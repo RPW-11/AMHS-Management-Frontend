@@ -2,7 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { RgvPathPoint } from '../../types/toolcase';
 import { Button } from '../ui/button';
-import { Ban, Eraser, MoveRight, Plus, SquarePen, Trash, X } from 'lucide-react';
+import { Ban, Eraser, MoveRight, Plus, RotateCcw, SquarePen, Trash, X } from 'lucide-react';
 import { Label } from '../ui/label';
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
 import SelectOption from '../select-option';
@@ -113,6 +113,12 @@ const ImageGridOverlay = ({
         setCurrEdited(null)
     }
 
+    const handleResetMap = () => {
+        setPointsMap(new Map<string, RgvPathPoint>())
+        setStationsOrder([])
+        setCurrEdited(null)
+    }
+
     useEffect(() => {
         const updateSize = () => {
             if (containerRef.current) {
@@ -126,8 +132,6 @@ const ImageGridOverlay = ({
 
         updateSize();
         window.addEventListener('resize', updateSize);
-
-        
 
         return () => window.removeEventListener('resize', updateSize);
     }, [image, rowDim, colDim]);
@@ -180,19 +184,29 @@ const ImageGridOverlay = ({
                 <Label>Map tools</Label>
                 <div className="flex gap-2">
                     <Button size={"icon"}
+                    title='Erase tile'
                     onClick={() => setMode("DEL")} 
                     variant={mode === "DEL" ? "secondary" : "outline"}>
                         <Eraser/>
                     </Button>
-                    <Button size={"icon"} 
+                    <Button size={"icon"}
+                    title='Add obstacle' 
                     onClick={() => setMode("ADD")} 
                     variant={mode === "ADD" ? "secondary" : "outline"}>
                         <Plus/>
                     </Button>
-                    <Button size={"icon"} 
+                    <Button size={"icon"}
+                    title='Edit tile' 
                     onClick={() => setMode("EDT")} 
                     variant={mode === "EDT" ? "secondary" : "outline"}>
                         <SquarePen/>
+                    </Button>
+                    <Separator orientation='vertical' className='h-5'/>
+                    <Button size={"icon"}
+                    title='Reset map' 
+                    onClick={handleResetMap} 
+                    variant={"outline"}>
+                        <RotateCcw/>
                     </Button>
                 </div>
             </div>

@@ -4,9 +4,10 @@ export type Option = {
 }
 
 export interface NotificationData {
-  userName: string;
-  description: string;
-  dayWithTime: string;
-  date: string;
-  isRead: boolean;
+    id: string;
+    userName: string;
+    description: string;
+    dayWithTime: string;
+    date: string;
+    isRead: boolean;
 }

@@ -4,7 +4,7 @@ import { Button } from "./ui/button"
 import { Popover, PopoverContent } from "./ui/popover"
 import { PopoverTrigger } from "@radix-ui/react-popover"
 import { Label } from "./ui/label"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Separator } from "./ui/separator"
 import { NotificationData } from "@/types/general"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
@@ -14,6 +14,7 @@ const Notification = () => {
     const [displayType, setDisplayType] = useState<string>("ALL")
     const [notifications, setNotifications] = useState<NotificationData[]>([
         {
+            id:"1",
             userName: "John Doe",
             description: "Sent you a connection request",
             dayWithTime: "Monday, 10:30 AM",
@@ -21,6 +22,7 @@ const Notification = () => {
             isRead: false
         },
         {
+            id:"2",
             userName: "Sarah Smith",
             description: "Liked your recent post",
             dayWithTime: "Tuesday, 2:15 PM",
@@ -28,6 +30,7 @@ const Notification = () => {
             isRead: true
         },
         {
+            id:"3",
             userName: "TechCorp Inc.",
             description: "Posted a new job opportunity",
             dayWithTime: "Wednesday, 9:45 AM",
@@ -35,6 +38,7 @@ const Notification = () => {
             isRead: false
         },
         {
+            id:"4",
             userName: "Alex Johnson",
             description: "Commented on your article",
             dayWithTime: "Thursday, 5:20 PM",
@@ -42,6 +46,7 @@ const Notification = () => {
             isRead: true
         },
         {
+            id:"5",
             userName: "Maria Garcia",
             description: "Shared your profile with her network",
             dayWithTime: "Friday, 11:10 AM",
@@ -49,6 +54,7 @@ const Notification = () => {
             isRead: false
         },
         {
+            id:"6",
             userName: "David Wilson",
             description: "Reacted to your comment",
             dayWithTime: "Saturday, 3:45 PM",
@@ -56,6 +62,7 @@ const Notification = () => {
             isRead: true
         },
         {
+            id:"7",
             userName: "Linda Brown",
             description: "Mentioned you in a post",
             dayWithTime: "Sunday, 7:30 AM",
@@ -63,6 +70,7 @@ const Notification = () => {
             isRead: false
         },
         {
+            id:"8",
             userName: "Michael Taylor",
             description: "Started following you",
             dayWithTime: "Monday, 4:55 PM",
@@ -70,6 +78,7 @@ const Notification = () => {
             isRead: true
         },
         {
+            id:"9",
             userName: "Emily Davis",
             description: "Sent you a private message",
             dayWithTime: "Tuesday, 1:25 PM",
@@ -77,6 +86,7 @@ const Notification = () => {
             isRead: false
         },
         {
+            id:"10",
             userName: "Robert Martinez",
             description: "Endorsed your skills",
             dayWithTime: "Wednesday, 6:40 PM",
@@ -84,18 +94,34 @@ const Notification = () => {
             isRead: true
         }
     ])
+    const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>(notifications)
 
-    const filteredNotifications = (): NotificationData[] => {
-        if (displayType === "READ") return notifications.filter(item => item.isRead)
-        else if (displayType === "UNREAD") return notifications.filter(item => !item.isRead)
-        return notifications
+    const filterNotifications = () => {
+        let newNotifcations: NotificationData[] = []
+        if (displayType === "READ") {
+            newNotifcations = notifications.filter(item => item.isRead)
+        }
+        else if (displayType === "UNREAD") {
+            newNotifcations = notifications.filter(item => !item.isRead)
+        }
+        setFilteredNotifications(displayType === "ALL" ? notifications : newNotifcations)
     }
+
+    const readNotificaton = (id: string) => setNotifications(prev => prev.map(item => item.id === id ? ({...item, isRead: true}) : item)) 
+
+    const hasUnreadNotification = (): boolean => notifications.some(item => !item.isRead)
+
+    useEffect(() => {
+        filterNotifications()
+    }, [displayType, notifications])
+
 
     return (
         <Popover>
             <PopoverTrigger asChild>
-                <Button variant={"outline"} size={"icon"} className="text-muted-foreground">
+                <Button variant={"outline"} size={"icon"} className="text-muted-foreground relative">
                     <Bell/>
+                    {hasUnreadNotification() && <div className="absolute top-[6px] right-[6px] rounded-full h-1.5 w-1.5 bg-primary"></div>}
                 </Button>
             </PopoverTrigger>
             <PopoverContent className="w-80 h-96 overflow-hidden">
@@ -104,12 +130,17 @@ const Notification = () => {
                     <div className="flex-1 flex flex-col justify-between gap-2 overflow-hidden">
                         <div className="flex items-center">
                             {DISPLAY_TYPES.map(type => (
-                                <Label onClick={() =>setDisplayType(type)} key={type} className={`cursor-pointer text-sm w-16 py-0.5 px-2 transition-all duration-200 ${displayType === type ? "border-b-2 border-primary text-primary" : "hover:text-primary text-muted-foreground font-normal"}`}>{ type.slice(0,1).toUpperCase() + type.slice(1).toLowerCase() }</Label>
+                                <Label onClick={() =>setDisplayType(type)} key={type} className={`cursor-pointer text-sm w-16 py-0.5 px-2 border-b-2 transition-all duration-200 ${displayType === type ? "border-primary text-primary" : "border-white hover:text-primary text-muted-foreground font-normal"}`}>{ type.slice(0,1).toUpperCase() + type.slice(1).toLowerCase() }</Label>
                             ))}
                         </div>
-                        <div className="flex-1 overflow-auto">
-                            {filteredNotifications().map((item, i) => (
-                                <NotificationCard key={i} item={item}/>
+                        <div className="flex-1 overflow-auto space-y-2">
+                            {filteredNotifications.length === 0 ?
+                            <div className="text-muted-foreground text-sm font-medium h-full flex justify-center items-center">
+                                No notifications
+                            </div>
+                            :
+                            filteredNotifications.map(item => (
+                                <NotificationCard key={item.id} item={item} onRead={readNotificaton}/>
                             ))}
                         </div>
                         <div className="space-y-2">
@@ -131,9 +162,14 @@ const Notification = () => {
     )
 }
 
-const NotificationCard = ({ item }: { item: NotificationData}) => {
+interface NotificationCardProps {
+    item: NotificationData
+    onRead: (id: string) => void
+}
+
+const NotificationCard = ({ item, onRead }: NotificationCardProps) => {
     return (
-        <div className="p-2 rounded-md flex gap-2 hover:bg-gray-100 cursor-pointer">
+        <div className={`p-2 rounded-md flex gap-2 ${item.isRead && "bg-gray-100"} hover:bg-gray-100 cursor-pointer`} onClick={() => onRead(item.id)}>
             <Avatar className="rounded-md">
                 <AvatarImage src="https://media.licdn.com/dms/image/v2/D5603AQEw05-cUCsC_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721522133019?e=2147483647&v=beta&t=qoMqARcOgZR_r6PuWK4uBCjsUyhmzr7wKrjNxKu05Sc"/>
                 <AvatarFallback>RP</AvatarFallback>
@@ -146,7 +182,7 @@ const NotificationCard = ({ item }: { item: NotificationData}) => {
                             <p className="text-xs">{ item.description }</p>
                         </div>
                     </div>
-                    {item.isRead && <div className="rounded-full h-2 w-2 bg-primary"></div>}
+                    {!item.isRead && <div className="rounded-full h-2 w-2 bg-primary"></div>}
                 </div>
                 <div className="flex justify-between text-xs">
                     <p>{ item.dayWithTime }</p>
