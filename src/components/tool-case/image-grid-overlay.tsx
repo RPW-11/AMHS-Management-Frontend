@@ -1,27 +1,22 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
-import { RgvPathPoint } from '../../types/toolcase';
+import { RgvPathPlan, RgvPathPoint } from '../../types/toolcase';
 import { Button } from '../ui/button';
-import { Ban, Eraser, MoveRight, Plus, RotateCcw, SquarePen, Trash, X } from 'lucide-react';
+import { Ban, Eraser, Plus, RotateCcw, SquarePen } from 'lucide-react';
 import { Label } from '../ui/label';
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from '../ui/dialog';
-import SelectOption from '../select-option';
-import { POINT_CATEGORY_OPTIONS, POINT_TYPE_STYLE } from '@/constants/tool-case';
-import { Option } from '@/types/general';
-import { Input } from '../ui/input';
-import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from '../ui/dropdown-menu';
+import { POINT_TYPE_STYLE } from '@/constants/tool-case';
 import { Separator } from '../ui/separator';
+import StationFlow from './station-flow';
+import EditPointDialog from './edit-point-dialog';
 
 interface ImageGridOverlayProps {
-    image: string
-    rowDim: number
-    colDim: number
+    rgvPathPlan: RgvPathPlan,
+    onChangePlan: (plan: RgvPathPlan) => void
 }
 
 const ImageGridOverlay = ({
-    image,
-    rowDim,
-    colDim
+    rgvPathPlan,
+    onChangePlan
 }: ImageGridOverlayProps) => {
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
@@ -30,6 +25,9 @@ const ImageGridOverlay = ({
     const [stationsOrder, setStationsOrder] = useState<[number, number][]>([])
     const [currEdited, setCurrEdited] = useState<RgvPathPoint|null>(null)
     const [mode, setMode] = useState<string>("ADD")
+    const [isRgvMounted, setIsRgvMounted] = useState<boolean>(false)
+
+    const [rowDim, colDim, image] = [rgvPathPlan.rowDim, rgvPathPlan.colDim, rgvPathPlan.image]
 
     const labelPath = (rowPos: number, colPos: number) => {
         const strPoint = `${rowPos}${colPos}`
@@ -90,12 +88,6 @@ const ImageGridOverlay = ({
         return "hover:bg-yellow-500/40"
     }
 
-    const hasStation = ():boolean => Array.from(pointsMap.values()).some(station => station.type === "ST")
-
-    const handleAddStation = (station: RgvPathPoint) => setStationsOrder([...stationsOrder, station.position])
-
-    const handleRemoveStation = (idx: number) => setStationsOrder(prev => prev.filter((_stat, i) => i !== idx))
-
     const handleSaveEditedPoint = (point: RgvPathPoint | null) => {
         if (point) {
             setPointsMap(prev => {
@@ -136,50 +128,33 @@ const ImageGridOverlay = ({
         return () => window.removeEventListener('resize', updateSize);
     }, [image, rowDim, colDim]);
 
+    useEffect(() => {
+        for(const point of rgvPathPlan.points) {
+            setPointsMap(prev => {
+                const newMap = new Map<string, RgvPathPoint>(prev)
+                newMap.delete(`${point.position[0]}${point.position[1]}`)
+                return newMap
+            })
+        }
+        setStationsOrder(rgvPathPlan.stationsOrder)
+        setIsRgvMounted(true)
+    }, [])
+
+    useEffect(() => {
+        if (isRgvMounted) {
+            onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values())})
+        }
+    }, [stationsOrder, pointsMap])
+
     const cellSize = containerSize.width / colDim;
 
     return (
         <div className="space-y-4">
-            <div className="space-y-2">
-                <Label>Define station flow</Label>
-                <div className="flex flex-wrap gap-2 rounded-md p-4 bg-gray-100">
-                    {stationsOrder.map((station, i) => (
-                        <div className='flex items-center gap-2 text-primary' key={i}>
-                            <Button 
-                            variant={"outline"} 
-                            size={"sm"} 
-                            className="group transition-all duration-200 w-16" 
-                            title={pointsMap.get(`${station[0]}${station[1]}`)?.name || ""}
-                            onClick={() => handleRemoveStation(i)}>
-                                <span className="block group-hover:hidden truncate">
-                                    {pointsMap.get(`${station[0]}${station[1]}`)?.name || ""}
-                                </span>
-                                <X className="hidden group-hover:block text-red-700"/>
-                            </Button>
-                            {i !== stationsOrder.length-1 && <MoveRight/>}
-                        </div>
-                    ))
-                    }
-                    {stationsOrder.length > 0 && <div><Separator orientation="vertical" className='mx-2 bg-gray-400'/></div>}
-
-                    <DropdownMenu>
-                        <DropdownMenuTrigger asChild>
-                            <Button variant={"default"} disabled={!hasStation()}>Add</Button>
-                        </DropdownMenuTrigger>
-                        <DropdownMenuContent className="w-56" align="start">
-                            <DropdownMenuLabel>Stations</DropdownMenuLabel>
-                            <DropdownMenuGroup>
-                            {Array.from(pointsMap.values()).map((station, i) => station.type === "ST" && (
-                                <DropdownMenuItem key={i} onClick={() => handleAddStation(station)}>
-                                    { station.name }
-                                </DropdownMenuItem>
-                            ))}
-                            </DropdownMenuGroup>  
-                        </DropdownMenuContent>
-                    </DropdownMenu>
-                </div>
-                <p className="text-xs text-muted-foreground">Inorder to add a flow, you need to have at least one station with a type of "Station"</p>
-            </div>
+            <StationFlow 
+            stationsOrder={stationsOrder}
+            pointsMap={pointsMap}
+            onChangeStationsOrder={setStationsOrder}
+            />
             <div className="space-y-2">
                 <Label>Map tools</Label>
                 <div className="flex gap-2">
@@ -266,70 +241,6 @@ const ImageGridOverlay = ({
             currPoint={currEdited}
             onEdit={handleSaveEditedPoint}/>}
         </div>
-    );
-};
-
-interface EditPointDialogProps {
-    currPoint: RgvPathPoint;
-    onEdit: (newPoint: RgvPathPoint | null) => void;
-}
-
-const EditPointDialog = ({
-    currPoint,
-    onEdit
-}: EditPointDialogProps) => {
-    const [localPoint, setLocalPoint] = useState<RgvPathPoint>(currPoint)
-
-    const formatPointToOption = (): Option => {
-        return localPoint.type === "OBS" ? POINT_CATEGORY_OPTIONS[0] : localPoint.type === "ST" ? POINT_CATEGORY_OPTIONS[1] : { name: "", value: "" }
-    }
-
-    const changePointType = (value: Option) => setLocalPoint({...localPoint, type: value.value })
-
-    const changePointName = (value: string) => setLocalPoint({...localPoint, name: value })
-
-    const changeProcessingTime = (value: string) => setLocalPoint({...localPoint, time: Number(value)})
-
-    const canSavePoint = () => {
-        return localPoint.name !== "" && localPoint.type !== ""
-    }
-
-    const handleSavePoint = () => onEdit(localPoint)
-
-    return (
-        <Dialog open={currPoint !== null} onOpenChange={() => onEdit(null)}>
-            <DialogContent>
-                <DialogHeader>
-                    <DialogTitle>Edit Point</DialogTitle>
-                    <DialogDescription>
-                        Fill the information of the point
-                    </DialogDescription>
-                </DialogHeader>
-                <div className='grid grid-cols-2 gap-4'>
-                    <div className="col-span-2 space-y-2">
-                        <Label>Point Name</Label>
-                        <Input value={localPoint.name} onChange={(e) => changePointName(e.target.value)} placeholder='Enter the point name'/>
-                    </div>
-                    <div className="col-span-2 lg:col-span-1 space-y-2">
-                        <Label>Point Type</Label>
-                        <SelectOption 
-                        value={formatPointToOption()}
-                        options={POINT_CATEGORY_OPTIONS}
-                        onValueChange={changePointType}
-                        labelName='Point Type'
-                        placeholder='Select point type'
-                        />
-                    </div>
-                    <div className="col-span-2 lg:col-span-1 space-y-2">
-                        <Label>Processing time (s)</Label>
-                        <Input value={localPoint.time} onChange={(e) => changeProcessingTime(e.target.value)} placeholder='Enter the processing time' type='number'/>
-                    </div>
-                    <div className="col-span-2 flex justify-end">
-                        <Button onClick={handleSavePoint} disabled={!canSavePoint()}>Save</Button>
-                    </div>
-                </div>
-            </DialogContent>
-        </Dialog>
     );
 };
 

@@ -4,6 +4,7 @@ import { ChevronDown } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
+import { Badge } from "../ui/badge"
 
 const EmployeeSummary = () => {
     const employeeAttendances = [
@@ -24,8 +25,25 @@ const EmployeeSummary = () => {
             position: "Engineer",
             status: "Late",
             time: "9.00 AM"
+        },
+        {
+            name: "Duarte",
+            position: "Engineer",
+            status: "Absent",
+            time: "Unknown"
         }
     ]
+
+    const getStatusBadgeVariant = (status: string) => {
+        switch (status.toLowerCase()) {
+            case "late":
+                return "warning"
+            case "on time":
+                return "success"
+            default:
+                return "danger"
+        }
+    }
     return (
         <div className="rounded-md p-4 bg-white space-y-4">
             <div>
@@ -55,7 +73,9 @@ const EmployeeSummary = () => {
                                 <p className="text-xs text-muted-foreground">{ item.position }</p>
                             </div>
                         </TableCell>
-                        <TableCell>{ item.status }</TableCell>
+                        <TableCell>
+                            <Badge variant={getStatusBadgeVariant(item.status)}>{ item.status }</Badge>
+                        </TableCell>
                         <TableCell className="text-right">{ item.time }</TableCell>
                     </TableRow>
                     ))}

@@ -11,3 +11,10 @@ export interface NotificationData {
     date: string;
     isRead: boolean;
 }
+
+export type User = {
+    firstName: string;
+    lastName: string;
+    imgUrl?: string;
+    position: string;
+}

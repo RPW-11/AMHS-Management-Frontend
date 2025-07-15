@@ -1,11 +1,13 @@
-
 import { ChevronDown } from "lucide-react"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
-import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
+import { Badge } from "../ui/badge"
+import UserAvatar from "../user-avatar"
+import { User } from "@/types/general"
+import { Task } from "@/types/task"
 
 const TaskSummary = () => {
-    const tasks = [
+    const tasks: Task[] = [
         {
             employeeName: "Rainata Putra",
             employeePosition: "Staff",
@@ -25,6 +27,29 @@ const TaskSummary = () => {
             status: "Cancelled"
         }
     ]
+
+    const convertToUserType = (task: Task): User => {
+        const names = task.employeeName.split(" ")
+        return {
+            firstName: names[0],
+            lastName: names[1] || "",
+            position: task.employeePosition
+        }
+    }
+
+    const getStatusBadgeVariant = (status: string) => {
+        switch (status.toLowerCase()) {
+            case "cancelled":
+                return "warning"
+            case "on going":
+                return "info"
+            case "done":
+                return "success"
+            default:
+                return "danger"
+        }
+    }
+
     return (
     <div className="rounded-md p-4 bg-white space-y-4">
         <div>
@@ -45,17 +70,20 @@ const TaskSummary = () => {
                 {tasks.map((item, i) => (
                 <TableRow key={i}>
                     <TableCell className="font-medium flex gap-4 items-center">
-                        <Avatar className="h-8.5 w-8.5 rounded-md">
-                            <AvatarImage src="https://media.licdn.com/dms/image/v2/D5603AQEw05-cUCsC_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721522133019?e=2147483647&v=beta&t=qoMqARcOgZR_r6PuWK4uBCjsUyhmzr7wKrjNxKu05Sc"/>
-                            <AvatarFallback>RP</AvatarFallback>
-                        </Avatar>
+                        <UserAvatar
+                        userData={convertToUserType(item)}
+                        hideNames
+                        size="sm"
+                        />
                         <div>
                             <h3>{ item.employeeName }</h3>
                             <p className="text-xs text-muted-foreground">{ item.employeePosition }</p>
                         </div>
                     </TableCell>
                     <TableCell>{ item.taskCategory }</TableCell>
-                    <TableCell className="text-right">{ item.status }</TableCell>
+                    <TableCell className="text-right">
+                        <Badge variant={getStatusBadgeVariant(item.status)}>{ item.status }</Badge>
+                    </TableCell>
                 </TableRow>
                 ))}
             </TableBody>

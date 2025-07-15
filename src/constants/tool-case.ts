@@ -1,4 +1,5 @@
 import { Option } from "@/types/general";
+import { RgvPathPlan } from "@/types/toolcase";
 
 export const POINT_CATEGORY_OPTIONS: Option[] = [
     { name: "Obstacle", value: "OBS" },
@@ -24,3 +25,13 @@ export const ROUTE_PLANNING_ALGORITHMS = [
         description: "Optimal for large matrix"
     },
 ]
+
+export const DEFAULT_RGV_PLAN: RgvPathPlan = {
+    id: "",
+    image: "",
+    rowDim: 6,
+    colDim: 6,
+    algorithm: "",
+    stationsOrder: [],
+    points: []
+}

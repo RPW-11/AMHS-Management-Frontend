@@ -1,13 +1,13 @@
 "use client"
 import { Bell, CheckCheck } from "lucide-react"
-import { Button } from "./ui/button"
-import { Popover, PopoverContent } from "./ui/popover"
+import { Button } from "../ui/button"
+import { Popover, PopoverContent } from "../ui/popover"
 import { PopoverTrigger } from "@radix-ui/react-popover"
-import { Label } from "./ui/label"
+import { Label } from "../ui/label"
 import { useEffect, useState } from "react"
-import { Separator } from "./ui/separator"
+import { Separator } from "../ui/separator"
 import { NotificationData } from "@/types/general"
-import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import NotificationCard from "./notification-card"
 
 const Notification = () => {
     const DISPLAY_TYPES = ["ALL", "UNREAD", "READ"]
@@ -140,7 +140,7 @@ const Notification = () => {
                             </div>
                             :
                             filteredNotifications.map(item => (
-                                <NotificationCard key={item.id} item={item} onRead={readNotificaton}/>
+                                <NotificationCard key={item.id} data={item} onRead={readNotificaton}/>
                             ))}
                         </div>
                         <div className="space-y-2">
@@ -159,37 +159,6 @@ const Notification = () => {
                 </div>
             </PopoverContent>
         </Popover>
-    )
-}
-
-interface NotificationCardProps {
-    item: NotificationData
-    onRead: (id: string) => void
-}
-
-const NotificationCard = ({ item, onRead }: NotificationCardProps) => {
-    return (
-        <div className={`p-2 rounded-md flex gap-2 ${item.isRead && "bg-gray-100"} hover:bg-gray-100 cursor-pointer`} onClick={() => onRead(item.id)}>
-            <Avatar className="rounded-md">
-                <AvatarImage src="https://media.licdn.com/dms/image/v2/D5603AQEw05-cUCsC_Q/profile-displayphoto-shrink_400_400/profile-displayphoto-shrink_400_400/0/1721522133019?e=2147483647&v=beta&t=qoMqARcOgZR_r6PuWK4uBCjsUyhmzr7wKrjNxKu05Sc"/>
-                <AvatarFallback>RP</AvatarFallback>
-            </Avatar>
-            <div className="w-full space-y-2">
-                <div className="flex justify-between">
-                    <div className="flex gap-2">
-                        <div>
-                            <h3 className="font-medium text-sm">{ item.userName }</h3>
-                            <p className="text-xs">{ item.description }</p>
-                        </div>
-                    </div>
-                    {!item.isRead && <div className="rounded-full h-2 w-2 bg-primary"></div>}
-                </div>
-                <div className="flex justify-between text-xs">
-                    <p>{ item.dayWithTime }</p>
-                    <p>{ item.date }</p>
-                </div>
-            </div>
-        </div>
     )
 }
 
