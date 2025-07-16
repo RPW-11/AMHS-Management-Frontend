@@ -1,4 +1,4 @@
-import { ChevronDown } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Button } from "../ui/button"
 import { Badge } from "../ui/badge"
@@ -97,7 +97,7 @@ const TaskSummary = () => {
         <div className="flex justify-center">
             <Button size={"sm"} variant={"outline"} className="text-xs">
             View details
-                <ChevronDown/>
+                <ChevronRight/>
             </Button>
         </div>
     </div>

@@ -1,12 +1,14 @@
 "use client"
 
-import { ChevronDown } from "lucide-react"
+import { ChevronRight } from "lucide-react"
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar"
 import { Button } from "../ui/button"
 import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, TableRow } from "../ui/table"
 import { Badge } from "../ui/badge"
+import { useRouter } from "next/navigation"
 
 const EmployeeSummary = () => {
+    const router = useRouter()
     const employeeAttendances = [
         {
             name: "Rainata Putra",
@@ -88,9 +90,13 @@ const EmployeeSummary = () => {
                 </TableFooter>
             </Table>
             <div className="flex justify-center">
-                <Button size={"sm"} variant={"outline"} className="text-xs">
+                <Button 
+                onClick={() => router.push(`/employees`)}
+                size={"sm"} 
+                variant={"outline"} 
+                className="text-xs">
                 View details
-                    <ChevronDown/>
+                    <ChevronRight/>
                 </Button>
             </div>
         </div>

@@ -1,4 +1,4 @@
-import { LayoutDashboard, ToolCase, Users, Warehouse } from "lucide-react";
+import { LayoutDashboard, LayoutList, ToolCase, Users, Warehouse } from "lucide-react";
 
 export const SIDEBAR_MENU = [
     {
@@ -12,9 +12,9 @@ export const SIDEBAR_MENU = [
         path: "/employees"
     },
     {
-        name: "Materials Inventory",
-        icon: Warehouse,
-        path: "/materials-inventory"
+        name: "Tasks",
+        icon: LayoutList,
+        path: "/tasks"
     },
     {
         name: "Tools",

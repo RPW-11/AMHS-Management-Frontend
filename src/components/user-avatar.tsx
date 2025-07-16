@@ -4,27 +4,30 @@ import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 interface UserAvatarProps {
     userData: User
     size: keyof typeof userAvatarVariants.size
+    customSize?: string
     hideNames?: boolean
 }
 
 const userAvatarVariants = {
     size: {
-        sm: "h-8.5 w-8.5 rounded-md",
-        lg: "h-9.5 w-9.5 rounded-md",
-        xl: "h-13 w-13 rounded-md"
+        sm: "h-8.5 w-8.5",
+        lg: "h-9.5 w-9.5",
+        xl: "h-13 w-13",
+        custom: ""
     }
 }
 
 const UserAvatar = ({
     userData,
     size = "lg",
+    customSize,
     hideNames = false
 }: UserAvatarProps) => {
-    const sizeClass = userAvatarVariants.size[size]
+    const sizeClass = size === "custom" ? customSize : userAvatarVariants.size[size]
     return (
         <div className={`flex items-center gap-2`}>
-            <Avatar className={sizeClass}>
-                <AvatarImage src={userData.imgUrl}/>
+            <Avatar className={`${sizeClass} rounded-md`}>
+                <AvatarImage src={userData.imgUrl} className="object-cover"/>
                 <AvatarFallback className="rounded-md">{userData.firstName.slice(0, 1).toUpperCase() + userData.lastName.slice(0, 1).toUpperCase()}</AvatarFallback>
             </Avatar>
         {!hideNames && 

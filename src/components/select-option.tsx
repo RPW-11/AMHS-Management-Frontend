@@ -7,6 +7,7 @@ interface SelectOptionProps {
     onValueChange: (value: Option) => void
     labelName: string
     placeholder: string
+    disabled?: boolean
 }
 
 const SelectOption = ({
@@ -14,7 +15,8 @@ const SelectOption = ({
     options,
     onValueChange,
     labelName,
-    placeholder
+    placeholder,
+    disabled = false
 }: SelectOptionProps) => {
 
     const handleValueChange = (value: string) => {
@@ -26,7 +28,7 @@ const SelectOption = ({
     }
 
     return (
-        <Select value={value.value} onValueChange={handleValueChange}>
+        <Select disabled={disabled} value={value.value} onValueChange={handleValueChange}>
             <SelectTrigger className="w-full">
                 <SelectValue placeholder={placeholder} />
             </SelectTrigger>
