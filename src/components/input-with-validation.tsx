@@ -2,7 +2,7 @@ import { ChangeEvent } from "react"
 import { Input } from "./ui/input"
 
 interface InputWithValidationProps {
-    validationFunction: () => string
+    errorMessage?: string
     value?: string
     onChange?: (value: string) => void,
     disabled?: boolean,
@@ -10,13 +10,12 @@ interface InputWithValidationProps {
 }
 
 const InputWithValidation = ({
-    validationFunction,
+    errorMessage,
     value,
     onChange,
     placeholder,
     disabled = false
 }:InputWithValidationProps) => {
-    const errorMessage = validationFunction();
     const updateValue = (e: ChangeEvent<HTMLInputElement>) => {
         if (onChange) {
             onChange(e.target.value)

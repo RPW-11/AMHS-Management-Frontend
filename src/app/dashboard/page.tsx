@@ -10,8 +10,8 @@ const DashboardPage = () => {
 
     return (
         <div className="space-y-4 max-w-6xl m-auto">
-            <div className="flex justify-between">
-                <h1 className="font-semibold text-2xl">Hello Rainata Putra,</h1>
+            <div className="flex justify-between items-center">
+                <h1 className="font-semibold text-xl">Hello Rainata Putra,</h1>
                 <CustomDatePicker date={currDate} onDateChange={setCurrDate} />
             </div>
             <div className="flex justify-center">
