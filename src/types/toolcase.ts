@@ -24,3 +24,15 @@ export interface RgvPathPlanReq {
     stationsOrder: [rowPos: number, colPos: number][]
     points: RgvPathPoint[]
 }
+
+export interface ImageAnalysisResult {
+    gridData: boolean[][];
+    cellWidth: number;
+    cellHeight: number;
+}
+
+export interface PixelAnalysisOptions {
+    threshold?: number;
+    targetColor?: { r: number; g: number; b: number };
+    sampleEvery?: number;
+}

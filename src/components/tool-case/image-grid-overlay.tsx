@@ -2,12 +2,14 @@
 import { useState, useRef, useEffect } from 'react';
 import { RgvPathPlan, RgvPathPoint } from '../../types/toolcase';
 import { Button } from '../ui/button';
-import { Ban, Eraser, Plus, RotateCcw, SquarePen } from 'lucide-react';
+import { Ban, Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
 import { Label } from '../ui/label';
 import { POINT_TYPE_STYLE } from '@/constants/tool-case';
 import { Separator } from '../ui/separator';
+import { useDebouncedCallback } from 'use-debounce';
 import StationFlow from './station-flow';
 import EditPointDialog from './edit-point-dialog';
+import { useAutoLabelMap } from '@/hooks/tool-case/useAutoLabelMap';
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan,
@@ -25,12 +27,33 @@ const ImageGridOverlay = ({
     const [stationsOrder, setStationsOrder] = useState<[number, number][]>([])
     const [currEdited, setCurrEdited] = useState<RgvPathPoint|null>(null)
     const [mode, setMode] = useState<string>("ADD")
+
     const [isRgvMounted, setIsRgvMounted] = useState<boolean>(false)
+    const [isDrawing, setIsDrawing] = useState<boolean>(false)
 
     const [rowDim, colDim, image] = [rgvPathPlan.rowDim, rgvPathPlan.colDim, rgvPathPlan.image]
 
+    // Automated labelling
+    const { analyzeGrid, loading, error } = useAutoLabelMap()
+
+    const handleAutomatedLabelling = async () => {
+        const result = await analyzeGrid(rgvPathPlan.image, rgvPathPlan.rowDim, rgvPathPlan.colDim); 
+        
+        for (let row = 0; row < rowDim; row++) {
+            for (let col = 0; col < colDim; col++) {
+                if (result.gridData[row][col]){
+                    labelPath(row, col)
+                }
+            }
+        }
+    }
+
+    const debouncedOnChangePlan = useDebouncedCallback(() => {
+        onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values())})
+    }, 400)
+
     const labelPath = (rowPos: number, colPos: number) => {
-        const strPoint = `${rowPos}${colPos}`
+        const strPoint = `${rowPos}-${colPos}`
         const rgvPoint: RgvPathPoint = {
             name: "Obstacle",
             type: "OBS",
@@ -52,13 +75,13 @@ const ImageGridOverlay = ({
 
         setPointsMap(prev => {
             const newMap = new Map<string, RgvPathPoint>(prev)
-            newMap.delete(`${rowPos}${colPos}`)
+            newMap.delete(`${rowPos}-${colPos}`)
             return newMap
         })
     }
 
     const editPoint = (rowPos: number, colPos: number) => {
-        const point = pointsMap.get(`${rowPos}${colPos}`)
+        const point = pointsMap.get(`${rowPos}-${colPos}`)
 
         if (point) {
             return setCurrEdited(point)
@@ -73,7 +96,7 @@ const ImageGridOverlay = ({
 
         setPointsMap(prev => {
             const newMap = new Map<string, RgvPathPoint>(prev)
-            newMap.set(`${rowPos}${colPos}`, newPoint)
+            newMap.set(`${rowPos}-${colPos}`, newPoint)
             return newMap
         })
 
@@ -81,7 +104,7 @@ const ImageGridOverlay = ({
     }
 
     const getPointStyle = (rowPos: number, colPos: number): string => {
-        const point = pointsMap.get(`${rowPos}${colPos}`)
+        const point = pointsMap.get(`${rowPos}-${colPos}`)
         if (point && point.type !== "") {
             return POINT_TYPE_STYLE.get(point.type) || ""
         }
@@ -93,7 +116,7 @@ const ImageGridOverlay = ({
             setPointsMap(prev => {
                 const newMap = new Map<string, RgvPathPoint>(prev)
                 const [rowPos, colPos] = point.position
-                newMap.set(`${rowPos}${colPos}`, point)
+                newMap.set(`${rowPos}-${colPos}`, point)
 
                 return newMap
             })
@@ -110,6 +133,31 @@ const ImageGridOverlay = ({
         setStationsOrder([])
         setCurrEdited(null)
     }
+
+    const handleMouseDown = (row: number, col: number) => {
+        setIsDrawing(true);
+        if (mode === "EDT") {
+            editPoint(row, col)
+        } else if (mode === "ADD") {
+            labelPath(row, col);
+        } else {
+            removePoint(row, col)
+        }
+    };
+
+    const handleMouseEnter = (row: number, col: number) => {
+        if (isDrawing) {
+            if (mode === "ADD") {
+                labelPath(row, col);
+            } else {
+                removePoint(row, col)
+            }
+        }
+    };
+
+    const handleMouseUp = () => {
+        setIsDrawing(false);
+    };
 
     useEffect(() => {
         const updateSize = () => {
@@ -142,7 +190,7 @@ const ImageGridOverlay = ({
 
     useEffect(() => {
         if (isRgvMounted) {
-            onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values())})
+            debouncedOnChangePlan()
         }
     }, [stationsOrder, pointsMap])
 
@@ -183,11 +231,17 @@ const ImageGridOverlay = ({
                     variant={"outline"}>
                         <RotateCcw/>
                     </Button>
+                    <Button size={"icon"}
+                    title='Automated labelling' 
+                    onClick={handleAutomatedLabelling} 
+                    variant={"outline"}>
+                        <Workflow/>
+                    </Button>
                 </div>
             </div>
             <div className="max-w-3xl w-full mx-auto">
                 <div 
-                    className="relative border rounded-md overflow-hidden bg-gray-100" 
+                    className="relative border black rounded-md overflow-hidden bg-gray-100" 
                     ref={containerRef}
                     style={{
                         height: `${containerSize.height}px`
@@ -214,7 +268,7 @@ const ImageGridOverlay = ({
                         }}
                     />
 
-                    <div className="absolute top-0 left-0 w-full h-full">
+                    <div className="absolute top-0 left-0 w-full h-full" onMouseLeave={handleMouseUp}>
                         {Array.from({ length: rowDim * colDim }).map((_, index) => {
                             const row = Math.floor(index / colDim);
                             const col = index % colDim;
@@ -228,9 +282,15 @@ const ImageGridOverlay = ({
                                         left: `${col * cellSize}px`,
                                         top: `${row * cellSize}px`,
                                     }}
-                                    onClick={() => mode === "ADD" ? labelPath(row, col) : mode === "DEL" ? removePoint(row, col) : editPoint(row, col)}
+                                    onMouseDown={() => handleMouseDown(row, col)}
+                                    onMouseEnter={() => handleMouseEnter(row, col)}
+                                    onMouseUp={handleMouseUp}
                                 >
-                                    { pointsMap.get(`${row}${col}`)?.type === "OBS" ? <Ban/> : pointsMap.get(`${row}${col}`)?.name }
+                                    { pointsMap.get(`${row}-${col}`)?.type === "ST" && 
+                                        <div>
+                                            {rowDim < 10 ? pointsMap.get(`${row}-${col}`)?.name : <MapPinCheckInside className='text-primary'/>}
+                                        </div>
+                                    }
                                 </button>
                             );
                         })}

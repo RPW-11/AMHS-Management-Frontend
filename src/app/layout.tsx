@@ -25,15 +25,7 @@ export default function RootLayout({
       <body
         className={`${figtree.className} antialiased flex min-h-screen w-screen overflow-x-hidden bg-gray-100`}
       >
-        <Sidebar />
-        <main className="ml-64 flex-1 relative">
-          <div className="absolute sticky top-0 w-full bg-gray-100 z-10">
-            <Header />
-          </div>
-          <div className="p-6">
-            {children}
-          </div>
-        </main>
+        {children}
       </body>
     </html>
   );

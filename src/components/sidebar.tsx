@@ -3,11 +3,16 @@ import { Button } from "./ui/button";
 import { SIDEBAR_MENU } from "@/constants/sidebar";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
-import { usePathname } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 
 const Sidebar = () => {
+    const { push } = useRouter()
     const pathname = usePathname();
     const currPath = "/" + pathname.split("/")[1]
+
+    const handleLogout = () => {
+        push("/login")
+    }
     return (
         <div className="fixed p-6 w-64 h-screen bg-gray-100 border-r flex flex-col justify-between">
             <div className="space-y-8">
@@ -23,7 +28,7 @@ const Sidebar = () => {
                     ))}
                 </div>
             </div>
-            <Button variant={"ghost"} className="w-full justify-start gap-3">
+            <Button onClick={handleLogout} variant={"ghost"} className="w-full justify-start gap-3">
                 <LogOut />
                 Log out
             </Button>

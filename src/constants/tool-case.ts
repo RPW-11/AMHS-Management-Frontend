@@ -29,8 +29,8 @@ export const ROUTE_PLANNING_ALGORITHMS = [
 export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     id: "",
     image: "",
-    rowDim: 6,
-    colDim: 6,
+    rowDim: 20,
+    colDim: 20,
     algorithm: "",
     stationsOrder: [],
     points: []
