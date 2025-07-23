@@ -3,19 +3,36 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import Image from "next/image"
-import { useEffect, useState } from "react"
+import { FormEvent, useEffect, useState } from "react"
 import { SLIDE_SHOW_IMAGES_PATH } from "@/constants/login"
 import { useRouter } from "next/navigation"
 import { Eye, EyeClosed } from "lucide-react"
 import { cn } from "@/lib/utils"
+import { LoginRequest } from "@/types/employee"
+import { useAuth } from "@/hooks/employee/useAuth"
+import LoadingSpinner from "@/components/loading-spinner"
 
 const LoginPage = () => {
+    const [loginReq, setLoginReq] = useState<LoginRequest>({ email: "", password: ""})
+    const [loginLoading, setLoginLoading] = useState<boolean>(false)
+    const [error, setError] = useState<string|null>(null)
+
     const [displayPassword, setDisplayPassword] = useState<boolean>(false)
     const [currentIndex, setCurrentIndex] = useState<number>(0);
+
+    const { login } = useAuth();
     const { push } = useRouter()
 
-    const handleLogin = () => {
-        push("/dashboard")
+    const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
+        e.preventDefault()
+        setLoginLoading(true)
+        
+        const [employee, error] = await login(loginReq);
+        
+        setLoginLoading(false)
+        if(error) return setError(error.title)
+        setError(null)
+        return push("/dashboard")
     }
 
     useEffect(() => {
@@ -32,10 +49,14 @@ const LoginPage = () => {
                     <h1 className="font-bold text-2xl text-primary">SAA Inc.</h1>
                     <p className="">Please login to continue</p>
                 </div>
-                <div className="space-y-4">
+                <form className="space-y-4" onSubmit={handleLogin}>
                     <div className="space-y-2">
                         <Label>Email</Label>
-                        <Input placeholder="Enter your email" />
+                        <Input
+                        required
+                        value={loginReq.email}
+                        onChange={(e) => setLoginReq({...loginReq, email: e.target.value})}
+                        placeholder="Enter your email" />
                     </div>
                     <div className="space-y-2">
                         <Label>Password</Label>
@@ -44,7 +65,10 @@ const LoginPage = () => {
                             "focus-within:border-ring focus-within:ring-ring/50 focus-within:ring-[3px]", // Changed from focus-visible to focus-within
                             "aria-invalid:ring-destructive/20 dark:aria-invalid:ring-destructive/40 aria-invalid:border-destructive",
                             )}>
-                            <input 
+                            <input
+                                required
+                                value={loginReq.password}
+                                onChange={(e) => setLoginReq({...loginReq, password: e.target.value})} 
                                 placeholder="Enter your password" 
                                 type={displayPassword ? "text" : "password"} 
                                 className="w-full outline-none bg-transparent"
@@ -64,10 +88,12 @@ const LoginPage = () => {
                             )}
                             </div>
                     </div>
-                    <Button onClick={handleLogin}>
+                    <p className="text-xs text-destructive"> { error }</p>
+                    <Button disabled={loginLoading} className="transition-all duration-300">
                         Login
+                        {loginLoading && <LoadingSpinner size="sm" variant="darkMode" />}
                     </Button>
-                </div>
+                </form>
             </div>
             <div className="w-1/2 h-full relative overflow-hidden">
                 {SLIDE_SHOW_IMAGES_PATH.map((img, index) => (

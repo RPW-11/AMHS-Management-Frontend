@@ -1,6 +1,9 @@
 
+"use client"
 import AllEmployeeTable from "@/components/employees/all-employee-table";
+import { Button } from "@/components/ui/button";
 import { Employee } from "@/types/employee";
+import { useRouter } from "next/navigation";
 
 const EmployeesPage = () => {
     const employees: Employee[] = [
@@ -76,8 +79,13 @@ const EmployeesPage = () => {
         }
     ];
 
+    const { push } = useRouter()
+
     return (
         <div className="rounded-md p-4 bg-white border space-y-4">
+            <div className="flex gap-4">
+                <Button onClick={() => push("/employees/add")}>Add Employee</Button>
+            </div>
             <div>
                 <h1 className="font-semibold text-xl">
                     Employees Detailed Information

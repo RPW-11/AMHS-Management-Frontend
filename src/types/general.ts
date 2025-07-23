@@ -18,3 +18,8 @@ export type User = {
     imgUrl?: string;
     position: string;
 }
+
+export interface ApiError {
+    title: string;
+    details?: string;
+}

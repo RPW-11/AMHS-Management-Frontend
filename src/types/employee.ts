@@ -9,3 +9,25 @@ export type Employee = {
     dateOfBirth: string
     imgUrl?: string
 }
+
+export enum EmployeePosition {
+    Staff = "staff",
+    SeniorStaff = "senior staff",
+    Supervisor = "supervisor",
+    Manager = "manager"
+}
+
+export interface LoginRequest {
+    email: string;
+    password: string;
+}
+
+export interface EmployeeRegisterRequest {
+    firstName: string;
+    lastName: string;
+    email: string;
+    password: string;
+    dateOfBirth: Date;
+    phoneNumber: string;
+    position: EmployeePosition;
+}
