@@ -1,12 +1,14 @@
 "use client"
 
-import { Employee, LoginRequest } from "@/types/employee"
+import { useUserStore } from "@/stores/useAuthStore"
+import { LoginRequest } from "@/types/employee"
 import { ApiError } from "@/types/general"
 import { useCallback } from "react"
 
 export const useAuth = () => {
-    
-    const login = useCallback(async (loginRequest: LoginRequest): Promise<[Employee|null, ApiError|null]> => {
+    const { setIsAuthenticated, setUser } = useUserStore()
+
+    const login = useCallback(async (loginRequest: LoginRequest): Promise<ApiError|null> => {
         const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/login`, {
             method: "POST",
             headers: {
@@ -16,9 +18,20 @@ export const useAuth = () => {
         })
         const data = await response.json()
         if (!response.ok) {
-            return [null, { title: data.title, details: data.details }]
+            return { title: data.title, details: data.details }
         }
-        return [data, null]
+
+        setIsAuthenticated(true)
+        setUser({
+            id: data.id,
+            firstName: data.firstName,
+            lastName: data.lastName,
+            imgUrl: data.imgUrl || null,
+            position: data.position,
+            token: data.token
+        })
+
+        return null
     }, [])
 
     return { login }

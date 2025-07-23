@@ -9,11 +9,11 @@ export default function RootLayout({
   return (
     <div className="flex overflow-x-hidden w-full">
         <Sidebar />
-        <main className="ml-64 flex-1 relative">
+        <main className="ml-64 flex-1 flex flex-col relative">
           <div className="absolute sticky top-0 w-full bg-gray-100 z-10">
             <Header />
           </div>
-          <div className="p-6">
+          <div className="p-6 flex-1">
             {children}
           </div>
         </main>

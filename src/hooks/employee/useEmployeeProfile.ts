@@ -1,18 +1,18 @@
 "use client"
 import { Employee } from "@/types/employee"
+import { ApiError } from "@/types/general";
 import { useState, useCallback, useMemo } from "react"
 
 export const useEmployeeProfile = () => {
     const [employeeDetails, setEmployeeDetails] = useState<Employee>({
-        id: "e1a9b2c3-d4e5-4f6a-7b8c-9d0e1f2a3b4c",
-        email: "john.doe@example.com",
-        firstName: "John",
-        lastName: "Doe",
-        age: 32,
-        phoneNumber: "+1 (555) 123-4567",
-        position: "Senior Software Engineer",
-        dateOfBirth: "15 May 1992",
-        imgUrl: "https://i.pinimg.com/474x/61/9c/64/619c64898a25274894d2e98a0700a7ca.jpg"
+        id: "",
+        email: "",
+        firstName: "",
+        lastName: "",
+        age: -1,
+        phoneNumber: "",
+        position: "",
+        dateOfBirth: new Date().toString(),
     });
 
     const validateField = useCallback((field: keyof Employee, value: string): string => {
@@ -57,7 +57,26 @@ export const useEmployeeProfile = () => {
         return Object.values(errors).every(msg => msg === "");
     }, [errors]);
 
+    const fetchEmployeeById = useCallback(async (employeeId: string): Promise<ApiError|null> => {
+        try {
+            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/${employeeId}`)
+            const data = await result.json()
+
+            if(!result.ok){
+                return { title: data.title, details: data.details }
+            }
+
+            setEmployeeDetails(data)
+            return null
+            
+        } catch (error) {
+            return { title: (error as Error).message }
+        }
+    }, [])
+
+
     return {
+        fetchEmployeeById,
         employeeDetails,
         errors,
         canSaveProfile,

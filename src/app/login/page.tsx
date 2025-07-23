@@ -20,19 +20,23 @@ const LoginPage = () => {
     const [displayPassword, setDisplayPassword] = useState<boolean>(false)
     const [currentIndex, setCurrentIndex] = useState<number>(0);
 
-    const { login } = useAuth();
+    const { login } = useAuth()
     const { push } = useRouter()
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
         setLoginLoading(true)
         
-        const [employee, error] = await login(loginReq);
+        const error = await login(loginReq);
+        
+        if(error) {
+            setError(error.title)
+        } else {
+            setError(null)
+            push("/dashboard")
+        }
         
         setLoginLoading(false)
-        if(error) return setError(error.title)
-        setError(null)
-        return push("/dashboard")
     }
 
     useEffect(() => {

@@ -13,10 +13,12 @@ export interface NotificationData {
 }
 
 export type User = {
+    id: string;
     firstName: string;
     lastName: string;
     imgUrl?: string;
     position: string;
+    token?: string;
 }
 
 export interface ApiError {
