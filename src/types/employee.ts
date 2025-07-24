@@ -27,7 +27,7 @@ export interface EmployeeRegisterRequest {
     lastName: string;
     email: string;
     password: string;
-    dateOfBirth: Date;
+    dateOfBirth: string;
     phoneNumber: string;
     position: EmployeePosition;
 }

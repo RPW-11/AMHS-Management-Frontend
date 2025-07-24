@@ -6,6 +6,7 @@ import { Table, TableBody, TableCell, TableFooter, TableHead, TableHeader, Table
 import { Employee } from "@/types/employee";
 import { useState } from "react";
 import SelectedEmployeeActions from "./selected-employee-actions";
+import { parsedTimeStampToDate } from "@/utils/general-util";
 
 interface AllEmployeeTable {
     employees: Employee[]
@@ -67,7 +68,7 @@ const AllEmployeeTable = ({
                             { emp.age }
                         </TableCell>
                         <TableCell>
-                            { emp.dateOfBirth }
+                            { parsedTimeStampToDate(emp.dateOfBirth) }
                         </TableCell>
                         <TableCell>
                             { emp.email }

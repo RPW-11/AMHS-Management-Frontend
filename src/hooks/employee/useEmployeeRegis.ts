@@ -1,5 +1,5 @@
 "use client"
-import { Employee, EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
+import { EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
 import { ApiError } from "@/types/general";
 import { useState, useCallback, useMemo } from "react"
 
@@ -9,24 +9,30 @@ export const useEmployeeRegis = () => {
         lastName: "",
         email: "",
         password: "",
-        dateOfBirth: new Date(),
+        dateOfBirth: new Date().toDateString(),
         phoneNumber: "",
         position: EmployeePosition.Staff
     });
 
-    const register = useCallback(async (employeeRegisReq: EmployeeRegisterRequest): Promise<[Employee|null, ApiError|null]> => {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/auth/register`, {
-            method: "POST",
-            headers: {
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify(employeeRegisReq)          
-        })
-        const data = await response.json()
-        if (!response.ok) {
-            return [null, { title: data.title, details: data.details }]
+    const register = useCallback(async (employeeRegisReq: EmployeeRegisterRequest): Promise<ApiError|null> => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees`, {
+                method: "POST",
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(employeeRegisReq)          
+            })
+
+            if (!response.ok) {
+                const data = await response.json()
+                return { title: data.title, details: data.details }
+            }
+
+            return null
+        } catch (error) {
+            return { title: (error as Error).message }
         }
-        return [data, null]
     }, [])
 
     const validateField = useCallback((field: keyof EmployeeRegisterRequest, value: string): string => {

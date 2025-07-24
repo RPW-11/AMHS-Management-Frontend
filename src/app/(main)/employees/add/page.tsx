@@ -26,7 +26,7 @@ const AddEmployeePage = () => {
     const handleRegister = async () => {
         setRegisError(null)
         setRegisterLoading(true)
-        const [employee, error] = await register(employeeRegisReq)
+        const error = await register(employeeRegisReq)
         if (error) {
             setRegisError(error.title)
         } else {
@@ -85,7 +85,7 @@ const AddEmployeePage = () => {
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Date of Birth</Label>
-                    <CustomDatePicker />
+                    <CustomDatePicker date={new Date(employeeRegisReq.dateOfBirth)} onDateChange={(date) => updateField("dateOfBirth", date.toDateString())} />
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Phone Number</Label>
