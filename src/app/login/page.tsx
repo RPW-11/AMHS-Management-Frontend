@@ -11,6 +11,7 @@ import { cn } from "@/lib/utils"
 import { LoginRequest } from "@/types/employee"
 import { useAuth } from "@/hooks/employee/useAuth"
 import LoadingSpinner from "@/components/loading-spinner"
+import { Routes } from "@/constants/general"
 
 const LoginPage = () => {
     const [loginReq, setLoginReq] = useState<LoginRequest>({ email: "", password: ""})
@@ -33,7 +34,7 @@ const LoginPage = () => {
             setError(error.title)
         } else {
             setError(null)
-            push("/dashboard")
+            push(Routes.Dashboard)
         }
         
         setLoginLoading(false)

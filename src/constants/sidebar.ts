@@ -1,24 +1,25 @@
-import { LayoutDashboard, LayoutList, ToolCase, Users, Warehouse } from "lucide-react";
+import { LayoutDashboard, LayoutList, ToolCase, Users } from "lucide-react";
+import { Routes } from "./general";
 
 export const SIDEBAR_MENU = [
     {
         name: "Dashboard",
         icon: LayoutDashboard,
-        path: "/dashboard"
+        path: Routes.Dashboard
     },
     {
         name: "Employees",
         icon: Users,
-        path: "/employees"
+        path: Routes.Employees
     },
     {
         name: "Tasks",
         icon: LayoutList,
-        path: "/tasks"
+        path: Routes.Tasks
     },
     {
         name: "Tools",
         icon: ToolCase,
-        path: "/tool-case"
+        path: Routes.ToolCase
     }
 ]

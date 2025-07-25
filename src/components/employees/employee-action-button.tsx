@@ -1,7 +1,8 @@
 import { ContactRound, Mail } from "lucide-react";
 import ActionsButton from "../actions-button";
 import { Button } from "../ui/button";
-import { usePathname, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
+import { EmployeeRoutes } from "@/constants/general";
 
 interface EmployeeActionButtonProps {
     employeeId: string
@@ -11,12 +12,11 @@ const EmployeeActionButton = ({
     employeeId
 }: EmployeeActionButtonProps) => {
     const { push } = useRouter()
-    const pathname = usePathname()
 
     return (
         <ActionsButton>
             <Button
-            onClick={() => push(`${pathname}/profile/${employeeId}`)}
+            onClick={() => push(EmployeeRoutes.Profile(employeeId))}
             className="w-full justify-start" 
             size={"sm"} variant={"ghost"}>
                 <ContactRound />

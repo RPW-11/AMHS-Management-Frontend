@@ -1,4 +1,5 @@
 "use client"
+import { Routes } from "@/constants/general";
 import { Button } from "./ui/button";
 import { SIDEBAR_MENU } from "@/constants/sidebar";
 import { LogOut } from "lucide-react";
@@ -11,7 +12,7 @@ const Sidebar = () => {
     const currPath = "/" + pathname.split("/")[1]
 
     const handleLogout = () => {
-        push("/login")
+        push(Routes.Login)
     }
     return (
         <div className="fixed p-6 w-64 h-screen bg-gray-100 border-r flex flex-col justify-between">

@@ -11,10 +11,10 @@ export type Employee = {
 }
 
 export enum EmployeePosition {
-    Staff = "staff",
-    SeniorStaff = "senior staff",
-    Supervisor = "supervisor",
-    Manager = "manager"
+    Staff = "Staff",
+    SeniorStaff = "SeniorStaff",
+    Supervisor = "Supervisor",
+    Manager = "Manager"
 }
 
 export interface LoginRequest {

@@ -1,5 +1,6 @@
 import { User } from "@/types/general"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
+import { formatEmployeePosition } from "@/utils/employee/employee-util"
 
 interface UserAvatarProps {
     userData: User
@@ -36,7 +37,7 @@ const UserAvatar = ({
                 { `${userData.firstName.slice(0, 1).toUpperCase()}${userData.firstName.slice(1).toLowerCase()} ${userData.lastName.slice(0, 1).toUpperCase()}${userData.lastName.slice(1).toLowerCase()}`}
             </h3>
             <p className="text-muted-foreground text-xs">
-                { userData.position }
+                { formatEmployeePosition(userData.position) }
             </p>
         </div>}
     </div>

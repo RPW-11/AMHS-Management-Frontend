@@ -6,14 +6,18 @@ import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
 import { EMPLOYEE_POSITIONS } from "@/constants/employee"
+import { Routes } from "@/constants/general"
 import { useEmployeeRegis } from "@/hooks/employee/useEmployeeRegis"
+import { useRoleRestriction } from "@/hooks/useRoleRestriction"
 import { Option } from "@/types/general"
-import { getPositionEnumByStr } from "@/utils/employee-registration/regis-util"
+import { getPositionEnumByStr } from "@/utils/employee/employee-util"
 import { useRouter } from "next/navigation"
 import { useState } from "react"
 
 
 const AddEmployeePage = () => {
+    const { loadingVerification } = useRoleRestriction()
+
     const { push } = useRouter()
     const { employeeRegisReq, updateField, register, canAddEmployee, errors } = useEmployeeRegis();
     const [registerLoading, setRegisterLoading] = useState<boolean>(false)
@@ -31,9 +35,20 @@ const AddEmployeePage = () => {
             setRegisError(error.title)
         } else {
             setRegisError(null)
-            push(`/employees`)
+            push(Routes.Employees)
         }
         setRegisterLoading(false)
+    }
+
+    if (loadingVerification) {
+        return (
+            <div className="w-full h-full flex justify-center items-center">
+                <div className="flex flex-col gap-4 items-center">
+                    <LoadingSpinner />
+                    <p className="font-medium">Verifying access</p>
+                </div>
+            </div>
+        )
     }
 
     return (

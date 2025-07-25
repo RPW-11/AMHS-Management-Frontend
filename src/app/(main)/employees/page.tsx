@@ -1,6 +1,7 @@
 
 "use client"
 import AllEmployeeTable from "@/components/employees/all-employee-table";
+import NavigationEmployee from "@/components/employees/navigation-employee";
 import LoadingSpinner from "@/components/loading-spinner";
 import { Button } from "@/components/ui/button";
 import { useEmployee } from "@/hooks/employee/useEmployee";
@@ -28,11 +29,17 @@ const EmployeesPage = () => {
         fetchEmployees()
     },[])
 
+    if(fetchAllError) {
+        return (
+            <div className="rounded-md p-4 bg-white border space-y-4 text-destructive text-center">
+                { fetchAllError }
+            </div>
+        )
+    }
+
     return (
         <div className="rounded-md p-4 bg-white border space-y-4">
-            <div className="flex gap-4">
-                <Button onClick={() => push("/employees/add")}>Add Employee</Button>
-            </div>
+            <NavigationEmployee />
             <div>
                 <h1 className="font-semibold text-xl">
                     Employees Detailed Information

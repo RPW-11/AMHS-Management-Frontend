@@ -3,6 +3,7 @@ import { Settings, UserRoundCog } from "lucide-react";
 import { Button } from "../ui/button";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useRouter } from "next/navigation";
+import { EmployeeRoutes } from "@/constants/general";
 
 
 const UserSetting = () => {
@@ -16,7 +17,7 @@ const UserSetting = () => {
             </PopoverTrigger>
             <PopoverContent className="w-36 p-1">
                 <Button 
-                onClick={() => push(`/employees/profile/me`)}
+                onClick={() => push(EmployeeRoutes.Profile("me"))}
                 variant={"ghost"} 
                 size={"sm"} 
                 className="w-full font-normal justify-start">

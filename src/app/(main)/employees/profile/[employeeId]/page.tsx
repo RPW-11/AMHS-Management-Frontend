@@ -10,7 +10,7 @@ import { EMPLOYEE_POSITIONS } from "@/constants/employee"
 import { useEmployeeProfile } from "@/hooks/employee/useEmployeeProfile"
 import { useUserStore } from "@/stores/useAuthStore"
 import { Option } from "@/types/general"
-import { getPositionEnumByStr } from "@/utils/employee-registration/regis-util"
+import { getPositionEnumByStr } from "@/utils/employee/employee-util"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
 
@@ -25,6 +25,7 @@ const EmployeeProfilePage = () => {
 
     const { fetchEmployeeById, employeeDetails, updateField, errors, canSaveProfile } = useEmployeeProfile();
 
+    const isMyProfile = (): boolean => resolvedEmployeeId === user?.id
 
     useEffect(() => {
         const fetchProfile = async (employeeId: string) => {
@@ -74,6 +75,7 @@ const EmployeeProfilePage = () => {
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>First Name</Label>
                     <InputWithValidation 
+                    disabled={!isMyProfile()}
                     value={employeeDetails.firstName}
                     onChange={(val) => updateField('firstName', val)}
                     placeholder="Enter your first name..."
@@ -81,7 +83,8 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Last Name</Label>
-                    <InputWithValidation 
+                    <InputWithValidation
+                    disabled={!isMyProfile()} 
                     value={employeeDetails.lastName}
                     onChange={(val) => updateField('lastName', val)}
                     placeholder="Enter your last name..."
@@ -89,7 +92,8 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Email</Label>
-                    <InputWithValidation 
+                    <InputWithValidation
+                    disabled={!isMyProfile()} 
                     value={employeeDetails.email}
                     onChange={(val) => updateField('email', val)}
                     placeholder="Enter your email..."
@@ -97,14 +101,15 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Phone Number</Label>
-                    <InputWithValidation 
+                    <InputWithValidation
+                    disabled={!isMyProfile()} 
                     value={employeeDetails.phoneNumber}
                     onChange={(val) => updateField('phoneNumber', val)}
                     placeholder="Enter your phone number..."
                     errorMessage={errors.phoneNumber}/>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Position</Label>
+                    <Label htmlFor="position" aria-label="position">Position</Label>
                     <SelectOption
                     disabled 
                     value={{ name: getPositionEnumByStr(employeeDetails.position).toString(), value: employeeDetails.position }}
@@ -116,12 +121,13 @@ const EmployeeProfilePage = () => {
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
                     <Label>Date of Birth</Label>
-                    <CustomDatePicker date={new Date(employeeDetails.dateOfBirth)}/>
+                    <CustomDatePicker 
+                    date={new Date(employeeDetails.dateOfBirth)}/>
                 </div>
             </div>
-            <div className="flex justify-end">
+            {isMyProfile() && <div className="flex justify-end">
                 <Button size={"sm"} disabled={!canSaveProfile}>Save</Button>
-            </div>
+            </div>}
         </div>
     )
 }
