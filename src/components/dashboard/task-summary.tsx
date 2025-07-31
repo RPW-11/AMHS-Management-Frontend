@@ -31,6 +31,7 @@ const TaskSummary = () => {
     const convertToUserType = (task: Task): User => {
         const names = task.employeeName.split(" ")
         return {
+            id: "",
             firstName: names[0],
             lastName: names[1] || "",
             position: task.employeePosition

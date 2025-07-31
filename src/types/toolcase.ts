@@ -1,28 +1,36 @@
+import { PointCategory } from "@/constants/tool-case"
+
+export type Position = {
+    rowPos: number
+    colPos: number
+}
+
 export type RgvPathPoint = {
     name: string
-    type: "OBS" | "ST" | string
+    category: PointCategory
     time: number
-    position: [number, number]
+    position: Position
 }
 
 export type RgvPathPlan = {
     id:string
-    image: string
+    image: File | null
     rowDim: number
     colDim: number
     algorithm: string
-    stationsOrder: [rowPos: number, colPos: number][]
+    stationsOrder: Position[]
     points: RgvPathPoint[]
 }
 
-export interface RgvPathPlanReq {
-    id?:string
-    image: string
-    rowDim: number
-    colDim: number
-    algorithm: string
-    stationsOrder: [rowPos: number, colPos: number][]
-    points: RgvPathPoint[]
+export interface CreateRgvPathPlanReq {
+    image: File
+    routeMetaData: {
+        rowDim: number
+        colDim: number
+        algorithm: string
+        stationsOrder: Position[]
+        points: RgvPathPoint[]
+    }
 }
 
 export interface ImageAnalysisResult {

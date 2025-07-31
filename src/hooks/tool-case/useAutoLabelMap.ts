@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react'
-import { analyzeImageGrid } from '@/utils/image-grid-util'
+import { analyzeImageGrid } from '@/utils/tool-case/image-grid-util'
 import { ImageAnalysisResult } from '@/types/toolcase'
 
 export function useAutoLabelMap() {

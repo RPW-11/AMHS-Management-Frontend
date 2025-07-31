@@ -1,4 +1,4 @@
-import { PixelAnalysisOptions, ImageAnalysisResult } from '../types/toolcase';
+import { PixelAnalysisOptions, ImageAnalysisResult } from '../../types/toolcase';
 
 export async function analyzeImageGrid(
     imageUrl: string,

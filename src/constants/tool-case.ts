@@ -1,14 +1,26 @@
 import { Option } from "@/types/general";
 import { RgvPathPlan } from "@/types/toolcase";
 
+export enum PointCategory {
+    Obstacle = "OBS",
+    Station = "ST",
+    None = "NONE"
+}
+
+export enum LabellingMode {
+    Add,
+    Edit,
+    Delete
+}
+
 export const POINT_CATEGORY_OPTIONS: Option[] = [
-    { name: "Obstacle", value: "OBS" },
-    { name: "Station", value: "ST" }
+    { name: "Obstacle", value: PointCategory.Obstacle.toString() },
+    { name: "Station", value: PointCategory.Station.toString() }
 ]
 
 export const POINT_TYPE_STYLE = new Map<string, string>([
-    ["OBS", "bg-yellow-700/40 hover:bg-yellow-700/60"],
-    ["ST", "bg-sky-700/40 hover:bg-sky-700/60"],
+    [PointCategory.Obstacle.toString(), "bg-yellow-700/40 hover:bg-yellow-700/60"],
+    [PointCategory.Station.toString(), "bg-sky-700/40 hover:bg-sky-700/60"],
 ])
 
 export const ROUTE_PLANNING_ALGORITHMS = [
@@ -28,7 +40,7 @@ export const ROUTE_PLANNING_ALGORITHMS = [
 
 export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     id: "",
-    image: "",
+    image: null,
     rowDim: 20,
     colDim: 20,
     algorithm: "",

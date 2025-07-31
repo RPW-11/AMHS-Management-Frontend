@@ -6,7 +6,8 @@ import { Input } from "../ui/input";
 import SelectOption from "../select-option";
 import { Button } from "../ui/button";
 import { useState } from "react";
-import { POINT_CATEGORY_OPTIONS } from "@/constants/tool-case";
+import { POINT_CATEGORY_OPTIONS, PointCategory } from "@/constants/tool-case";
+import { getPointCategoryByStr } from "@/utils/tool-case/route-planning";
 
 interface EditPointDialogProps {
     currPoint: RgvPathPoint;
@@ -20,17 +21,17 @@ const EditPointDialog = ({
     const [localPoint, setLocalPoint] = useState<RgvPathPoint>(currPoint)
 
     const formatPointToOption = (): Option => {
-        return localPoint.type === "OBS" ? POINT_CATEGORY_OPTIONS[0] : localPoint.type === "ST" ? POINT_CATEGORY_OPTIONS[1] : { name: "", value: "" }
+        return localPoint.category === PointCategory.Obstacle ? POINT_CATEGORY_OPTIONS[0] : localPoint.category === PointCategory.Station ? POINT_CATEGORY_OPTIONS[1] : { name: "", value: "" }
     }
 
-    const changePointType = (value: Option) => setLocalPoint({...localPoint, type: value.value })
+    const changePointType = (value: Option) => setLocalPoint({...localPoint, category:  getPointCategoryByStr(value.value)})
 
     const changePointName = (value: string) => setLocalPoint({...localPoint, name: value })
 
     const changeProcessingTime = (value: string) => setLocalPoint({...localPoint, time: Number(value)})
 
     const canSavePoint = () => {
-        return localPoint.name !== "" && localPoint.type !== ""
+        return localPoint.name !== "" && localPoint.category !== PointCategory.None
     }
 
     const handleSavePoint = () => onEdit(localPoint)

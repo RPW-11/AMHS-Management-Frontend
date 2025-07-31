@@ -4,20 +4,19 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { DEFAULT_RGV_PLAN, ROUTE_PLANNING_ALGORITHMS } from "@/constants/tool-case";
+import { useRgvRouteSolver } from "@/hooks/tool-case/useRgvRouteSolver";
 import { RgvPathPlan } from "@/types/toolcase";
 import { useState } from "react";
 
 const RgvRoutePlanningPage = () => {
     const [rgvPlan, setRgvPlan] = useState<RgvPathPlan>(DEFAULT_RGV_PLAN)
 
+    const { submitRgvRoutePlan } = useRgvRouteSolver();
+
     const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
         const file = e.target.files?.[0];
         if (file) {
-            const reader = new FileReader();
-            reader.onload = (event) => {
-                setRgvPlan(prev => ({...prev, image: event.target?.result as string}));
-            };
-            reader.readAsDataURL(file);
+            setRgvPlan(prev => ({...prev, image: file }));
         }
     };
 
@@ -37,7 +36,15 @@ const RgvRoutePlanningPage = () => {
     }
 
     const isAbleToProceed = (): boolean => {
-        return rgvPlan.algorithm !== "" && rgvPlan.rowDim > 0 && rgvPlan.colDim > 0 &&  rgvPlan.image !== "" && rgvPlan.points.length > 0 && rgvPlan.stationsOrder.length > 1
+        return rgvPlan.algorithm !== "" && rgvPlan.rowDim > 0 && rgvPlan.colDim > 0 &&  rgvPlan.image !== null && rgvPlan.points.length > 0 && rgvPlan.stationsOrder.length > 1
+    }
+
+    const handleSubmitRgvPlan = async() => {
+        if (!rgvPlan.image) return
+        const error = await submitRgvRoutePlan({ image: rgvPlan.image, routeMetaData: {...rgvPlan} })
+        if (error) {
+            console.log(error);
+        }
     }
 
     return(
@@ -77,9 +84,9 @@ const RgvRoutePlanningPage = () => {
                     </div>
                 </div>
             </div>
-            {rgvPlan.image !== "" && <ImageGridOverlay rgvPathPlan={rgvPlan} onChangePlan={setRgvPlan}/>}
+            {rgvPlan.image && <ImageGridOverlay rgvPathPlan={{ ...rgvPlan, image: rgvPlan.image}} onChangePlan={setRgvPlan}/>}
             <div className="flex justify-end">
-                <Button disabled={!isAbleToProceed()}>Next</Button>
+                <Button disabled={!isAbleToProceed()} onClick={handleSubmitRgvPlan}>Submit</Button>
             </div>
         </div>
     )

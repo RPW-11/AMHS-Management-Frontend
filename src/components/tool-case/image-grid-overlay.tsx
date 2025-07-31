@@ -1,10 +1,10 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
-import { RgvPathPlan, RgvPathPoint } from '../../types/toolcase';
+import { Position, RgvPathPlan, RgvPathPoint } from '../../types/toolcase';
 import { Button } from '../ui/button';
-import { Ban, Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
+import { Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
 import { Label } from '../ui/label';
-import { POINT_TYPE_STYLE } from '@/constants/tool-case';
+import { LabellingMode, POINT_TYPE_STYLE, PointCategory } from '@/constants/tool-case';
 import { Separator } from '../ui/separator';
 import { useDebouncedCallback } from 'use-debounce';
 import StationFlow from './station-flow';
@@ -12,7 +12,7 @@ import EditPointDialog from './edit-point-dialog';
 import { useAutoLabelMap } from '@/hooks/tool-case/useAutoLabelMap';
 
 interface ImageGridOverlayProps {
-    rgvPathPlan: RgvPathPlan,
+    rgvPathPlan: RgvPathPlan & { image: File };
     onChangePlan: (plan: RgvPathPlan) => void
 }
 
@@ -24,20 +24,21 @@ const ImageGridOverlay = ({
     const containerRef = useRef<HTMLDivElement>(null);
 
     const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(new Map<string,RgvPathPoint>())
-    const [stationsOrder, setStationsOrder] = useState<[number, number][]>([])
+    const [stationsOrder, setStationsOrder] = useState<Position[]>([])
     const [currEdited, setCurrEdited] = useState<RgvPathPoint|null>(null)
-    const [mode, setMode] = useState<string>("ADD")
+    const [mode, setMode] = useState<LabellingMode>(LabellingMode.Add)
 
     const [isRgvMounted, setIsRgvMounted] = useState<boolean>(false)
     const [isDrawing, setIsDrawing] = useState<boolean>(false)
 
     const [rowDim, colDim, image] = [rgvPathPlan.rowDim, rgvPathPlan.colDim, rgvPathPlan.image]
+    const [imageUrl, setImageUrl] = useState<string|null>(null)
 
     // Automated labelling
     const { analyzeGrid, loading, error } = useAutoLabelMap()
 
     const handleAutomatedLabelling = async () => {
-        const result = await analyzeGrid(rgvPathPlan.image, rgvPathPlan.rowDim, rgvPathPlan.colDim); 
+        const result = await analyzeGrid(URL.createObjectURL(rgvPathPlan.image), rgvPathPlan.rowDim, rgvPathPlan.colDim); 
         
         for (let row = 0; row < rowDim; row++) {
             for (let col = 0; col < colDim; col++) {
@@ -56,9 +57,9 @@ const ImageGridOverlay = ({
         const strPoint = `${rowPos}-${colPos}`
         const rgvPoint: RgvPathPoint = {
             name: "Obstacle",
-            type: "OBS",
+            category: PointCategory.Obstacle,
             time: 0,
-            position: [rowPos, colPos]
+            position: { rowPos, colPos }
         }
 
         setPointsMap(prev => {
@@ -69,7 +70,7 @@ const ImageGridOverlay = ({
     }
 
     const removePoint = (rowPos: number, colPos: number) => {
-        if (stationsOrder.some(station => station[0] === rowPos && station[1] === colPos)) {
+        if (stationsOrder.some(station => station.rowPos === rowPos && station.colPos === colPos)) {
             setStationsOrder([])
         }
 
@@ -89,9 +90,9 @@ const ImageGridOverlay = ({
         
         const newPoint:RgvPathPoint = {
             name: "",
-            type: "",
+            category: PointCategory.None,
             time: 0,
-            position: [rowPos, colPos]
+            position: { rowPos, colPos }
         }
 
         setPointsMap(prev => {
@@ -105,8 +106,8 @@ const ImageGridOverlay = ({
 
     const getPointStyle = (rowPos: number, colPos: number): string => {
         const point = pointsMap.get(`${rowPos}-${colPos}`)
-        if (point && point.type !== "") {
-            return POINT_TYPE_STYLE.get(point.type) || ""
+        if (point && point.category !== PointCategory.None) {
+            return POINT_TYPE_STYLE.get(point.category) || ""
         }
         return "hover:bg-yellow-500/40"
     }
@@ -115,13 +116,13 @@ const ImageGridOverlay = ({
         if (point) {
             setPointsMap(prev => {
                 const newMap = new Map<string, RgvPathPoint>(prev)
-                const [rowPos, colPos] = point.position
+                const { rowPos, colPos } = point.position
                 newMap.set(`${rowPos}-${colPos}`, point)
 
                 return newMap
             })
 
-            if (stationsOrder.some(station => station[0] === point.position[0] && station[1] === point.position[1]) && point.type === "OBS") {
+            if (stationsOrder.some(station => station.rowPos === point.position.rowPos && station.colPos === point.position.colPos) && point.category === PointCategory.Obstacle) {
                 setStationsOrder([])
             }
         }
@@ -136,9 +137,9 @@ const ImageGridOverlay = ({
 
     const handleMouseDown = (row: number, col: number) => {
         setIsDrawing(true);
-        if (mode === "EDT") {
+        if (mode === LabellingMode.Edit) {
             editPoint(row, col)
-        } else if (mode === "ADD") {
+        } else if (mode === LabellingMode.Add) {
             labelPath(row, col);
         } else {
             removePoint(row, col)
@@ -147,7 +148,7 @@ const ImageGridOverlay = ({
 
     const handleMouseEnter = (row: number, col: number) => {
         if (isDrawing) {
-            if (mode === "ADD") {
+            if (mode === LabellingMode.Add) {
                 labelPath(row, col);
             } else {
                 removePoint(row, col)
@@ -170,6 +171,10 @@ const ImageGridOverlay = ({
             }
         };
 
+        if(image) {
+            setImageUrl(URL.createObjectURL(image))
+        }
+
         updateSize();
         window.addEventListener('resize', updateSize);
 
@@ -180,7 +185,7 @@ const ImageGridOverlay = ({
         for(const point of rgvPathPlan.points) {
             setPointsMap(prev => {
                 const newMap = new Map<string, RgvPathPoint>(prev)
-                newMap.delete(`${point.position[0]}${point.position[1]}`)
+                newMap.delete(`${point.position.rowPos}-${point.position.colPos}`)
                 return newMap
             })
         }
@@ -208,20 +213,20 @@ const ImageGridOverlay = ({
                 <div className="flex gap-2">
                     <Button size={"icon"}
                     title='Erase tile'
-                    onClick={() => setMode("DEL")} 
-                    variant={mode === "DEL" ? "secondary" : "outline"}>
+                    onClick={() => setMode(LabellingMode.Delete)} 
+                    variant={mode === LabellingMode.Delete ? "secondary" : "outline"}>
                         <Eraser/>
                     </Button>
                     <Button size={"icon"}
                     title='Add obstacle' 
-                    onClick={() => setMode("ADD")} 
-                    variant={mode === "ADD" ? "secondary" : "outline"}>
+                    onClick={() => setMode(LabellingMode.Add)} 
+                    variant={mode === LabellingMode.Add ? "secondary" : "outline"}>
                         <Plus/>
                     </Button>
                     <Button size={"icon"}
                     title='Edit tile' 
-                    onClick={() => setMode("EDT")} 
-                    variant={mode === "EDT" ? "secondary" : "outline"}>
+                    onClick={() => setMode(LabellingMode.Edit)} 
+                    variant={mode === LabellingMode.Edit ? "secondary" : "outline"}>
                         <SquarePen/>
                     </Button>
                     <Separator orientation='vertical' className='h-5'/>
@@ -247,15 +252,15 @@ const ImageGridOverlay = ({
                         height: `${containerSize.height}px`
                     }}
                 >
-                    <img
-                        src={image}
+                    {imageUrl && <img
+                        src={imageUrl}
                         alt="Grid preview"
                         className="w-full h-full object-fill"
                         style={{
                             display: 'block',
                             objectPosition: 'center center'
                         }}
-                    />
+                    />}
 
                     <div
                         className="absolute top-0 left-0 w-full h-full pointer-events-none"
@@ -286,7 +291,7 @@ const ImageGridOverlay = ({
                                     onMouseEnter={() => handleMouseEnter(row, col)}
                                     onMouseUp={handleMouseUp}
                                 >
-                                    { pointsMap.get(`${row}-${col}`)?.type === "ST" && 
+                                    { pointsMap.get(`${row}-${col}`)?.category === PointCategory.Station && 
                                         <div>
                                             {rowDim < 10 ? pointsMap.get(`${row}-${col}`)?.name : <MapPinCheckInside className='text-primary'/>}
                                         </div>
