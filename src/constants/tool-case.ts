@@ -4,13 +4,16 @@ import { RgvPathPlan } from "@/types/toolcase";
 export enum PointCategory {
     Obstacle = "OBS",
     Station = "ST",
-    None = "NONE"
+    None = "NONE",
+    Path = "PATH",
+    StationAsPath = "STATION_AS_PATH"
 }
 
 export enum LabellingMode {
     Add,
     Edit,
-    Delete
+    Delete,
+    Solve
 }
 
 export const POINT_CATEGORY_OPTIONS: Option[] = [
@@ -21,6 +24,8 @@ export const POINT_CATEGORY_OPTIONS: Option[] = [
 export const POINT_TYPE_STYLE = new Map<string, string>([
     [PointCategory.Obstacle.toString(), "bg-yellow-700/40 hover:bg-yellow-700/60"],
     [PointCategory.Station.toString(), "bg-sky-700/40 hover:bg-sky-700/60"],
+    [PointCategory.Path.toString(), "bg-green-700/40 hover:bg-green-700/60"],
+    [PointCategory.StationAsPath.toString(), "bg-green-700/40 hover:bg-green-700/60"]
 ])
 
 export const ROUTE_PLANNING_ALGORITHMS = [
@@ -45,5 +50,6 @@ export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     colDim: 20,
     algorithm: "",
     stationsOrder: [],
+    sampleSolution: [],
     points: []
 }

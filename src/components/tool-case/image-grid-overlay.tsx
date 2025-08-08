@@ -1,8 +1,8 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
-import { Position, RgvPathPlan, RgvPathPoint } from '../../types/toolcase';
+import { Position, RgvPathPlan, RgvPathPoint, SampleSolution } from '../../types/toolcase';
 import { Button } from '../ui/button';
-import { Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
+import { ArrowBigUp, Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
 import { Label } from '../ui/label';
 import { LabellingMode, POINT_TYPE_STYLE, PointCategory } from '@/constants/tool-case';
 import { Separator } from '../ui/separator';
@@ -10,6 +10,7 @@ import { useDebouncedCallback } from 'use-debounce';
 import StationFlow from './station-flow';
 import EditPointDialog from './edit-point-dialog';
 import { useAutoLabelMap } from '@/hooks/tool-case/useAutoLabelMap';
+import { toast } from 'sonner';
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan & { image: File };
@@ -25,6 +26,7 @@ const ImageGridOverlay = ({
 
     const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(new Map<string,RgvPathPoint>())
     const [stationsOrder, setStationsOrder] = useState<Position[]>([])
+    const [sampleSolution, setSampleSolution] = useState<SampleSolution>(new SampleSolution())
     const [currEdited, setCurrEdited] = useState<RgvPathPoint|null>(null)
     const [mode, setMode] = useState<LabellingMode>(LabellingMode.Add)
 
@@ -50,7 +52,7 @@ const ImageGridOverlay = ({
     }
 
     const debouncedOnChangePlan = useDebouncedCallback(() => {
-        onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values())})
+        onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values()), sampleSolution: sampleSolution.paths})
     }, 400)
 
     const labelPath = (rowPos: number, colPos: number) => {
@@ -69,6 +71,43 @@ const ImageGridOverlay = ({
         })
     }
 
+    const solvePath = (rowPos: number, colPos: number) => {
+        const strPoint = `${rowPos}-${colPos}`
+        const exist = pointsMap.get(strPoint)
+
+        if(exist && exist.category === PointCategory.Obstacle) {
+            return
+        }
+
+
+        const newSampleSolution = new SampleSolution(sampleSolution.pathsSet, sampleSolution.paths)
+        try {
+            newSampleSolution.addPath({ rowPos, colPos })
+            setSampleSolution(newSampleSolution)
+
+            let rgvPoint: RgvPathPoint = {
+                name: "Path",
+                category: PointCategory.Path,
+                time: 0,
+                position: { rowPos, colPos }
+            }
+
+            if (exist?.category === PointCategory.Station) {
+                rgvPoint = exist
+                rgvPoint.category = PointCategory.StationAsPath
+            }
+
+            setPointsMap(prev => {
+                const newMap = new Map<string, RgvPathPoint>(prev)
+                newMap.set(strPoint, rgvPoint)
+                return newMap
+            })
+
+        } catch (error) {
+            toast.error((error as Error).message)
+        }
+    }
+
     const removePoint = (rowPos: number, colPos: number) => {
         if (stationsOrder.some(station => station.rowPos === rowPos && station.colPos === colPos)) {
             setStationsOrder([])
@@ -79,6 +118,9 @@ const ImageGridOverlay = ({
             newMap.delete(`${rowPos}-${colPos}`)
             return newMap
         })
+
+        // reset sample solution.
+        setSampleSolution(new SampleSolution())
     }
 
     const editPoint = (rowPos: number, colPos: number) => {
@@ -133,6 +175,7 @@ const ImageGridOverlay = ({
         setPointsMap(new Map<string, RgvPathPoint>())
         setStationsOrder([])
         setCurrEdited(null)
+        setSampleSolution(new SampleSolution())
     }
 
     const handleMouseDown = (row: number, col: number) => {
@@ -141,7 +184,9 @@ const ImageGridOverlay = ({
             editPoint(row, col)
         } else if (mode === LabellingMode.Add) {
             labelPath(row, col);
-        } else {
+        } else if (mode === LabellingMode.Solve) {
+            solvePath(row, col);
+        }  else {
             removePoint(row, col)
         }
     };
@@ -150,6 +195,8 @@ const ImageGridOverlay = ({
         if (isDrawing) {
             if (mode === LabellingMode.Add) {
                 labelPath(row, col);
+            } else if(mode === LabellingMode.Solve) {
+                solvePath(row, col)
             } else {
                 removePoint(row, col)
             }
@@ -229,6 +276,12 @@ const ImageGridOverlay = ({
                     variant={mode === LabellingMode.Edit ? "secondary" : "outline"}>
                         <SquarePen/>
                     </Button>
+                    <Button size={"icon"}
+                    title='Add solution path' 
+                    onClick={() => setMode(LabellingMode.Solve)} 
+                    variant={mode === LabellingMode.Solve ? "secondary" : "outline"}>
+                        <ArrowBigUp/>
+                    </Button>
                     <Separator orientation='vertical' className='h-5'/>
                     <Button size={"icon"}
                     title='Reset map' 
@@ -291,7 +344,11 @@ const ImageGridOverlay = ({
                                     onMouseEnter={() => handleMouseEnter(row, col)}
                                     onMouseUp={handleMouseUp}
                                 >
-                                    { pointsMap.get(`${row}-${col}`)?.category === PointCategory.Station && 
+                                    { 
+                                    (pointsMap.get(`${row}-${col}`)?.category === PointCategory.Station 
+                                    ||
+                                    pointsMap.get(`${row}-${col}`)?.category === PointCategory.StationAsPath)
+                                    && 
                                         <div>
                                             {rowDim < 10 ? pointsMap.get(`${row}-${col}`)?.name : <MapPinCheckInside className='text-primary'/>}
                                         </div>

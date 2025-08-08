@@ -13,9 +13,9 @@ export const SIDEBAR_MENU = [
         path: Routes.Employees
     },
     {
-        name: "Tasks",
+        name: "Missions",
         icon: LayoutList,
-        path: Routes.Tasks
+        path: Routes.Missions
     },
     {
         name: "Tools",

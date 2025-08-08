@@ -19,13 +19,6 @@ const ToolCasePage = () => {
                         <p className="text-xs">Find the most optimal RGV route (track) based on the chosen algorithm</p>
                     </div>
                 </Link>
-                <Link href={""} className="col-span-2 lg:col-span-1 flex justify-start px-4 py-2 rounded-md gap-4 border hover:bg-secondary hover:text-primary">
-                    <Route size={40}/>
-                    <div>
-                        <h3 className="font-semibold">RGV Route Planning</h3>
-                        <p className="text-xs">Find the most optimal RGV route (track) based on the chosen algorithm</p>
-                    </div>
-                </Link>
             </div>
         </div>
     )

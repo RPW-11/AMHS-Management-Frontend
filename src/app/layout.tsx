@@ -3,6 +3,7 @@ import { Figtree } from "next/font/google";
 import "./globals.css";
 import Sidebar from "@/components/sidebar";
 import Header from "@/components/header/header";
+import { Toaster } from "@/components/ui/sonner";
 
 const figtree = Figtree({
   subsets: ["latin"],
@@ -26,6 +27,7 @@ export default function RootLayout({
         className={`${figtree.className} antialiased flex min-h-screen w-screen overflow-x-hidden bg-gray-100`}
       >
         {children}
+        <Toaster />
       </body>
     </html>
   );

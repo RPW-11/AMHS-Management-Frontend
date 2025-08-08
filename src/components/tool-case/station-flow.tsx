@@ -4,6 +4,7 @@ import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
 import { DropdownMenu, DropdownMenuContent, DropdownMenuGroup, DropdownMenuItem, DropdownMenuLabel, DropdownMenuTrigger } from "../ui/dropdown-menu";
 import { Position, RgvPathPoint } from "@/types/toolcase";
+import { PointCategory } from "@/constants/tool-case";
 
 interface StationFlowProps {
     stationsOrder: Position[]
@@ -16,7 +17,7 @@ const StationFlow = ({
     pointsMap,
     onChangeStationsOrder
 }: StationFlowProps) => {
-    const hasStation = ():boolean => Array.from(pointsMap.values()).some(station => station.category === "ST")
+    const hasStation = ():boolean => Array.from(pointsMap.values()).some(station => station.category === PointCategory.Station || station.category === PointCategory.StationAsPath)
     const handleAddStation = (station: RgvPathPoint) => onChangeStationsOrder([...stationsOrder, station.position])
     const handleRemoveStation = (idx: number) => onChangeStationsOrder(stationsOrder.filter((_stat, i) => i !== idx))
     
@@ -50,7 +51,14 @@ const StationFlow = ({
                     <DropdownMenuContent className="w-56" align="start">
                         <DropdownMenuLabel>Stations</DropdownMenuLabel>
                         <DropdownMenuGroup>
-                        {Array.from(pointsMap.values()).map((station, i) => station.category === "ST" && (
+                        {Array.from(pointsMap.values()).map((station, i) => 
+                        (
+                            station.category === PointCategory.Station 
+                            || 
+                            station.category === PointCategory.StationAsPath
+                        ) 
+                            && 
+                        (
                             <DropdownMenuItem key={i} onClick={() => handleAddStation(station)}>
                                 { station.name }
                             </DropdownMenuItem>
