@@ -1,16 +1,15 @@
 "use client"
 import { useState, useRef, useEffect } from 'react';
 import { Position, RgvPathPlan, RgvPathPoint, SampleSolution } from '../../types/toolcase';
-import { Button } from '../ui/button';
-import { ArrowBigUp, Eraser, MapPinCheckInside, Plus, RotateCcw, SquarePen, Workflow } from 'lucide-react';
-import { Label } from '../ui/label';
+import { MapPinCheckInside } from 'lucide-react';
 import { LabellingMode, POINT_TYPE_STYLE, PointCategory } from '@/constants/tool-case';
-import { Separator } from '../ui/separator';
 import { useDebouncedCallback } from 'use-debounce';
 import StationFlow from './station-flow';
 import EditPointDialog from './edit-point-dialog';
 import { useAutoLabelMap } from '@/hooks/tool-case/useAutoLabelMap';
 import { toast } from 'sonner';
+import ModeToggle from './mode-toggle';
+import { Label } from '../ui/label';
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan & { image: File };
@@ -52,7 +51,7 @@ const ImageGridOverlay = ({
     }
 
     const debouncedOnChangePlan = useDebouncedCallback(() => {
-        onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values()), sampleSolution: sampleSolution.paths})
+        onChangePlan({...rgvPathPlan, stationsOrder: stationsOrder, points: Array.from(pointsMap.values())})
     }, 400)
 
     const labelPath = (rowPos: number, colPos: number) => {
@@ -79,9 +78,33 @@ const ImageGridOverlay = ({
             return
         }
 
-
         const newSampleSolution = new SampleSolution(sampleSolution.pathsSet, sampleSolution.paths)
+
         try {
+            
+            if (newSampleSolution.paths.length > 0
+                &&
+                newSampleSolution.paths[0].rowPos === rowPos
+                &&
+                newSampleSolution.paths[0].colPos === colPos
+            ){
+                newSampleSolution.addPath({ rowPos, colPos })
+                // reaching terminal condition, add the solution
+                onChangePlan({...rgvPathPlan, sampleSolutions: [...rgvPathPlan.sampleSolutions, newSampleSolution.paths]})
+                setSampleSolution(new SampleSolution())
+                // remove the paths
+                setPointsMap(prev => {
+                    const newMap = new Map<string, RgvPathPoint>(prev)
+                    newSampleSolution.paths.forEach(pos => {
+                        const point = newMap.get(`${pos.rowPos}-${pos.colPos}`);
+                        if (point && point.category === PointCategory.Path)
+                            newMap.delete(`${pos.rowPos}-${pos.colPos}`)
+                    })
+                    return newMap
+                })
+                return
+            }
+            
             newSampleSolution.addPath({ rowPos, colPos })
             setSampleSolution(newSampleSolution)
 
@@ -92,7 +115,7 @@ const ImageGridOverlay = ({
                 position: { rowPos, colPos }
             }
 
-            if (exist?.category === PointCategory.Station) {
+            if (exist?.category === PointCategory.Station || exist?.category === PointCategory.StationAsPath) {
                 rgvPoint = exist
                 rgvPoint.category = PointCategory.StationAsPath
             }
@@ -256,47 +279,19 @@ const ImageGridOverlay = ({
             onChangeStationsOrder={setStationsOrder}
             />
             <div className="space-y-2">
-                <Label>Map tools</Label>
-                <div className="flex gap-2">
-                    <Button size={"icon"}
-                    title='Erase tile'
-                    onClick={() => setMode(LabellingMode.Delete)} 
-                    variant={mode === LabellingMode.Delete ? "secondary" : "outline"}>
-                        <Eraser/>
-                    </Button>
-                    <Button size={"icon"}
-                    title='Add obstacle' 
-                    onClick={() => setMode(LabellingMode.Add)} 
-                    variant={mode === LabellingMode.Add ? "secondary" : "outline"}>
-                        <Plus/>
-                    </Button>
-                    <Button size={"icon"}
-                    title='Edit tile' 
-                    onClick={() => setMode(LabellingMode.Edit)} 
-                    variant={mode === LabellingMode.Edit ? "secondary" : "outline"}>
-                        <SquarePen/>
-                    </Button>
-                    <Button size={"icon"}
-                    title='Add solution path' 
-                    onClick={() => setMode(LabellingMode.Solve)} 
-                    variant={mode === LabellingMode.Solve ? "secondary" : "outline"}>
-                        <ArrowBigUp/>
-                    </Button>
-                    <Separator orientation='vertical' className='h-5'/>
-                    <Button size={"icon"}
-                    title='Reset map' 
-                    onClick={handleResetMap} 
-                    variant={"outline"}>
-                        <RotateCcw/>
-                    </Button>
-                    <Button size={"icon"}
-                    title='Automated labelling' 
-                    onClick={handleAutomatedLabelling} 
-                    variant={"outline"}>
-                        <Workflow/>
-                    </Button>
-                </div>
+                <Label>Sample Solutions</Label>
+                <h3 className='text-sm'>Count: { rgvPathPlan.sampleSolutions.length }</h3>
+                {rgvPathPlan.sampleSolutions.length === 0
+                 &&
+                 <p className="text-muted-foreground text-xs">You have 0 sample solutions. Please add some sample solutions using the 'Add solution path' tool</p> 
+                }
             </div>
+            <ModeToggle
+                mode={mode}
+                onChangeMode={setMode}
+                handleResetMap={handleResetMap}
+                handleAutomatedLabelling={handleAutomatedLabelling}
+            />
             <div className="max-w-3xl w-full mx-auto">
                 <div 
                     className="relative border black rounded-md overflow-hidden bg-gray-100" 

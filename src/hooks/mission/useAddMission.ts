@@ -2,7 +2,7 @@
 
 import { MissionCategory } from "@/constants/mission"
 import { ApiError } from "@/types/general"
-import { AddMissionForm, AddMissionRequest, ErrorMissionForm } from "@/types/mission"
+import { AddMissionForm, AddMissionRequest, AddMissionResponse, ErrorMissionForm } from "@/types/mission"
 import { addMissionFormToRequest } from "@/utils/mission/mission-util"
 import { useCallback, useState } from "react"
 
@@ -21,7 +21,7 @@ export const useAddMission = () => {
         dueDateTime: ""
     })
 
-    const addMissionApi = useCallback(async (addMissionForm: AddMissionForm): Promise<ApiError|null> => {
+    const addMissionApi = useCallback(async (addMissionForm: AddMissionForm): Promise<[apiError:ApiError|null, result: AddMissionResponse|null]> => {
         try {
             const addMissionReq = addMissionFormToRequest(addMissionForm)
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions`, {
@@ -32,14 +32,16 @@ export const useAddMission = () => {
                 body: JSON.stringify(addMissionReq)          
             })
 
+            const data = await response.json()
+
             if (!response.ok) {
-                const data = await response.json()
-                return { title: data.title, details: data.details }
+                return [{ title: data.title, details: data.details } as ApiError, null]
             }
 
-            return null
+            return [null, data as AddMissionResponse]
         } catch (error) {
-            return { title: (error as Error).message }
+            return [{ title: (error as Error).message, details: "" } as ApiError, null]
+
         }
     }, []);
 

@@ -1,4 +1,5 @@
 import { MissionCategory, MissionStatus } from "@/constants/mission"
+import { RoutePlanningAlgorithm } from "@/constants/tool-case"
 
 export type Mission = {
     id: string
@@ -10,6 +11,12 @@ export type Mission = {
     resourceLink?: string
     createdAt: string
     updatedAt: string
+    routePlanningSummary?: RoutePlanningSummary
+}
+
+export type RoutePlanningSummary = {
+    algorithm: RoutePlanningAlgorithm,
+    imageUrl: string
 }
 
 export interface AddMissionForm {
@@ -31,4 +38,8 @@ export interface AddMissionRequest {
     category: string
     description: string
     finishedAt: Date
+}
+
+export interface AddMissionResponse {
+    id: string
 }

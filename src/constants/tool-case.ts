@@ -9,6 +9,12 @@ export enum PointCategory {
     StationAsPath = "STATION_AS_PATH"
 }
 
+export enum RoutePlanningAlgorithm {
+    Dfs = "Dfs",
+    GeneticAlgorithm = "GeneticAlgorithm",
+    ReinforcementLearning = "ReinforcementLearning"
+}
+
 export enum LabellingMode {
     Add,
     Edit,
@@ -31,15 +37,18 @@ export const POINT_TYPE_STYLE = new Map<string, string>([
 export const ROUTE_PLANNING_ALGORITHMS = [
     {
         name: "Depth-First Search (DFS)",
-        description: "Find all possible routes and grab the best result. Not suitable for high-dimensional matrix (optimal at 6x6)"
+        description: "Find all possible routes and grab the best result. Not suitable for high-dimensional matrix (optimal at 6x6)",
+        value: RoutePlanningAlgorithm.Dfs
     },
     {
         name: "Genetic Algorithm (GA)",
-        description: "Find optimal route based on chromosome crossover. Quite optimal for mid-sized matrix"
+        description: "Find optimal route based on chromosome crossover. Quite optimal for mid-sized matrix",
+        value: RoutePlanningAlgorithm.GeneticAlgorithm
     },
     {
         name: "Reinforcement Learning PPO",
-        description: "Optimal for large matrix"
+        description: "Optimal for large matrix",
+        value: RoutePlanningAlgorithm.ReinforcementLearning
     },
 ]
 
@@ -50,6 +59,6 @@ export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     colDim: 20,
     algorithm: "",
     stationsOrder: [],
-    sampleSolution: [],
+    sampleSolutions: [],
     points: []
 }

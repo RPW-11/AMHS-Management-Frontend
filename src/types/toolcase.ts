@@ -19,7 +19,7 @@ export type RgvPathPlan = {
     colDim: number
     algorithm: string
     stationsOrder: Position[]
-    sampleSolution: Position[]
+    sampleSolutions: Position[][]
     points: RgvPathPoint[]
 }
 
@@ -30,7 +30,7 @@ export interface CreateRgvPathPlanReq {
         colDim: number
         algorithm: string
         stationsOrder: Position[]
-        sampleSolution: Position[]
+        sampleSolutions: Position[][]
         points: RgvPathPoint[]
     }
 }
@@ -67,7 +67,14 @@ export class SampleSolution {
             }
             
         }
-        if (this.pathsSet.has(`${position.rowPos}-${position.colPos}`)){
+        
+        if (this.pathsSet.has(`${position.rowPos}-${position.colPos}`) 
+            && 
+            (this.paths[0].rowPos !== position.rowPos
+            || 
+            this.paths[0].colPos !== position.colPos)
+        )
+        {
             throw new Error("Cannot add the same path")
         }
 

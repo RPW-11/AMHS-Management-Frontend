@@ -14,8 +14,9 @@ export const EmployeeRoutes = class extends Routes {
 
 export const MissionRoutes = class extends Routes {
     static Add: string = `${this.Missions}/add`
+    static Detail = (missionId: string): string => `${this.Missions}/${missionId}`
 }
 
 export const ToolCaseRoutes = class extends Routes {
-    static RgvRoutePlanning: string = `${this.ToolCase}/rgv-route-planning`
+    static RgvRoutePlanning = (missionId: string): string => `${this.ToolCase}/rgv-route-planning/${missionId}`
 }

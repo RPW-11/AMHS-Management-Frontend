@@ -5,7 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { ToolCaseRoutes } from "@/constants/general";
+import { Routes, ToolCaseRoutes } from "@/constants/general";
 import {
   MISSION_CATEGORIES_OPTIONS,
   MissionCategory,
@@ -30,13 +30,15 @@ const AddMissionPage = () => {
         return
     }
     
-    const error = await addMissionApi(addMissionForm);
-    if (error) {
-        toast.error(error.title)
+    const [apiError, result] = await addMissionApi(addMissionForm);
+    if (apiError) {
+        toast.error(apiError.title)
         return
     }
-    toast.success(`The mission ${addMissionForm.name} has been created`)
-    push(ToolCaseRoutes.RgvRoutePlanning);
+    if (result) {
+      toast.success(`The mission ${addMissionForm.name} has been created`)
+      push(addMissionForm.category === MissionCategory.RoutePlanning ? ToolCaseRoutes.RgvRoutePlanning(result.id) : Routes.Missions);
+    }
   };
 
   return (
