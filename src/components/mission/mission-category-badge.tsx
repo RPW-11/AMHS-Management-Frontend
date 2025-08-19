@@ -21,7 +21,7 @@ const MissionCategoryBadge = ({
         }
     }
     return (
-        <div className="bg-gray-200 rounded-md flex gap-2 p-2 h-fit items-center">
+        <div className="bg-gray-200 rounded-md flex gap-2 px-2 py-1 h-fit w-fit items-center">
             <MissionIcon category={category} size={14}/>
             <h3 className="font-medium text-sm">{ getFormattedMissionCategory() }</h3>
         </div>

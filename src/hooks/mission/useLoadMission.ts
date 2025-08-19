@@ -1,6 +1,5 @@
 "use client"
 
-import { ApiError } from "@/types/general";
 import { Mission } from "@/types/mission";
 import { useEffect, useState } from "react";
 import { toast } from "sonner";

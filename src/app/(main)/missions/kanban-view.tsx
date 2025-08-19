@@ -2,8 +2,11 @@
 
 import MissionCard from "@/components/mission/mission-card";
 import { MissionStatus } from "@/constants/mission";
-import { Mission } from "@/types/mission";
+import { useDeleteMission } from "@/hooks/mission/useDeleteMission";
+import { useModifyMission } from "@/hooks/mission/useModifyMission";
+import { Mission, UpdateMissionRequest } from "@/types/mission";
 import { useState } from "react";
+import { toast } from "sonner";
 
 interface KanbanViewProps {
     missions: Mission[]
@@ -16,6 +19,21 @@ const KanbanView = ({
     const [inactiveMissions, setInactiveMissions] = useState<Mission[]>(missions.filter(m => m.status === MissionStatus.Inactive))
     const [finishedMission, setFinishedMission] = useState<Mission[]>(missions.filter(m => m.status === MissionStatus.Finished))
 
+    const { updateMissionApi } = useModifyMission()
+    const { deleteMissionApi } = useDeleteMission()
+    
+    const handleUpdateMission = async (mission: Mission) => {
+        const updateReq: UpdateMissionRequest = {
+            name: mission.name,
+            description: mission.description,
+            status: mission.status
+        }
+        const result = await updateMissionApi(updateReq, mission.id);
+        if (result) {
+            toast.error(result.title)
+        }
+    }
+
     const handleMoveToActiveSection = (mission: Mission) => {
         if (inactiveMissions.find(m => m.id === mission.id)) {
             setInactiveMissions(inactiveMissions.filter(m => m.id !== mission.id))
@@ -23,6 +41,7 @@ const KanbanView = ({
             setFinishedMission(finishedMission.filter(m => m.id !== mission.id))
         }
         mission.status = MissionStatus.Active
+        handleUpdateMission(mission).then()
         setActiveMissions([...activeMissions, mission])
     }
 
@@ -33,6 +52,7 @@ const KanbanView = ({
             setInactiveMissions(inactiveMissions.filter(m => m.id !== mission.id))
         }
         mission.status = MissionStatus.Finished
+        handleUpdateMission(mission).then()
         setFinishedMission([...finishedMission, mission])
     }
 
@@ -43,7 +63,18 @@ const KanbanView = ({
             setFinishedMission(finishedMission.filter(m => m.id !== mission.id))
         }
         mission.status = MissionStatus.Inactive
+        handleUpdateMission(mission).then()
         setInactiveMissions([...inactiveMissions, mission])
+    }
+
+    const handleDeleteMission = async (mission: Mission) => {
+        const error = await deleteMissionApi(mission.id)
+        if (error) {
+            toast.error(error.title)
+        }
+        setActiveMissions(prev => prev.filter(m => m.id !== mission.id))
+        setInactiveMissions(prev => prev.filter(m => m.id !== mission.id))
+        setFinishedMission(prev => prev.filter(m => m.id !== mission.id))
     }
 
     return (
@@ -58,7 +89,8 @@ const KanbanView = ({
                         <MissionCard 
                         onMoveToActiveSection={handleMoveToActiveSection}
                         onMoveToFinishedSection={handleMoveToFinishedSection}
-                        onMoveToInactiveSection={handleMoveToInactiveSection} 
+                        onMoveToInactiveSection={handleMoveToInactiveSection}
+                        onDeleteMission={handleDeleteMission} 
                         key={mission.id} mission={mission} />
                     ))}
                     {activeMissions.length === 0
@@ -78,6 +110,7 @@ const KanbanView = ({
                         onMoveToActiveSection={handleMoveToActiveSection}
                         onMoveToFinishedSection={handleMoveToFinishedSection}
                         onMoveToInactiveSection={handleMoveToInactiveSection} 
+                        onDeleteMission={handleDeleteMission} 
                         key={mission.id} mission={mission} />
                     ))}
                     {finishedMission.length === 0
@@ -96,7 +129,8 @@ const KanbanView = ({
                         <MissionCard 
                         onMoveToActiveSection={handleMoveToActiveSection}
                         onMoveToFinishedSection={handleMoveToFinishedSection}
-                        onMoveToInactiveSection={handleMoveToInactiveSection} 
+                        onMoveToInactiveSection={handleMoveToInactiveSection}
+                        onDeleteMission={handleDeleteMission} 
                         key={mission.id} mission={mission} />
                     ))}
                     {inactiveMissions.length === 0

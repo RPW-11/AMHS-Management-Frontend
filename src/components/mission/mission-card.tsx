@@ -13,13 +13,15 @@ interface MissionCardProps {
     onMoveToActiveSection: (mission: Mission) => void
     onMoveToFinishedSection: (mission: Mission) => void
     onMoveToInactiveSection: (mission: Mission) => void
+    onDeleteMission: (mission: Mission) => void
 }
 
 const MissionCard = ({
     mission,
     onMoveToActiveSection,
     onMoveToFinishedSection,
-    onMoveToInactiveSection
+    onMoveToInactiveSection,
+    onDeleteMission
 }: MissionCardProps) => {
     
     const functionCoordinator = (missionStatus: MissionStatus) => {
@@ -70,6 +72,7 @@ const MissionCard = ({
                     mission.status === MissionStatus.Finished ? "Inactive" :
                     "Active"
                 }</ContextMenuItem>
+                <ContextMenuItem onClick={() => onDeleteMission(mission)}>Delete</ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     );

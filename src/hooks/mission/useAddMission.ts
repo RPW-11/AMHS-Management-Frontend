@@ -2,7 +2,7 @@
 
 import { MissionCategory } from "@/constants/mission"
 import { ApiError } from "@/types/general"
-import { AddMissionForm, AddMissionRequest, AddMissionResponse, ErrorMissionForm } from "@/types/mission"
+import { AddMissionForm, AddMissionResponse, ErrorMissionForm } from "@/types/mission"
 import { addMissionFormToRequest } from "@/utils/mission/mission-util"
 import { useCallback, useState } from "react"
 

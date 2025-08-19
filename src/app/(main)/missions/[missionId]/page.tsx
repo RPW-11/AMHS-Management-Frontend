@@ -1,5 +1,4 @@
 "use client"
-
 import LoadingSpinner from "@/components/loading-spinner";
 import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import { MissionCategory } from "@/constants/mission";
@@ -9,6 +8,8 @@ import { useEffect } from "react";
 import RoutePlanningSummarySection from "./route-planning-detail";
 import { Button } from "@/components/ui/button";
 import { Routes } from "@/constants/general";
+import MissionMetadata from "./mission-metadata";
+import { Label } from "@/components/ui/label";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
@@ -39,24 +40,28 @@ const MissionDetailPage = () => {
     }
 
     return (
-        <div className="rounded-md bg-white p-4 space-y-4">
+        <div className="rounded-md bg-white p-4 space-y-6">
             <Button size={"sm"} onClick={() => push(Routes.Missions)}>Back</Button>
-            <div className="flex justify-between gap-4">
-                <div>
-                    <h1 className="font-semibold text-xl">
-                        { mission.name }
-                    </h1>
+            <h1 className="font-medium text-xl">
+                { mission.name }
+            </h1>
+            <MissionMetadata mission={mission} />
+
+            <div className="space-y-4">
+                <Label>Mission Description</Label>
+                <div className="p-2 bg-gray-100 rounded-md w-full">
                     <p className="text-sm text-muted-foreground">{ mission.description }</p>
                 </div>
-                <MissionCategoryBadge category={mission.category} />
             </div>
+
             {mission.category === MissionCategory.RoutePlanning
             &&
             mission.routePlanningSummary
             &&
             mission.resourceLink
             &&
-            <div className="py-4">
+            <div className="py-4 space-y-4">
+                <Label>Mission Detail</Label>
                 <RoutePlanningSummarySection resourceLink={mission.resourceLink} routePlanningSumarry={mission.routePlanningSummary}/>
             </div>
             }

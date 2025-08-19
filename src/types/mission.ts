@@ -11,12 +11,26 @@ export type Mission = {
     resourceLink?: string
     createdAt: string
     updatedAt: string
+    assignedEmployees: AssignedEmployee[]
     routePlanningSummary?: RoutePlanningSummary
+}
+
+export type AssignedEmployee = {
+    id: string,
+    firstName: string,
+    lastName: string,
+    imgUrl?: string,
+    role: string
 }
 
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
     imageUrl: string
+    score: {
+        throughput: number,
+        trackLength: number,
+        numOfRgvs: number
+    }
 }
 
 export interface AddMissionForm {
@@ -42,4 +56,10 @@ export interface AddMissionRequest {
 
 export interface AddMissionResponse {
     id: string
+}
+
+export interface UpdateMissionRequest {
+    name: string,
+    description: string,
+    status: string
 }
