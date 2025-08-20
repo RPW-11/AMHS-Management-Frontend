@@ -23,15 +23,15 @@ const RoutePlanningSummarySection = ({
                 </div>
                 <div className="col-span-1">Total Throughput</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    { routePlanningSumarry.score.throughput }
+                    { `${routePlanningSumarry.score.throughput} products per hour` }
                 </div>
                 <div className="col-span-1">Track Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    { routePlanningSumarry.score.trackLength }
+                    { `${routePlanningSumarry.score.trackLength} meter` }
                 </div>
                 <div className="col-span-1">Maximum Number of RGVs</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    { routePlanningSumarry.score.numOfRgvs }
+                    { `${routePlanningSumarry.score.numOfRgvs} rgvs` }
                 </div>
             </div>
             <Image 

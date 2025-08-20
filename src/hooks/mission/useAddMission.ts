@@ -1,12 +1,17 @@
 "use client"
 
+import { Routes } from "@/constants/general"
 import { MissionCategory } from "@/constants/mission"
+import { useUserStore } from "@/stores/useAuthStore"
 import { ApiError } from "@/types/general"
 import { AddMissionForm, AddMissionResponse, ErrorMissionForm } from "@/types/mission"
 import { addMissionFormToRequest } from "@/utils/mission/mission-util"
+import { redirect, useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 
 export const useAddMission = () => {
+    const { user } = useUserStore()
+    const { push } = useRouter()
     const [addMissionForm, setAddMissionForm] = useState<AddMissionForm>({
         name: "",
         description: "",
@@ -27,10 +32,16 @@ export const useAddMission = () => {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions`, {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
                 },
                 body: JSON.stringify(addMissionReq)          
             })
+
+            if (response.status === 401) {
+                push(Routes.Login)
+                return [null, null]
+            }
 
             const data = await response.json()
 

@@ -1,18 +1,29 @@
 "use client"
+import { Routes } from "@/constants/general";
+import { useUserStore } from "@/stores/useAuthStore";
 import { ApiError } from "@/types/general";
 import { UpdateMissionRequest } from "@/types/mission";
+import { redirect, useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 export const useModifyMission = () => {
+    const { user } = useUserStore()
+    const { push } = useRouter()
     const updateMissionApi = useCallback(async (updateMissionReq: UpdateMissionRequest, missionId: string): Promise<ApiError|null> => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`, {
                 method: "PATCH",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
                 },
                 body: JSON.stringify(updateMissionReq)          
             })
+
+            if (response.status === 401) {
+                push(Routes.Login)
+                return null
+            }
 
             if (!response.ok) {
                 const data = await response.json()

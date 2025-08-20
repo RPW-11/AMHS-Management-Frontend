@@ -7,9 +7,10 @@ import { useParams, useRouter } from "next/navigation";
 import { useEffect } from "react";
 import RoutePlanningSummarySection from "./route-planning-detail";
 import { Button } from "@/components/ui/button";
-import { Routes } from "@/constants/general";
+import { Routes, ToolCaseRoutes } from "@/constants/general";
 import MissionMetadata from "./mission-metadata";
 import { Label } from "@/components/ui/label";
+import Link from "next/link";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
@@ -56,13 +57,19 @@ const MissionDetailPage = () => {
 
             {mission.category === MissionCategory.RoutePlanning
             &&
-            mission.routePlanningSummary
-            &&
-            mission.resourceLink
-            &&
             <div className="py-4 space-y-4">
                 <Label>Mission Detail</Label>
-                <RoutePlanningSummarySection resourceLink={mission.resourceLink} routePlanningSumarry={mission.routePlanningSummary}/>
+                {
+                    mission.routePlanningSummary
+                    &&
+                    mission.resourceLink
+                    ?
+                    <RoutePlanningSummarySection resourceLink={mission.resourceLink} routePlanningSumarry={mission.routePlanningSummary}/>
+                    :
+                    <div className="bg-gray-100 text-sm p-2 rounded-md text-muted-foreground">
+                        This mission has no route configured, click <Link href={ToolCaseRoutes.RgvRoutePlanning(mission.id)} className="text-blue-500 hover:underline">here</Link> to solve one.
+                    </div>
+                }
             </div>
             }
         </div>

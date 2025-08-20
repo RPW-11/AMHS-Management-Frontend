@@ -1,6 +1,7 @@
 "use client"
 import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import MissionMember from "@/components/mission/mission-member";
+import MissionStatusBadge from "@/components/mission/mission-status";
 import { Mission } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import { CalendarFold, CircleUserRound, Layers2, Loader } from "lucide-react";
@@ -46,7 +47,7 @@ const MissionMetadata = ({
                 <div className="font-medium">Status</div>
             </div>
             <div className="col-span-5">
-                { mission.status }
+                <MissionStatusBadge status={mission.status} />
             </div>
         </div>
     );

@@ -1,9 +1,14 @@
 "use client"
+import { Routes } from "@/constants/general";
+import { useUserStore } from "@/stores/useAuthStore";
 import { Employee } from "@/types/employee"
 import { ApiError } from "@/types/general";
+import { redirect, useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react"
 
 export const useEmployeeProfile = () => {
+    const { user } = useUserStore()
+    const { push } = useRouter()
     const [employeeDetails, setEmployeeDetails] = useState<Employee>({
         id: "",
         email: "",
@@ -59,7 +64,17 @@ export const useEmployeeProfile = () => {
 
     const fetchEmployeeById = useCallback(async (employeeId: string): Promise<ApiError|null> => {
         try {
-            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/${employeeId}`)
+            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/${employeeId}`, {
+                headers: {
+                    'Authorization': `Bearer ${user?.token}`
+                }
+            })
+            
+            if (result.status === 401) {
+                push(Routes.Login)
+                return null
+            }
+
             const data = await result.json()
 
             if(!result.ok){

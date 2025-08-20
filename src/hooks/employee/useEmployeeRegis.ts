@@ -1,9 +1,14 @@
 "use client"
+import { Routes } from "@/constants/general";
+import { useUserStore } from "@/stores/useAuthStore";
 import { EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
 import { ApiError } from "@/types/general";
+import { redirect, useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react"
 
 export const useEmployeeRegis = () => {
+    const { user } = useUserStore()
+    const { push } = useRouter()
     const [employeeRegisReq, setEmployeeRegisReq] = useState<EmployeeRegisterRequest>({
         firstName: "",
         lastName: "",
@@ -19,10 +24,16 @@ export const useEmployeeRegis = () => {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees`, {
                 method: "POST",
                 headers: {
-                    'Content-Type': 'application/json'
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
                 },
                 body: JSON.stringify(employeeRegisReq)          
             })
+
+            if (response.status === 401) {
+                push(Routes.Login)
+                return null
+            }
 
             if (!response.ok) {
                 const data = await response.json()

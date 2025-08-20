@@ -1,8 +1,13 @@
+import { Routes } from "@/constants/general"
+import { useUserStore } from "@/stores/useAuthStore"
 import { ApiError } from "@/types/general"
 import { CreateRgvPathPlanReq } from "@/types/toolcase"
+import { redirect, useRouter } from "next/navigation"
 import { useCallback } from "react"
 
 export const useRgvRouteSolver = () => {
+    const { user } = useUserStore()
+    const { push } = useRouter()
     const submitRgvRoutePlan = useCallback(async (createRgvPlanReq: CreateRgvPathPlanReq, missionId: string): Promise<ApiError|null> => {
         try {
             const requestForm = new FormData()
@@ -11,8 +16,16 @@ export const useRgvRouteSolver = () => {
             
             const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/route-planning`, {
                 method: "PATCH",
-                body: requestForm
+                body: requestForm,
+                headers: {
+                    'Authorization': `Bearer ${user?.token}`
+                }
             })
+
+            if (result.status === 401) {
+                push(Routes.Login)
+                return null
+            }
 
             if(!result.ok) {
                 const data = await result.json()
