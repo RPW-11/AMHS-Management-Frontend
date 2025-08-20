@@ -5,13 +5,16 @@ import { SIDEBAR_MENU } from "@/constants/sidebar";
 import { LogOut } from "lucide-react";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+import { useUserStore } from "@/stores/useAuthStore";
 
 const Sidebar = () => {
     const { push } = useRouter()
+    const { logout } = useUserStore();
     const pathname = usePathname();
     const currPath = "/" + pathname.split("/")[1]
 
     const handleLogout = () => {
+        logout()
         push(Routes.Login)
     }
     return (

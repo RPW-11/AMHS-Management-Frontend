@@ -2,12 +2,13 @@ import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
 import { ApiError } from "@/types/general"
 import { CreateRgvPathPlanReq } from "@/types/toolcase"
-import { redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useCallback } from "react"
 
 export const useRgvRouteSolver = () => {
     const { user } = useUserStore()
     const { push } = useRouter()
+    
     const submitRgvRoutePlan = useCallback(async (createRgvPlanReq: CreateRgvPathPlanReq, missionId: string): Promise<ApiError|null> => {
         try {
             const requestForm = new FormData()

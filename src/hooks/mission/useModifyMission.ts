@@ -3,7 +3,7 @@ import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { ApiError } from "@/types/general";
 import { UpdateMissionRequest } from "@/types/mission";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useCallback } from "react";
 
 export const useModifyMission = () => {

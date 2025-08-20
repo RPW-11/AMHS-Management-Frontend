@@ -3,17 +3,18 @@
 import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Mission } from "@/types/mission";
-import { redirect, useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
 export const useLoadMission = () => {
-    const { user } = useUserStore()
+    const { user, isHydrated } = useUserStore()
     const { push } = useRouter();
+
     const [missions, setMissions] = useState<Mission[]>([])
     const [isFetchingMissions, setIsFetchingMissions] = useState<boolean>(true)
 
-    const fetchMissions = async () => {
+    const fetchMissions = useCallback(async () => {
         setIsFetchingMissions(true)
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions`, {
@@ -39,12 +40,14 @@ export const useLoadMission = () => {
         } finally {
             setIsFetchingMissions(false)
         }
-    }
+    }, [user])
 
     useEffect(() => {
         const fetchResource = () => fetchMissions()
-        fetchResource()
-    }, [])
+        if (isHydrated){
+            fetchResource()
+        }
+    }, [isHydrated])
 
     return {
         missions,

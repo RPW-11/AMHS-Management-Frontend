@@ -12,36 +12,18 @@ import { useUserStore } from "@/stores/useAuthStore"
 import { Option } from "@/types/general"
 import { getPositionEnumByStr } from "@/utils/employee/employee-util"
 import { useParams } from "next/navigation"
-import { useEffect, useState } from "react"
 
 const EmployeeProfilePage = () => {
     const { employeeId } = useParams()
     const { user } = useUserStore()
 
-    const [loadingProfile, setLoadingProfile] = useState<boolean>(true)
-    const [fetchError, setFetchError] = useState<string|null>(null)
-
     const resolvedEmployeeId = employeeId?.toString() === "me" ? user?.id : employeeId?.toString();
 
-    const { fetchEmployeeById, employeeDetails, updateField, errors, canSaveProfile } = useEmployeeProfile();
+    const { isFetchingProfile, fetchError, employeeDetails, updateField, errors, canSaveProfile } = useEmployeeProfile(
+        resolvedEmployeeId
+    );
 
     const isMyProfile = (): boolean => resolvedEmployeeId === user?.id
-
-    useEffect(() => {
-        const fetchProfile = async (employeeId: string) => {
-            setLoadingProfile(true)
-            const error = await fetchEmployeeById(employeeId)
-            if (error) {
-                setFetchError(error.title)
-            } else {
-                setFetchError(null)
-            }
-            setLoadingProfile(false)
-        }
-        if (resolvedEmployeeId) {
-            fetchProfile(resolvedEmployeeId)
-        }
-    }, [resolvedEmployeeId])
 
     if (fetchError) {
         return (
@@ -51,7 +33,7 @@ const EmployeeProfilePage = () => {
         )
     }
 
-    if (loadingProfile) {
+    if (isFetchingProfile) {
         return (
             <div className="flex justify-center items-center w-full h-full">
                 <LoadingSpinner size="xl"/>

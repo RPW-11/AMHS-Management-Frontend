@@ -3,36 +3,15 @@
 import AllEmployeeTable from "@/components/employees/all-employee-table";
 import NavigationEmployee from "@/components/employees/navigation-employee";
 import LoadingSpinner from "@/components/loading-spinner";
-import { Button } from "@/components/ui/button";
 import { useEmployee } from "@/hooks/employee/useEmployee";
-import { useRouter } from "next/navigation";
-import { useEffect, useState } from "react";
 
 const EmployeesPage = () => {
-    const { employees, fetchAllEmployees } = useEmployee()
-    const { push } = useRouter()
+    const { employees, isFetching, fetchError } = useEmployee()
 
-    const [fetchAllError, setFetchAllError] = useState<string|null>(null)
-    const [fetchAllLoading, setFetchAllLoading] = useState<boolean>(true)
-
-    useEffect(() => {
-        const fetchEmployees = async () => {
-            setFetchAllLoading(true)
-            const error = await fetchAllEmployees()
-            if (error) {
-                setFetchAllError(error.title)
-            } else {
-                setFetchAllError(null)
-            }
-            setFetchAllLoading(false)
-        }
-        fetchEmployees()
-    },[])
-
-    if(fetchAllError) {
+    if(fetchError) {
         return (
             <div className="rounded-md p-4 bg-white border space-y-4 text-destructive text-center">
-                { fetchAllError }
+                { fetchError }
             </div>
         )
     }
@@ -49,7 +28,7 @@ const EmployeesPage = () => {
                 </p>
             </div>
             <div>
-            {fetchAllLoading ? 
+            {isFetching ? 
                 <div className="flex justify-center">
                     <LoadingSpinner/> 
                 </div>

@@ -3,12 +3,15 @@ import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Employee } from "@/types/employee"
 import { ApiError } from "@/types/general";
-import { redirect, useRouter } from "next/navigation";
-import { useState, useCallback, useMemo } from "react"
+import { useRouter } from "next/navigation";
+import { useState, useCallback, useMemo, useEffect } from "react"
 
-export const useEmployeeProfile = () => {
-    const { user } = useUserStore()
+export const useEmployeeProfile = (employeeId?: string) => {
+    const { user, isHydrated } = useUserStore()
     const { push } = useRouter()
+    const [fetchError, setFetchError] = useState<string | null>(null)
+    const [isFetchingProfile, setIsFetchingProfile] = useState<boolean>(true)
+
     const [employeeDetails, setEmployeeDetails] = useState<Employee>({
         id: "",
         email: "",
@@ -62,7 +65,8 @@ export const useEmployeeProfile = () => {
         return Object.values(errors).every(msg => msg === "");
     }, [errors]);
 
-    const fetchEmployeeById = useCallback(async (employeeId: string): Promise<ApiError|null> => {
+    const fetchEmployeeById = useCallback(async () => {
+        setIsFetchingProfile(true)
         try {
             const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/${employeeId}`, {
                 headers: {
@@ -71,28 +75,36 @@ export const useEmployeeProfile = () => {
             })
             
             if (result.status === 401) {
-                push(Routes.Login)
-                return null
+                return push(Routes.Login)
             }
 
             const data = await result.json()
 
             if(!result.ok){
-                return { title: data.title, details: data.details }
+                return setFetchError(data.title)
             }
 
+            setFetchError(null)
             setEmployeeDetails(data)
-            return null
             
         } catch (error) {
-            return { title: (error as Error).message }
+            setFetchError((error as Error).message)
+        } finally {
+            setIsFetchingProfile(false)
         }
-    }, [])
+    }, [user, employeeId])
 
+    useEffect(() => {
+        const fetchData = () => fetchEmployeeById()
+        if (isHydrated && employeeId) {
+            fetchData()
+        }
+    }, [isHydrated, employeeId])
 
     return {
-        fetchEmployeeById,
         employeeDetails,
+        isFetchingProfile,
+        fetchError,
         errors,
         canSaveProfile,
         updateField

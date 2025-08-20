@@ -3,7 +3,7 @@ import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
 import { ApiError } from "@/types/general";
-import { redirect, useRouter } from "next/navigation";
+import { useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react"
 
 export const useEmployeeRegis = () => {

@@ -6,7 +6,7 @@ import { useUserStore } from "@/stores/useAuthStore"
 import { ApiError } from "@/types/general"
 import { AddMissionForm, AddMissionResponse, ErrorMissionForm } from "@/types/mission"
 import { addMissionFormToRequest } from "@/utils/mission/mission-util"
-import { redirect, useRouter } from "next/navigation"
+import { useRouter } from "next/navigation"
 import { useCallback, useState } from "react"
 
 export const useAddMission = () => {

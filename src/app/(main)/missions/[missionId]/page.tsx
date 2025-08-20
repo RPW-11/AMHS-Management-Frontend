@@ -1,10 +1,8 @@
 "use client"
 import LoadingSpinner from "@/components/loading-spinner";
-import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import { MissionCategory } from "@/constants/mission";
 import { useLoadDetailedMission } from "@/hooks/mission/useLoadDetailedMission";
 import { useParams, useRouter } from "next/navigation";
-import { useEffect } from "react";
 import RoutePlanningSummarySection from "./route-planning-detail";
 import { Button } from "@/components/ui/button";
 import { Routes, ToolCaseRoutes } from "@/constants/general";
@@ -14,15 +12,10 @@ import Link from "next/link";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
-    const { fetchMissionById, isFetchingMission, mission} = useLoadDetailedMission();
+    const { isFetchingMission, mission} = useLoadDetailedMission(
+        typeof missionId === 'string' ? missionId : undefined
+    );
     const { push } = useRouter();
-
-    useEffect(() => {
-        if (missionId) {
-            const fetchMission = () => fetchMissionById(missionId.toString())
-            fetchMission()
-        }
-    }, [missionId])
 
     if (isFetchingMission) {
         return (

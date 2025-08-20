@@ -3,16 +3,19 @@
 import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
 import { Employee } from "@/types/employee"
-import { ApiError } from "@/types/general"
 import { useRouter } from "next/navigation"
-import { useCallback, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 
 export const useEmployee = () => {
-    const { user } = useUserStore();
+    const { user, isHydrated } = useUserStore();
+    
     const { push } = useRouter()
     const [employees, setEmployess] = useState<Employee[]>([])
+    const [isFetching, setIsFetching] = useState<boolean>(true)
+    const [fetchError, setFetchError] = useState<string | null>(null)
     
-    const fetchAllEmployees = useCallback(async (): Promise<ApiError|null> => {
+    const fetchAllEmployees = useCallback(async () => {
+        setIsFetching(true)
         try {
             const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees`, {
                 headers: {
@@ -21,27 +24,35 @@ export const useEmployee = () => {
             })
 
             if (result.status === 401) {
-                push(Routes.Login)
-                return null
+                return push(Routes.Login)
             }
 
             const data = await result.json()
 
-
             if(!result.ok) {
-                return { title: data.title, details: data.details }
+                return setFetchError(data.title)
             }
 
             setEmployess(data)
+            setFetchError(null)
 
-            return null
         } catch (error) {
-            return { title: (error as Error).message }
+            setFetchError((error as Error).message)
+        } finally {
+            setIsFetching(false)
         }
-    }, [])
+    }, [user])
+
+    useEffect(() => {
+        const fetchData = () => fetchAllEmployees()
+        if (isHydrated) {
+            fetchData()
+        }
+    }, [isHydrated])
     
-        return {
-            employees,
-            fetchAllEmployees
-        };
+    return {
+        employees,
+        fetchError,
+        isFetching
+    };
 }
