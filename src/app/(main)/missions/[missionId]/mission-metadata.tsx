@@ -1,10 +1,12 @@
 "use client"
 import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import MissionMember from "@/components/mission/mission-member";
+import MissionMembers from "@/components/mission/mission-members";
 import MissionStatusBadge from "@/components/mission/mission-status";
+import { MissionRole } from "@/constants/mission";
 import { Mission } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
-import { CalendarFold, CircleUserRound, Layers2, Loader } from "lucide-react";
+import { CalendarFold, CircleUserRound, Layers2, Loader, Users } from "lucide-react";
 
 interface MissionMetadataProps {
     mission: Mission
@@ -13,7 +15,7 @@ interface MissionMetadataProps {
 const MissionMetadata = ({
     mission
 }: MissionMetadataProps) => {
-    const leader = mission.assignedEmployees.find(e => e.role.toLowerCase() === "leader")
+    const leader = mission.assignedEmployees.find(e => e.role === MissionRole.Leader)
     return (
         <div className="grid grid-cols-6 text-sm gap-2">
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
@@ -34,7 +36,7 @@ const MissionMetadata = ({
                 <CircleUserRound size={15}/>
                 <div className="font-medium">Leader</div>
             </div>
-            {leader && <div className="col-span-5"><MissionMember member={leader} /></div>}
+            {leader && <div className="col-span-5"><MissionMember {...leader} /></div>}
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <CalendarFold size={15}/>
                 <div className="font-medium">Created Date</div>
@@ -48,6 +50,13 @@ const MissionMetadata = ({
             </div>
             <div className="col-span-5">
                 <MissionStatusBadge status={mission.status} />
+            </div>
+            <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
+                <Users size={15}/>
+                <div className="font-medium">Members</div>
+            </div>
+            <div className="col-span-5">
+                {leader && <MissionMembers mission={mission} leader={leader}/>}
             </div>
         </div>
     );

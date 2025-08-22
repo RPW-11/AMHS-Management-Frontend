@@ -17,6 +17,18 @@ export enum MissionStatus {
     Finished = "Finished"
 }
 
+export enum MissionRole {
+    Leader = "Leader",
+    Member = "Member",
+    CoLeader = "CoLeader"
+}
+
+export const MISSION_ROLES_OPTIONS: Option[] = [
+    { name: "Leader", value: MissionRole.Leader },
+    { name: "Co Leader", value: MissionRole.CoLeader },
+    { name: "Member", value: MissionRole.Member },
+]
+
 export const MISSION_CATEGORIES_OPTIONS: Option[] = [
     { name: "Route Planning", value: MissionCategory.RoutePlanning.toString() },
     { name: "Normal", value: MissionCategory.Normal.toString() }

@@ -1,20 +1,23 @@
-import { AssignedEmployee } from "@/types/mission";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface MissionMemberProps {
-    member: AssignedEmployee
+    firstName: string
+    lastName: string
+    imgUrl?: string
 }
 
 const MissionMember = ({
-    member
+    firstName,
+    lastName,
+    imgUrl
 }: MissionMemberProps) => {
     return (
-        <div className="flex gap-2 items-center">
+        <div className="flex gap-2 items-center text-sm">
             <Avatar className={`h-8.5 w-8.5 rounded-md`}>
-                <AvatarImage src={member.imgUrl} className="object-cover"/>
-                <AvatarFallback className="rounded-md">{member.firstName.slice(0, 1).toUpperCase() + member.lastName.slice(0, 1).toUpperCase()}</AvatarFallback>
+                <AvatarImage src={imgUrl} className="object-cover"/>
+                <AvatarFallback className="rounded-md">{firstName.slice(0, 1).toUpperCase() + lastName.slice(0, 1).toUpperCase()}</AvatarFallback>
             </Avatar>
-            {`${member.firstName} ${member.lastName}`}
+            {`${firstName} ${lastName}`}
         </div>
     );
 }

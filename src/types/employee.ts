@@ -10,6 +10,14 @@ export type Employee = {
     imgUrl?: string
 }
 
+export type EmployeeSearch = {
+    id: string
+    email: string
+    firstName: string
+    lastName: string
+    imgUrl?: string
+}
+
 export enum EmployeePosition {
     Staff = "Staff",
     SeniorStaff = "SeniorStaff",
