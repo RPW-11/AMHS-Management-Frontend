@@ -10,10 +10,8 @@ import { toast } from "sonner"
 
 export const useMissionMember = (missionId?: string) => {
     const { user, isHydrated } = useUserStore()
-    const { mission, onMissionChange } = useMissionDetailStore()
     const [missionMembers, setMissionMembers] = useState<AssignedEmployee[]>([])
     const [isFetchingMembers, setIsFetchingMembers] = useState<boolean>(true);
-    const [refetchFlag, setRefetchFlag] = useState<boolean>(false)
 
     const { push } = useRouter()
 
@@ -49,10 +47,6 @@ export const useMissionMember = (missionId?: string) => {
     
     const addMemberToMissionHandler = useCallback(async (memberId: string) => {
         try {
-            if (!mission) {
-                throw new Error("The mission has not been loaded")
-            }
-
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/add/${memberId}`, {
                 method: "PATCH",
                 headers: {
@@ -69,9 +63,36 @@ export const useMissionMember = (missionId?: string) => {
                 const data = await response.json()
                 throw new Error(data.title)
             }
+            
+            // refetch
+            fetchMissionMembers()
 
-            onMissionChange({...mission, numberOfMembers: mission?.numberOfMembers + 1})
-            setRefetchFlag(!refetchFlag)
+        } catch (error) {
+            throw error
+        }
+    }, [user])
+
+    const deleteMemberFromMissionHandler = useCallback(async (memberId: string) => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/delete/${memberId}`, {
+                method: "PATCH",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                }         
+            })
+            
+            if (response.status === 401) {
+                return push(Routes.Login)
+            }
+
+            if (!response.ok) {
+                const data = await response.json()
+                throw new Error(data.title)
+            }
+            
+            // refetch
+            fetchMissionMembers()
             
         } catch (error) {
             throw error
@@ -84,16 +105,23 @@ export const useMissionMember = (missionId?: string) => {
         error: (error) => (error as Error).message
     })
 
+    const deleteMemberFromMission = (memberId: string) => toast.promise(deleteMemberFromMissionHandler(memberId), {
+        loading: "Deleting a member...",
+        success: "Member deleted successfully",
+        error: (error) => (error as Error).message
+    })
+
     useEffect(() => {
         const fetchData = () => fetchMissionMembers()
         if (isHydrated) {
             fetchData()
         }
-    }, [isHydrated, refetchFlag])
+    }, [isHydrated])
 
     return {
         missionMembers,
         isFetchingMembers,
-        addMemberToMission
+        addMemberToMission,
+        deleteMemberFromMission
     }
 }
