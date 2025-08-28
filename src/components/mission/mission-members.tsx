@@ -11,25 +11,27 @@ import { MISSION_ROLES_OPTIONS } from "@/constants/mission";
 import { getOption } from "@/utils/general-util";
 import { Trash } from "lucide-react";
 import MemberSearch from "./member-search";
+import { useMissionMember } from "@/hooks/mission/useMissionMember";
 
 interface MissionMembersProps {
-    mission: Mission,
-    leader: AssignedEmployee
+    mission: Mission
 }
 
 const MissionMembers = ({
-    mission,
-    leader
+    mission
 }: MissionMembersProps) => {
     const { user } = useUserStore()
+    const { missionMembers, isFetchingMembers } = useMissionMember(mission.id)
+
     const handleChangeRole = (option: Option) => {
 
     }
+
     return (
         <Dialog>
             <DialogTrigger asChild>
                 <Button size={"sm"} variant={"ghost"}>
-                    { `${mission.assignedEmployees.length} members` }
+                    { `${mission.numberOfMembers} members` }
                 </Button>
             </DialogTrigger>
             <DialogContent>
@@ -39,34 +41,38 @@ const MissionMembers = ({
                 </DialogHeader>
                 <div className="space-y-4">
                     <MemberSearch />
-                    <div className="flex flex-col gap-2">
-                        {mission.assignedEmployees.map(emp => (
-                            <div key={emp.id} className="grid grid-cols-6 gap-2">
-                                <div className="col-span-4">
-                                    <MissionMember {...emp}/>
+                    {isFetchingMembers ?
+                        <div className="h-40 rounded-md bg-gray-100 animate-pulse"></div>
+                        :
+                        <div className="flex flex-col gap-2">
+                            {missionMembers.map(emp => (
+                                <div key={emp.id} className="grid grid-cols-6 gap-2">
+                                    <div className="col-span-4">
+                                        <MissionMember {...emp}/>
+                                    </div>
+                                    <div className="col-span-2 flex items-center gap-2">
+                                        <SelectOption
+                                            disabled={user?.id !== mission.leader.id || emp.id === user.id} 
+                                            value={getOption(MISSION_ROLES_OPTIONS, emp.role)}
+                                            options={MISSION_ROLES_OPTIONS}
+                                            onValueChange={handleChangeRole}
+                                            labelName={"Mission Role"}
+                                            placeholder={"Change Role"} 
+                                        />
+                                        {emp.id !== user?.id
+                                        &&
+                                        <Button 
+                                        title="Remove member"
+                                        variant={"ghostDestructive"} 
+                                        size={"icon"}
+                                        >
+                                            <Trash />
+                                        </Button>}                         
+                                    </div>
                                 </div>
-                                <div className="col-span-2 flex items-center gap-2">
-                                    <SelectOption
-                                        disabled={user?.id !== leader.id || emp.id === user.id} 
-                                        value={getOption(MISSION_ROLES_OPTIONS, emp.role)}
-                                        options={MISSION_ROLES_OPTIONS}
-                                        onValueChange={handleChangeRole}
-                                        labelName={"Mission Role"}
-                                        placeholder={"Change Role"} 
-                                    />
-                                    {emp.id !== user?.id
-                                    &&
-                                    <Button 
-                                    title="Remove member"
-                                    variant={"ghostDestructive"} 
-                                    size={"icon"}
-                                    >
-                                        <Trash />
-                                    </Button>}                         
-                                </div>
-                            </div>
-                        ))}
-                    </div>
+                            ))}
+                        </div>
+                    }
                 </div>
             </DialogContent>
         </Dialog>

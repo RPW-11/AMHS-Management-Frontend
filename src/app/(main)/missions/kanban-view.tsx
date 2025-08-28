@@ -42,7 +42,7 @@ const KanbanView = ({
         }
         mission.status = MissionStatus.Active
         handleUpdateMission(mission).then()
-        setActiveMissions([...activeMissions, mission])
+        setActiveMissions([mission, ...activeMissions])
     }
 
     const handleMoveToFinishedSection = (mission: Mission) => {
@@ -53,7 +53,7 @@ const KanbanView = ({
         }
         mission.status = MissionStatus.Finished
         handleUpdateMission(mission).then()
-        setFinishedMission([...finishedMission, mission])
+        setFinishedMission([mission, ...finishedMission])
     }
 
     const handleMoveToInactiveSection = (mission: Mission) => {
@@ -64,7 +64,7 @@ const KanbanView = ({
         }
         mission.status = MissionStatus.Inactive
         handleUpdateMission(mission).then()
-        setInactiveMissions([...inactiveMissions, mission])
+        setInactiveMissions([mission, ...inactiveMissions])
     }
 
     const handleDeleteMission = async (mission: Mission) => {

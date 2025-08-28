@@ -9,7 +9,14 @@ import { useMissionMember } from "@/hooks/mission/useMissionMember";
 const MemberSearch = () => {
     const { missionId } = useParams();
     const { employees, isFetching, fetchError, searchedName, setSearchedName } = useSearchEmployeesByName()
+    
     const { addMemberToMission } = useMissionMember(typeof missionId === 'string' ? missionId : undefined)
+    
+    const handleAddMemberToMission = (employeeId: string) => {
+        addMemberToMission(employeeId)
+        setSearchedName("")
+    }
+
     return (
         <div className="relative">
             <div className="flex items-center gap-2 px-3 py-2 w-full bg-white rounded-md border text-sm">
@@ -35,7 +42,7 @@ const MemberSearch = () => {
                 :
                 <div className="space-y-2 w-full">
                     {employees.map((emp) => (
-                        <div onClick={() => addMemberToMission(emp.id)} key={emp.id} className="flex justify-start hover:bg-gray-100 cursor-pointer rounded-md">
+                        <div onClick={() => handleAddMemberToMission(emp.id)} key={emp.id} className="flex justify-start hover:bg-gray-100 cursor-pointer rounded-md">
                             <MissionMember {...emp}/>
                         </div>
                     ))}

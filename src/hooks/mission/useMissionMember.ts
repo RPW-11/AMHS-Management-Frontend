@@ -2,16 +2,57 @@
 
 import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
+import { useMissionDetailStore } from "@/stores/useMissionDetailStore"
+import { AssignedEmployee } from "@/types/mission"
 import { useRouter } from "next/navigation"
-import { useCallback } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { toast } from "sonner"
 
 export const useMissionMember = (missionId?: string) => {
-    const { user } = useUserStore()
+    const { user, isHydrated } = useUserStore()
+    const { mission, onMissionChange } = useMissionDetailStore()
+    const [missionMembers, setMissionMembers] = useState<AssignedEmployee[]>([])
+    const [isFetchingMembers, setIsFetchingMembers] = useState<boolean>(true);
+    const [refetchFlag, setRefetchFlag] = useState<boolean>(false)
+
     const { push } = useRouter()
+
+    const fetchMissionMembers = useCallback(async () => {
+        setIsFetchingMembers(true)
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members`, {
+                method: "GET",
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${user?.token}`
+                }         
+            })
+            
+            if (response.status === 401) {
+                return push(Routes.Login)
+            }
+            
+            const data = await response.json()
+
+            if (!response.ok) {
+                toast.error(data.title)
+            }
+
+            setMissionMembers(data)
+
+        } catch (error) {
+            toast.error((error as Error).message)
+        } finally {
+            setIsFetchingMembers(false)
+        }
+    }, [user])
     
     const addMemberToMissionHandler = useCallback(async (memberId: string) => {
         try {
+            if (!mission) {
+                throw new Error("The mission has not been loaded")
+            }
+
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/add/${memberId}`, {
                 method: "PATCH",
                 headers: {
@@ -28,6 +69,10 @@ export const useMissionMember = (missionId?: string) => {
                 const data = await response.json()
                 throw new Error(data.title)
             }
+
+            onMissionChange({...mission, numberOfMembers: mission?.numberOfMembers + 1})
+            setRefetchFlag(!refetchFlag)
+            
         } catch (error) {
             throw error
         }
@@ -36,10 +81,19 @@ export const useMissionMember = (missionId?: string) => {
     const addMemberToMission = (memberId: string) => toast.promise(addMemberToMissionHandler(memberId), {
         loading: "Adding a member...",
         success: "Member added successfully",
-        error: (error) => error as string
+        error: (error) => (error as Error).message
     })
 
+    useEffect(() => {
+        const fetchData = () => fetchMissionMembers()
+        if (isHydrated) {
+            fetchData()
+        }
+    }, [isHydrated, refetchFlag])
+
     return {
+        missionMembers,
+        isFetchingMembers,
         addMemberToMission
     }
 }

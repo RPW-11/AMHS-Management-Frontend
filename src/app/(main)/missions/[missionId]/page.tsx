@@ -44,7 +44,13 @@ const MissionDetailPage = () => {
             <div className="space-y-4">
                 <Label>Mission Description</Label>
                 <div className="p-2 bg-gray-100 rounded-md w-full">
+                    { mission.description ? 
                     <p className="text-sm text-muted-foreground">{ mission.description }</p>
+                    :
+                    <p className="text-sm italic text-center text-muted-foreground">
+                        No description
+                    </p>
+                    }
                 </div>
             </div>
 

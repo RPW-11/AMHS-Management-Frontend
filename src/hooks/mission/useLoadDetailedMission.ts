@@ -2,7 +2,7 @@
 
 import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
-import { Mission } from "@/types/mission";
+import { useMissionDetailStore } from "@/stores/useMissionDetailStore";
 import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
@@ -10,7 +10,7 @@ import { toast } from "sonner";
 export const useLoadDetailedMission = (missionId?: string) => {
     const { user, isHydrated } = useUserStore()
     const { push } = useRouter()
-    const [mission, setMission] = useState<Mission>()
+    const { mission, refetchFlag, onMissionChange } = useMissionDetailStore()
     const [isFetchingMission, setIsFetchingMission] = useState<boolean>(true)
 
     const fetchMissionById = useCallback(async () => {
@@ -33,7 +33,7 @@ export const useLoadDetailedMission = (missionId?: string) => {
                 toast.error(data.title)
             }
 
-            setMission(data)
+            onMissionChange(data)
         } catch (error) {
             toast.error((error as Error).message)
         } finally {
@@ -46,7 +46,7 @@ export const useLoadDetailedMission = (missionId?: string) => {
         if (isHydrated && missionId) {
             fetchData()
         }
-    }, [isHydrated, missionId])
+    }, [isHydrated, missionId, refetchFlag])
 
     return {
         mission,

@@ -7,11 +7,12 @@ export type Mission = {
     description: string
     category: MissionCategory
     status: MissionStatus
+    leader: AssignedEmployee
     finishedAt: string
     resourceLink?: string
     createdAt: string
     updatedAt: string
-    assignedEmployees: AssignedEmployee[]
+    numberOfMembers: number
     routePlanningSummary?: RoutePlanningSummary
 }
 
@@ -25,7 +26,11 @@ export type AssignedEmployee = {
 
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
-    imageUrl: string
+    imageUrl: string,
+    rgvMap: {
+        rowDim: number,
+        colDim: number,
+    }
     score: {
         throughput: number,
         trackLength: number,
