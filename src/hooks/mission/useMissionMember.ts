@@ -1,127 +1,192 @@
-"use client"
+"use client";
 
-import { Routes } from "@/constants/general"
-import { useUserStore } from "@/stores/useAuthStore"
-import { useMissionDetailStore } from "@/stores/useMissionDetailStore"
-import { AssignedEmployee } from "@/types/mission"
-import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
-import { toast } from "sonner"
+import { Routes } from "@/constants/general";
+import { useUserStore } from "@/stores/useAuthStore";
+import { AssignedEmployee, ChangeMemberRoleRequest } from "@/types/mission";
+import { useRouter } from "next/navigation";
+import { useCallback, useEffect, useState } from "react";
+import { toast } from "sonner";
 
 export const useMissionMember = (missionId?: string) => {
-    const { user, isHydrated } = useUserStore()
-    const [missionMembers, setMissionMembers] = useState<AssignedEmployee[]>([])
+    const { user, isHydrated } = useUserStore();
+    const [missionMembers, setMissionMembers] = useState<AssignedEmployee[]>(
+        []
+    );
     const [isFetchingMembers, setIsFetchingMembers] = useState<boolean>(true);
 
-    const { push } = useRouter()
+    const { push } = useRouter();
 
     const fetchMissionMembers = useCallback(async () => {
-        setIsFetchingMembers(true)
+        setIsFetchingMembers(true);
         try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members`, {
-                method: "GET",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user?.token}`
-                }         
-            })
-            
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members`,
+                {
+                    method: "GET",
+                    headers: {
+                        "Content-Type": "application/json",
+                        Authorization: `Bearer ${user?.token}`,
+                    },
+                }
+            );
+
             if (response.status === 401) {
-                return push(Routes.Login)
+                return push(Routes.Login);
             }
-            
-            const data = await response.json()
+
+            const data = await response.json();
 
             if (!response.ok) {
-                toast.error(data.title)
+                toast.error(data.title);
             }
 
-            setMissionMembers(data)
-
+            setMissionMembers(data);
         } catch (error) {
-            toast.error((error as Error).message)
+            toast.error((error as Error).message);
         } finally {
-            setIsFetchingMembers(false)
+            setIsFetchingMembers(false);
         }
-    }, [user])
-    
-    const addMemberToMissionHandler = useCallback(async (memberId: string) => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/add/${memberId}`, {
-                method: "PATCH",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user?.token}`
-                }         
-            })
-            
-            if (response.status === 401) {
-                return push(Routes.Login)
+    }, [user]);
+
+    const addMemberToMissionHandler = useCallback(
+        async (memberId: string) => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/add/${memberId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${user?.token}`,
+                        },
+                    }
+                );
+
+                if (response.status === 401) {
+                    return push(Routes.Login);
+                }
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.title);
+                }
+
+                // refetch
+                fetchMissionMembers();
+            } catch (error) {
+                throw error;
             }
+        },
+        [user]
+    );
 
-            if (!response.ok) {
-                const data = await response.json()
-                throw new Error(data.title)
+    const deleteMemberFromMissionHandler = useCallback(
+        async (memberId: string) => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/delete/${memberId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${user?.token}`,
+                        },
+                    }
+                );
+
+                if (response.status === 401) {
+                    return push(Routes.Login);
+                }
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.title);
+                }
+
+                // refetch
+                fetchMissionMembers();
+            } catch (error) {
+                throw error;
             }
-            
-            // refetch
-            fetchMissionMembers()
+        },
+        [user]
+    );
 
-        } catch (error) {
-            throw error
-        }
-    }, [user])
+    const changeMemberRoleHandler = useCallback(
+        async (
+            memberId: string,
+            changeMemberRoleRequest: ChangeMemberRoleRequest
+        ) => {
+            try {
+                const response = await fetch(
+                    `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/changeRole/${memberId}`,
+                    {
+                        method: "PATCH",
+                        headers: {
+                            "Content-Type": "application/json",
+                            Authorization: `Bearer ${user?.token}`,
+                        },
+                        body: JSON.stringify(changeMemberRoleRequest),
+                    }
+                );
 
-    const deleteMemberFromMissionHandler = useCallback(async (memberId: string) => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/delete/${memberId}`, {
-                method: "PATCH",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user?.token}`
-                }         
-            })
-            
-            if (response.status === 401) {
-                return push(Routes.Login)
+                if (response.status === 401) {
+                    return push(Routes.Login);
+                }
+
+                if (!response.ok) {
+                    const data = await response.json();
+                    throw new Error(data.title);
+                }
+
+                // refetch
+                fetchMissionMembers();
+            } catch (error) {
+                throw error;
             }
+        },
+        [user]
+    );
 
-            if (!response.ok) {
-                const data = await response.json()
-                throw new Error(data.title)
+    const addMemberToMission = (memberId: string) =>
+        toast.promise(addMemberToMissionHandler(memberId), {
+            loading: "Adding a member...",
+            success: "Member added successfully",
+            error: (error) => (error as Error).message,
+        });
+
+    const deleteMemberFromMission = (memberId: string) =>
+        toast.promise(deleteMemberFromMissionHandler(memberId), {
+            loading: "Deleting a member...",
+            success: "Member deleted successfully",
+            error: (error) => (error as Error).message,
+        });
+
+    const changeMemberRole = (
+        memberId: string,
+        changeMemberRoleRequest: ChangeMemberRoleRequest
+    ) =>
+        toast.promise(
+            changeMemberRoleHandler(memberId, changeMemberRoleRequest),
+            {
+                loading: "Changing member's role...",
+                success: "Member's role changed successfully",
+                error: (error) => (error as Error).message,
             }
-            
-            // refetch
-            fetchMissionMembers()
-            
-        } catch (error) {
-            throw error
-        }
-    }, [user])
-
-    const addMemberToMission = (memberId: string) => toast.promise(addMemberToMissionHandler(memberId), {
-        loading: "Adding a member...",
-        success: "Member added successfully",
-        error: (error) => (error as Error).message
-    })
-
-    const deleteMemberFromMission = (memberId: string) => toast.promise(deleteMemberFromMissionHandler(memberId), {
-        loading: "Deleting a member...",
-        success: "Member deleted successfully",
-        error: (error) => (error as Error).message
-    })
+        );
 
     useEffect(() => {
-        const fetchData = () => fetchMissionMembers()
+        const fetchData = () => fetchMissionMembers();
         if (isHydrated) {
-            fetchData()
+            fetchData();
         }
-    }, [isHydrated])
+    }, [isHydrated]);
 
     return {
         missionMembers,
         isFetchingMembers,
         addMemberToMission,
-        deleteMemberFromMission
-    }
-}
+        deleteMemberFromMission,
+        changeMemberRole,
+    };
+};

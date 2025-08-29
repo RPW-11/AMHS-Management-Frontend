@@ -14,7 +14,7 @@ import MissionMember from "./mission-member";
 import SelectOption from "../select-option";
 import { Option } from "@/types/general";
 import { useUserStore } from "@/stores/useAuthStore";
-import { MISSION_ROLES_OPTIONS } from "@/constants/mission";
+import { MISSION_ROLES_OPTIONS, MissionRole } from "@/constants/mission";
 import { getOption } from "@/utils/general-util";
 import { Trash } from "lucide-react";
 import MemberSearch from "./member-search";
@@ -32,9 +32,14 @@ const MissionMembers = ({ mission }: MissionMembersProps) => {
         isFetchingMembers,
         addMemberToMission,
         deleteMemberFromMission,
+        changeMemberRole
     } = useMissionMember(mission.id);
 
-    const handleChangeRole = (option: Option) => {};
+    const handleChangeRole = (option: Option, memberId: string) => {
+        changeMemberRole(memberId, { role: option.value as MissionRole })
+    };
+
+    const isCurrentUserALeader = missionMembers.some(mem => mem.id === user?.id && mem.role === MissionRole.Leader)
 
     return (
         <Dialog>
@@ -68,27 +73,29 @@ const MissionMembers = ({ mission }: MissionMembersProps) => {
                                     <div className="col-span-4">
                                         <MissionMember {...emp} />
                                     </div>
-                                    <div className="col-span-2 flex items-center gap-2">
-                                        <SelectOption
+                                    <div className="col-span-2 grid grid-cols-5 gap-2">
+                                        <div className="col-span-4">
+                                            <SelectOption
                                             disabled={
-                                                user?.id !==
-                                                    mission.leader.id ||
-                                                emp.id === user.id
-                                            }
+                                                !isCurrentUserALeader ||
+                                                emp.id === user?.id
+                                            }   
                                             value={getOption(
                                                 MISSION_ROLES_OPTIONS,
                                                 emp.role
                                             )}
                                             options={MISSION_ROLES_OPTIONS}
-                                            onValueChange={handleChangeRole}
+                                            onValueChange={(val) => handleChangeRole(val, emp.id)}
                                             labelName={"Mission Role"}
                                             placeholder={"Change Role"}
                                         />
-                                        {emp.id !== user?.id && (
+                                        </div>
+                                        {emp.id !== user?.id && isCurrentUserALeader && (
                                             <Button
                                                 title="Remove member"
                                                 variant={"ghostDestructive"}
                                                 size={"icon"}
+                                                className="col-span-1"
                                                 onClick={() =>
                                                     deleteMemberFromMission(
                                                         emp.id

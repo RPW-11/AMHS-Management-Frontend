@@ -68,3 +68,7 @@ export interface UpdateMissionRequest {
     description: string,
     status: string
 }
+
+export interface ChangeMemberRoleRequest {
+    role: MissionRole
+}

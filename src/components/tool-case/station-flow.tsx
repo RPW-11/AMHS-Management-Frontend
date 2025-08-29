@@ -85,7 +85,7 @@ const StationFlow = ({
                     <DropdownMenuContent className="w-56" align="start">
                         <DropdownMenuLabel>Stations</DropdownMenuLabel>
                         <DropdownMenuGroup>
-                            {pointsMap.values().map(
+                            {[...pointsMap.values()].map(
                                 (station, i) =>
                                     (station.category ===
                                         PointCategory.Station ||
