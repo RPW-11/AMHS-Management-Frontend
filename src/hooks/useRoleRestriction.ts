@@ -20,7 +20,7 @@ export function useRoleRestriction() {
     useEffect(() => {
         if(protectedRoutes.has(pathname)) {
             if(!user) {return}
-            var exist = protectedRoutes.get(pathname)?.includes(getPositionEnumByStr(user.position))
+            const exist = protectedRoutes.get(pathname)?.includes(getPositionEnumByStr(user.position))
             
             if(!exist) {
                 setLoadingVerification(false)

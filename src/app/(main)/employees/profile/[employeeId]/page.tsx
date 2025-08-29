@@ -12,6 +12,7 @@ import { useUserStore } from "@/stores/useAuthStore"
 import { Option } from "@/types/general"
 import { getPositionEnumByStr } from "@/utils/employee/employee-util"
 import { useParams } from "next/navigation"
+import { toast } from "sonner"
 
 const EmployeeProfilePage = () => {
     const { employeeId } = useParams()
@@ -96,7 +97,7 @@ const EmployeeProfilePage = () => {
                     disabled 
                     value={{ name: getPositionEnumByStr(employeeDetails.position).toString(), value: employeeDetails.position }}
                     options={EMPLOYEE_POSITIONS}
-                    onValueChange={(val:Option) => {}}
+                    onValueChange={(val:Option) => { toast.error(`This function is not implemented yet. Clicked value: ${val.value}`)}}
                     placeholder="Select employee position"
                     labelName="Position"
                     />

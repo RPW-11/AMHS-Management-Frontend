@@ -8,7 +8,7 @@ export function getPositionEnumByStr(positionVal: string): EmployeePosition {
 }
 
 export function formatEmployeePosition(positionVal: string): string {
-    var position = EMPLOYEE_POSITIONS.find(pos => pos.value === positionVal)
+    const position = EMPLOYEE_POSITIONS.find(pos => pos.value === positionVal)
     
     if (position) {
         return position.name

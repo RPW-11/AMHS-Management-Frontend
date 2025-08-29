@@ -2,7 +2,6 @@
 import CustomDatePicker from "@/components/custom-date-picker"
 import EmployeeSummary from "@/components/dashboard/employee-summary"
 import ProductSummary from "@/components/dashboard/product-summary"
-import TaskSummary from "@/components/dashboard/task-summary"
 import { useState } from "react"
 
 const DashboardPage = () => {
@@ -20,9 +19,6 @@ const DashboardPage = () => {
             <div className="grid grid-cols-7 gap-4">
                 <div className="col-span-7 xl:col-span-3">
                     <EmployeeSummary />
-                </div>
-                <div className="col-span-7 xl:col-span-4">
-                    <TaskSummary />
                 </div>
             </div>
         </div>

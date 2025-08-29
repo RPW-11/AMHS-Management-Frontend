@@ -1,6 +1,6 @@
 "use client";
 
-import { AssignedEmployee, Mission } from "@/types/mission";
+import { Mission } from "@/types/mission";
 import {
     Dialog,
     DialogContent,

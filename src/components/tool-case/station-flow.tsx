@@ -106,8 +106,8 @@ const StationFlow = ({
                 </DropdownMenu>
             </div>
             <p className="text-xs text-muted-foreground">
-                Inorder to add a flow, you need to have at least one station
-                with a type of "Station"
+                {`Inorder to add a flow, you need to have at least one station
+                with a type of "Station"`}
             </p>
         </div>
     );

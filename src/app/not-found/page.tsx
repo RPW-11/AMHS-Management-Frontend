@@ -37,7 +37,7 @@ const ForbiddenPage = () => {
                         403 - Forbidden
                     </h2>
                     <p className="mt-4 text-lg text-muted-foreground">
-                        You don't have permission to access this page.
+                        {`You don't have permission to access this page.`}
                     </p>
                     <p className="mt-2 text-sm text-muted-foreground">
                         Please contact your administrator if you believe this is an error.

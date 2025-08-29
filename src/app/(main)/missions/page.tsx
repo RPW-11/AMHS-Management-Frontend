@@ -1,8 +1,7 @@
 "use client"
 import { Button } from "@/components/ui/button"
 import { MissionRoutes } from "@/constants/general";
-import { ListMissionsViewMode, MissionCategory, MissionStatus } from "@/constants/mission";
-import { Mission } from "@/types/mission";
+import { ListMissionsViewMode } from "@/constants/mission";
 import { Kanban, Table } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useState } from "react";

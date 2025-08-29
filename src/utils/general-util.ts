@@ -8,7 +8,7 @@ export function parsedTimeStampToDate(timeStamp: string): string{
             year: 'numeric',
         })
     } catch (error) {
-        return "Invalid Date Input"
+        return `Invalid date input: ${(error as Error).message}`
     }
 }
 
@@ -23,7 +23,7 @@ export function parsedTimeStampToDateTime(timeStamp: string) {
             hour12: true
         })
     } catch (error) {
-        return "Invalid Date Input"
+        return `Invalid date input: ${(error as Error).message}`
     }
 }
 
