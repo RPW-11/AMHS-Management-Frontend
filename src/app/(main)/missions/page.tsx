@@ -36,7 +36,7 @@ const MissionPage = () => {
                         Kanban
                     </Button>
                 </div>
-                <Button size={"sm"} onClick={() => push(MissionRoutes.Add)}>Add mission</Button>
+                <Button onClick={() => push(MissionRoutes.Add)}>Add mission</Button>
             </div>
             <div className="w-full">
                 {viewMode === ListMissionsViewMode.Kanban ? 

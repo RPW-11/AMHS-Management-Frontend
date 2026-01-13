@@ -18,14 +18,16 @@ const EmployeesPage = () => {
 
     return (
         <div className="rounded-md p-4 bg-white border space-y-4">
-            <NavigationEmployee />
-            <div>
-                <h1 className="font-semibold text-xl">
-                    Employees Detailed Information
-                </h1>
-                <p className="text-muted-foreground text-sm">
-                    Monitor and manage your employees easily. 
-                </p>
+            <div className="flex items-center justify-between">
+                <div>
+                    <h1 className="font-semibold text-xl">
+                        Employees Detailed Information
+                    </h1>
+                    <p className="text-muted-foreground text-sm">
+                        Monitor and manage your employees easily. 
+                    </p>
+                </div>
+                <NavigationEmployee />
             </div>
             <div>
             {isFetching ? 

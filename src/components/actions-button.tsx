@@ -15,7 +15,7 @@ const ActionsButton = ({
                     <Ellipsis/>
                 </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-36 p-1.5" align="end">
+            <PopoverContent className="w-36 p-1" align="end">
                 { children }
             </PopoverContent>
         </Popover>
