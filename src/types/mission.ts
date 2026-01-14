@@ -1,7 +1,7 @@
 import { MissionCategory, MissionRole, MissionStatus } from "@/constants/mission"
 import { RoutePlanningAlgorithm } from "@/constants/tool-case"
 
-export type Mission = {
+export type MissionDetail = {
     id: string
     name: string
     description: string
@@ -14,6 +14,18 @@ export type Mission = {
     updatedAt: string
     numberOfMembers: number
     routePlanningSummary?: RoutePlanningSummary
+}
+
+export type Mission = {
+    id: string
+    name: string
+    description: string
+    category: MissionCategory
+    status: MissionStatus
+    finishedAt: string
+    resourceLink?: string
+    createdAt: string
+    updatedAt: string
 }
 
 export type AssignedEmployee = {

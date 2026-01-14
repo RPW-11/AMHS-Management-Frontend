@@ -3,7 +3,7 @@ import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import MissionMember from "@/components/mission/mission-member";
 import MissionMembers from "@/components/mission/mission-members";
 import MissionStatusBadge from "@/components/mission/mission-status";
-import { Mission } from "@/types/mission";
+import { MissionDetail } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import {
     CalendarFold,
@@ -14,7 +14,7 @@ import {
 } from "lucide-react";
 
 interface MissionMetadataProps {
-    mission: Mission;
+    mission: MissionDetail;
 }
 
 const MissionMetadata = ({ mission }: MissionMetadataProps) => {

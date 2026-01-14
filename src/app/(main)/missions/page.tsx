@@ -8,6 +8,7 @@ import { useState } from "react";
 import KanbanView from "./kanban-view";
 import { useLoadMission } from "@/hooks/mission/useLoadMission";
 import LoadingSpinner from "@/components/loading-spinner";
+import TableView from "./table-view";
 
 
 const MissionPage = () => {
@@ -24,7 +25,7 @@ const MissionPage = () => {
     }
 
     return (
-        <div className="rounded-md p-4 bg-white border space-y-4">
+        <div className="rounded-md p-4 bg-white border space-y-6">
             <div className="flex justify-between">
                 <div className="flex gap-2">
                     <Button onClick={() => setViewMode(ListMissionsViewMode.Table)} size={"sm"} className="font-medium" variant={viewMode === ListMissionsViewMode.Table ? "secondary" : "ghost"}>
@@ -42,7 +43,7 @@ const MissionPage = () => {
                 {viewMode === ListMissionsViewMode.Kanban ? 
                 <KanbanView missions={missions} />
                 :
-                <div className="">Not created</div>
+                <TableView missions={missions} />
                 }
             </div>
         </div>

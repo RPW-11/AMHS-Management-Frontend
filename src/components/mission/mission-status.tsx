@@ -9,10 +9,10 @@ const MissionStatusBadge = ({
     status
 }: MissionStatusProps) => {
     const variant = status === MissionStatus.Active
-                    ? "info" :
-                    status === MissionStatus.Finished
                     ? "success" :
-                    "danger"
+                    status === MissionStatus.Finished
+                    ? "default" :
+                    "destructive"
     return (
         <Badge 
         variant={variant}
