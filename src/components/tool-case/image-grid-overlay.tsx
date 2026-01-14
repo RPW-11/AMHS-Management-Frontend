@@ -326,18 +326,6 @@ const ImageGridOverlay = ({
                 pointsMap={pointsMap}
                 onChangeStationsOrder={setStationsOrder}
             />
-            <div className="space-y-2">
-                <Label>Sample Solutions</Label>
-                <h3 className="text-sm">
-                    Count: {rgvPathPlan.sampleSolutions.length}
-                </h3>
-                {rgvPathPlan.sampleSolutions.length === 0 && (
-                    <p className="text-muted-foreground text-xs">
-                        {`You have 0 sample solutions. Please add some sample
-                        solutions using the 'Add solution path' tool`}
-                    </p>
-                )}
-            </div>
             <ModeToggle
                 mode={mode}
                 onChangeMode={setMode}

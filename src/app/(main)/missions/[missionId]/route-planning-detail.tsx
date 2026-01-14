@@ -14,23 +14,23 @@ const RoutePlanningSummarySection = ({
         <div className="space-y-4 text-sm">
             <div className="grid grid-cols-2 gap-4 w-4/5 lg:w-1/4 items-center">
                 <div className="col-span-1">Detailed JSON File</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
+                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     { resourceLink }
                 </div>
                 <div className="col-span-1">Algorithm</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
+                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     { routePlanningSumarry.algorithm }
                 </div>
                 <div className="col-span-1">Row Dimension</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
+                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     { routePlanningSumarry.rgvMap.rowDim }
                 </div>
                 <div className="col-span-1">Column Dimension</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
+                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     { routePlanningSumarry.rgvMap.colDim }
                 </div>
                 <div className="col-span-1">Total Throughput</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
+                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     { `${Math.floor(routePlanningSumarry.score.throughput)} products per hour` }
                 </div>
                 <div className="col-span-1">Track Length</div>

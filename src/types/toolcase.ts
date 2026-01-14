@@ -17,6 +17,8 @@ export type RgvPathPlan = {
     image: File | null
     rowDim: number
     colDim: number
+    widthLength: number
+    heightLength: number
     algorithm: string
     stationsOrder: Position[]
     sampleSolutions: Position[][]
@@ -28,6 +30,8 @@ export interface CreateRgvPathPlanReq {
     routeMetaData: {
         rowDim: number
         colDim: number
+        widthLength: number
+        heightLength: number
         algorithm: string
         stationsOrder: Position[]
         sampleSolutions: Position[][]

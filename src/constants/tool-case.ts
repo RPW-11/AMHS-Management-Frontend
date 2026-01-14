@@ -57,6 +57,8 @@ export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     image: null,
     rowDim: 20,
     colDim: 20,
+    widthLength: 100,
+    heightLength: 100,
     algorithm: "",
     stationsOrder: [],
     sampleSolutions: [],

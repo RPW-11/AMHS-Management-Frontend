@@ -33,6 +33,14 @@ const RgvRoutePlanningPage = () => {
         setRgvPlan(prev => ({...prev, colDim: Number(e.target.value)}))
     }
 
+    const handleWidthLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRgvPlan(prev => ({...prev, widthLength: Number(e.target.value)}))
+    }
+
+    const handleHeightLengthChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+        setRgvPlan(prev => ({...prev, heightLength: Number(e.target.value)}))
+    }
+
     const getAlgorithmCardStyle = (algoName: string): string => {
         if (algoName === rgvPlan.algorithm) {
             return "border-primary bg-accent text-primary"
@@ -86,6 +94,18 @@ const RgvRoutePlanningPage = () => {
                     <Input type="number" value={rgvPlan.colDim} onChange={handleColDimChange}/>
                     <p className="text-xs text-muted-foreground">Bigger column dimension will yield to more computation</p>
                 </div>
+
+                <div className="col-span-2 lg:col-span-1 space-y-2">
+                    <Label>Width length</Label>
+                    <Input type="number" value={rgvPlan.widthLength} onChange={handleWidthLengthChange}/>
+                    <p className="text-xs text-muted-foreground">The actual width length in meter</p>
+                </div>
+                <div className="col-span-2 lg:col-span-1 space-y-2">
+                    <Label>Height length</Label>
+                    <Input type="number" value={rgvPlan.heightLength} onChange={handleHeightLengthChange}/>
+                    <p className="text-xs text-muted-foreground">The actual height length in meter</p>
+                </div>
+                
                 <div className="col-span-2 space-y-2">
                     <Label>Algorithms</Label>
                     <div className="grid grid-cols-3 gap-2">
