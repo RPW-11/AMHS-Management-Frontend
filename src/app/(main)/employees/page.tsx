@@ -4,14 +4,24 @@ import AllEmployeeTable from "@/components/employees/all-employee-table";
 import NavigationEmployee from "@/components/employees/navigation-employee";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useEmployee } from "@/hooks/employee/useEmployee";
+import { CircleX } from "lucide-react";
 
 const EmployeesPage = () => {
-    const { employees, isFetching, fetchError } = useEmployee()
+    const { employees, isLoading, error } = useEmployee();
 
-    if(fetchError) {
+    if (isLoading) {
+        return(
+            <div className="w-full h-full flex justify-center">
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (error) {
         return (
-            <div className="rounded-md p-4 bg-white border space-y-4 text-destructive text-center">
-                { fetchError }
+             <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2">
+                <CircleX size={32} className="text-red-500"/>
+                <div className="text-xl text-red-500">Error fetching the data</div>
             </div>
         )
     }
@@ -30,13 +40,7 @@ const EmployeesPage = () => {
                 <NavigationEmployee />
             </div>
             <div>
-            {isFetching ? 
-                <div className="flex justify-center">
-                    <LoadingSpinner/> 
-                </div>
-                : 
-                <AllEmployeeTable employees={employees}/>
-            }
+            <AllEmployeeTable employees={employees}/>
             </div>
         </div>
     )

@@ -1,7 +1,7 @@
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useCallback } from "react";
 
-export function usePagination(initialPage = 1, initialPageSize = 20) {
+export function usePagination(initialPage = 1, initialPageSize = 10) {
     const searchParams = useSearchParams();
     const pathname = usePathname();
     const router = useRouter();

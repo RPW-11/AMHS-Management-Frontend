@@ -4,55 +4,64 @@ import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
 import { Employee } from "@/types/employee"
 import { useRouter } from "next/navigation"
-import { useCallback, useEffect, useState } from "react"
+import { usePagination } from "../usePagination"
+import { useQuery } from "@tanstack/react-query"
+import { PaginatedResponse } from "@/types/general"
 
 export const useEmployee = () => {
     const { user, isHydrated } = useUserStore();
-    
-    const { push } = useRouter()
-    const [employees, setEmployess] = useState<Employee[]>([])
-    const [isFetching, setIsFetching] = useState<boolean>(true)
-    const [fetchError, setFetchError] = useState<string | null>(null)
-    
-    const fetchAllEmployees = useCallback(async () => {
-        setIsFetching(true)
-        try {
-            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees`, {
-                headers: {
-                    'Authorization': `Bearer ${user?.token}`
+    const { push } = useRouter();
+    const { page, pageSize } = usePagination();
+
+    const { data, isLoading, isFetching, error, refetch } = useQuery<
+        PaginatedResponse<Employee>
+    >({
+        queryKey: ["employees", page, pageSize],
+        queryFn: async () => {
+            if (!user?.token) {
+                push(Routes.Login);
+                throw new Error("Unauthorized");
+            }
+            
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees?page=${page}&pageSize=${pageSize}`,
+                {
+                    headers: { Authorization: `Bearer ${user.token}` },
                 }
-            })
+            );
 
-            if (result.status === 401) {
-                return push(Routes.Login)
+            if (response.status === 401) {
+                push(Routes.Login);
+                throw new Error("Unauthorized");
             }
 
-            const data = await result.json()
-
-            if(!result.ok) {
-                return setFetchError(data.title)
+            if (!response.ok) {
+                const errData = await response.json();
+                throw new Error(errData.title || "Fetch failed");
             }
 
-            setEmployess(data)
-            setFetchError(null)
+            return response.json();
+        },
+        enabled: isHydrated && !!user?.token,
+    });
 
-        } catch (error) {
-            setFetchError((error as Error).message)
-        } finally {
-            setIsFetching(false)
-        }
-    }, [user])
-
-    useEffect(() => {
-        const fetchData = () => fetchAllEmployees()
-        if (isHydrated) {
-            fetchData()
-        }
-    }, [isHydrated])
+    const employees = data?.items ?? [];
+    const totalCount = data?.totalCount ?? 0;
+    const totalPages = data?.totalPages ?? 0;
+    const hasNext = data?.hasNext ?? false;
+    const hasPrevious = data?.hasPrevious ?? false;
     
     return {
         employees,
-        fetchError,
-        isFetching
+        isLoading,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        error,
+        isFetching,
+        refresh: refetch,
     };
 }

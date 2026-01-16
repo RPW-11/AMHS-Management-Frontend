@@ -160,7 +160,7 @@ const TableView = ({ missions }: TableViewProps) => {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={6}>Total data</TableCell>
+                        <TableCell colSpan={6}>Total missions</TableCell>
                         <TableCell className="text-right">{totalCount}</TableCell>
                     </TableRow>
                 </TableFooter>
