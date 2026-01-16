@@ -1,57 +1,66 @@
-"use client"
+"use client";
 
 import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
+import { PaginatedResponse } from "@/types/general";
 import { Mission } from "@/types/mission";
 import { useRouter } from "next/navigation";
-import { useCallback, useEffect, useState } from "react";
-import { toast } from "sonner";
+import { usePagination } from "../usePagination";
+import { useQuery } from "@tanstack/react-query";
 
 export const useLoadMission = () => {
-    const { user, isHydrated } = useUserStore()
+    const { user, isHydrated } = useUserStore();
     const { push } = useRouter();
+    const { page, pageSize } = usePagination();
 
-    const [missions, setMissions] = useState<Mission[]>([])
-    const [isFetchingMissions, setIsFetchingMissions] = useState<boolean>(true)
-
-    const fetchMissions = useCallback(async () => {
-        setIsFetchingMissions(true)
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions`, {
-                headers: {
-                    'Authorization': `Bearer ${user?.token}`
+    const { data, isLoading, error, refetch } = useQuery<
+        PaginatedResponse<Mission>
+    >({
+        queryKey: ["missions", page, pageSize],
+        queryFn: async () => {
+            if (!user?.token) {
+                push(Routes.Login);
+                throw new Error("Unauthorized");
+            }
+            
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}`,
+                {
+                    headers: { Authorization: `Bearer ${user.token}` },
                 }
-            })
+            );
 
             if (response.status === 401) {
-                push(Routes.Login)
-                return
+                push(Routes.Login);
+                throw new Error("Unauthorized");
             }
-
-            const data = await response.json()
 
             if (!response.ok) {
-                toast.error(data.title)
+                const errData = await response.json();
+                throw new Error(errData.title || "Fetch failed");
             }
 
-            setMissions(data)
-        } catch (error) {
-            toast.error((error as Error).message)
-        } finally {
-            setIsFetchingMissions(false)
-        }
-    }, [user])
+            return response.json();
+        },
+        enabled: isHydrated && !!user?.token,
+    });
 
-    useEffect(() => {
-        const fetchResource = () => fetchMissions()
-        if (isHydrated){
-            fetchResource()
-        }
-    }, [isHydrated])
+    const missions = data?.items ?? [];
+    const totalCount = data?.totalCount ?? 0;
+    const totalPages = data?.totalPages ?? 0;
+    const hasNext = data?.hasNext ?? false;
+    const hasPrevious = data?.hasPrevious ?? false;
 
     return {
         missions,
-        isFetchingMissions
+        isFetchingMissions: isLoading,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNext,
+        hasPrevious,
+        error,
+        refresh: refetch,
     };
-}
- 
+};

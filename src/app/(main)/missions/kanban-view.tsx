@@ -9,7 +9,7 @@ import { useState } from "react";
 import { toast } from "sonner";
 
 interface KanbanViewProps {
-    missions: Mission[]
+    missions: Mission[];
 }
 
 const KanbanView = ({

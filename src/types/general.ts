@@ -12,6 +12,16 @@ export interface NotificationData {
     isRead: boolean;
 }
 
+export interface PaginatedResponse<T> {
+    items: T[];
+    page: number;
+    pageSize: number;
+    totalCount: number;
+    totalPages: number;
+    hasNext?: boolean;
+    hasPrevious?: boolean;
+}
+
 export type User = {
     id: string;
     firstName: string;

@@ -2,7 +2,7 @@
 import { Button } from "@/components/ui/button"
 import { MissionRoutes } from "@/constants/general";
 import { ListMissionsViewMode } from "@/constants/mission";
-import { Kanban, Table } from "lucide-react";
+import { CircleX, Kanban, Table } from "lucide-react";
 import { useRouter } from "next/navigation"
 import { useState } from "react";
 import KanbanView from "./kanban-view";
@@ -12,14 +12,23 @@ import TableView from "./table-view";
 
 
 const MissionPage = () => {
-    const [viewMode, setViewMode] = useState<ListMissionsViewMode>(ListMissionsViewMode.Kanban)
-    const { missions, isFetchingMissions } = useLoadMission();
+    const [viewMode, setViewMode] = useState<ListMissionsViewMode>(ListMissionsViewMode.Table);
+    const { missions, isFetchingMissions, error } = useLoadMission();
     const { push } = useRouter()
 
     if (isFetchingMissions) {
         return(
             <div className="w-full h-full flex justify-center">
                 <LoadingSpinner />
+            </div>
+        )
+    }
+
+    if (error) {
+        return (
+             <div className="w-full h-full flex flex-col items-center justify-center text-center gap-2">
+                <CircleX size={32} className="text-red-500"/>
+                <div className="text-xl text-red-500">Error fetching the data</div>
             </div>
         )
     }

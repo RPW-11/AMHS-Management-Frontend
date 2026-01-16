@@ -10,10 +10,12 @@ import {
     Table,
     TableBody,
     TableCell,
+    TableFooter,
     TableHead,
     TableHeader,
     TableRow,
 } from "@/components/ui/table";
+import { useLoadMission } from "@/hooks/mission/useLoadMission";
 import { Mission } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import React, { useState } from "react";
@@ -23,6 +25,8 @@ interface TableViewProps {
 }
 
 const TableView = ({ missions }: TableViewProps) => {
+    const { page, pageSize, totalCount, totalPages, hasNext, hasPrevious } =
+        useLoadMission();
     const [currentStatus, setCurrentStatus] = useState<string>("All");
     const [selectedMissionIds, setSelectedMissionIds] = useState<Set<string>>(
         new Set()
@@ -32,9 +36,11 @@ const TableView = ({ missions }: TableViewProps) => {
         if (selectedMissionIds.size === missions.length) {
             setSelectedMissionIds(new Set());
         } else {
-            setSelectedMissionIds(new Set(missions.map(mission => mission.id)));
+            setSelectedMissionIds(
+                new Set(missions.map((mission) => mission.id))
+            );
         }
-    }
+    };
 
     const handleToggleMission = (missionId: string) => {
         const newSelectedIds = new Set(selectedMissionIds);
@@ -44,23 +50,15 @@ const TableView = ({ missions }: TableViewProps) => {
             newSelectedIds.add(missionId);
         }
         setSelectedMissionIds(newSelectedIds);
-    }
-
-    const handleDeleteMissions = (missionIds: string[]) => {
-        try {
-            
-        } catch (error) {
-            
-        }
-    }
+    };
 
     return (
         <div className="space-y-4 relative">
-            {selectedMissionIds.size > 0 &&
+            {selectedMissionIds.size > 0 && (
                 <SelectedMissionActions
                     selectedIds={Array.from(selectedMissionIds)}
                 />
-            }
+            )}
             <div className="flex justify-between items-center">
                 <div className="border rounded-md w-fit overflow-hidden">
                     <Button
@@ -119,9 +117,18 @@ const TableView = ({ missions }: TableViewProps) => {
                         missions.map((mission, i) => (
                             <TableRow key={mission.id}>
                                 <TableCell>
-                                    <Checkbox checked={selectedMissionIds.has(mission.id)} onCheckedChange={() => handleToggleMission(mission.id)}/>
+                                    <Checkbox
+                                        checked={selectedMissionIds.has(
+                                            mission.id
+                                        )}
+                                        onCheckedChange={() =>
+                                            handleToggleMission(mission.id)
+                                        }
+                                    />
                                 </TableCell>
-                                <TableCell>{i + 1}</TableCell>
+                                <TableCell>
+                                    {(page - 1) * pageSize + i + 1}
+                                </TableCell>
                                 <TableCell>{mission.name}</TableCell>
                                 <TableCell>
                                     <MissionCategoryBadge
@@ -145,14 +152,28 @@ const TableView = ({ missions }: TableViewProps) => {
                         ))
                     ) : (
                         <TableRow>
-                            <TableCell colSpan={5} className="text-center">
+                            <TableCell colSpan={6} className="text-center">
                                 No missions available.
                             </TableCell>
                         </TableRow>
                     )}
                 </TableBody>
+                <TableFooter>
+                    <TableRow>
+                        <TableCell colSpan={6}>Total data</TableCell>
+                        <TableCell className="text-right">{totalCount}</TableCell>
+                    </TableRow>
+                </TableFooter>
             </Table>
-            <Pagination />
+            {missions.length > 0 && (
+                <Pagination
+                    page={page}
+                    pageSize={pageSize}
+                    totalPages={totalPages}
+                    hasNext={hasNext}
+                    hasPrevious={hasPrevious}
+                />
+            )}
         </div>
     );
 };
