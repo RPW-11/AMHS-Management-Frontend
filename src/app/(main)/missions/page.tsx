@@ -13,10 +13,10 @@ import TableView from "./table-view";
 
 const MissionPage = () => {
     const [viewMode, setViewMode] = useState<ListMissionsViewMode>(ListMissionsViewMode.Table);
-    const { missions, isFetchingMissions, error } = useLoadMission();
+    const { missions, isLoading, isFetching, error } = useLoadMission();
     const { push } = useRouter()
 
-    if (isFetchingMissions) {
+    if (isLoading) {
         return(
             <div className="w-full h-full flex justify-center">
                 <LoadingSpinner />

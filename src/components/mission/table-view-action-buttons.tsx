@@ -8,7 +8,6 @@ import { Mission } from "@/types/mission";
 import { useState } from "react";
 import {
     AlertDialog,
-    AlertDialogAction,
     AlertDialogCancel,
     AlertDialogContent,
     AlertDialogDescription,
@@ -16,7 +15,6 @@ import {
     AlertDialogHeader,
     AlertDialogTitle,
 } from "../ui/alert-dialog";
-import { toast } from "sonner";
 import { useDeleteMission } from "@/hooks/mission/useDeleteMission";
 
 interface TableViewActionButtonsProp {
@@ -24,22 +22,13 @@ interface TableViewActionButtonsProp {
 }
 
 const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
-    const { deleteMissionApi } = useDeleteMission();
+    const { mutate: deleteMission  } = useDeleteMission();
     const { push } = useRouter();
     const [openDialog, setOpenDialog] = useState<boolean>(false);
 
     const handleDeleteMission = () => {
-        toast.promise(
-            deleteMissionApi(mission.id),
-            {
-                loading: "Deleting mission...",
-                success: () => {
-                    setOpenDialog(false);
-                    return "Mission deleted successfully.";
-                },
-                error: (err) => `Failed to delete mission. ${err}`,
-            }
-        );
+        setOpenDialog(false);
+        deleteMission(mission.id);
     }
 
     const handleViewDetail = () => push(MissionRoutes.Detail(mission.id));

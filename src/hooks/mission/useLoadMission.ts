@@ -13,7 +13,7 @@ export const useLoadMission = () => {
     const { push } = useRouter();
     const { page, pageSize } = usePagination();
 
-    const { data, isLoading, error, refetch } = useQuery<
+    const { data, isLoading, isFetching, error, refetch } = useQuery<
         PaginatedResponse<Mission>
     >({
         queryKey: ["missions", page, pageSize],
@@ -53,7 +53,7 @@ export const useLoadMission = () => {
 
     return {
         missions,
-        isFetchingMissions: isLoading,
+        isLoading,
         page,
         pageSize,
         totalCount,
@@ -61,6 +61,7 @@ export const useLoadMission = () => {
         hasNext,
         hasPrevious,
         error,
+        isFetching,
         refresh: refetch,
     };
 };

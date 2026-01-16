@@ -1,37 +1,44 @@
 import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
-import { ApiError } from "@/types/general";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
-import { useCallback } from "react";
+import { toast } from "sonner";
 
 export const useDeleteMission = () => {
+    const queryClient = useQueryClient();
     const { user } = useUserStore();
-    const { push } = useRouter()
-    const deleteMissionApi = useCallback(async (missionId: string): Promise<ApiError|null> => {
-        try {
-            const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`, {
-                method: "DELETE",
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${user?.token}`
+    const { push } = useRouter();
+
+    return useMutation({
+        mutationFn: async (missionId: string) => {
+            if (!user?.token) throw new Error("Unauthorized");
+
+            const response = await fetch(
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`,
+                {
+                    method: "DELETE",
+                    headers: { Authorization: `Bearer ${user.token}` },
                 }
-            })
+            );
 
             if (response.status === 401) {
-                push(Routes.Login)
-                return null
+                push(Routes.Login);
+                throw new Error("Unauthorized");
             }
 
             if (!response.ok) {
-                const data = await response.json()
-                return { title: data.title, details: data.details } as ApiError
+                const errData = await response.json();
+                throw new Error(errData.title || "Delete failed");
             }
 
-            return null
-        } catch (error) {
-            return { title: (error as Error).message, details: "" }
-        }
-    }, []);
-
-    return { deleteMissionApi }
-}
+            return null;
+        },
+        onSuccess: () => {
+            queryClient.invalidateQueries({ queryKey: ["missions"] });
+            toast.success("Mission deleted");
+        },
+        onMutate: () => toast.loading("Deleting mission..."),
+        onSettled: () => toast.dismiss(),
+        onError: (err) => toast.error((err as Error).message),
+    });
+};
