@@ -56,6 +56,7 @@ const TableView = ({ missions }: TableViewProps) => {
         <div className="space-y-4 relative">
             {selectedMissionIds.size > 0 && (
                 <SelectedMissionActions
+                    onDelete={() => setSelectedMissionIds(new Set())}
                     selectedIds={Array.from(selectedMissionIds)}
                 />
             )}

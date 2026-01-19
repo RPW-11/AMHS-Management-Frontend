@@ -4,20 +4,28 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
-export const useDeleteMission = () => {
+export const useDeleteBulkMissions = (
+    onDelete: () => void
+) => {
     const queryClient = useQueryClient();
     const { user } = useUserStore();
     const { push } = useRouter();
 
     return useMutation({
-        mutationFn: async (missionId: string) => {
+        mutationFn: async (missionIds: string[]) => {
             if (!user?.token) throw new Error("Unauthorized");
 
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions`,
                 {
                     method: "DELETE",
-                    headers: { Authorization: `Bearer ${user.token}` },
+                    headers: { 
+                        Authorization: `Bearer ${user.token}`,
+                        "Content-Type": "application/json"
+                    },
+                    body: JSON.stringify({
+                        missionIds
+                    })
                 },
             );
 
@@ -33,14 +41,15 @@ export const useDeleteMission = () => {
 
             return null;
         },
-        onSuccess: () => {
+        onSuccess: (_, missionIds) => {
             queryClient.invalidateQueries({ queryKey: ["missions"] });
-            toast.success("Mission deleted", {
+            toast.success(`${missionIds.length} missions have been deleted`, {
                 duration: 3000,
                 onAutoClose: () => toast.dismiss(),
             });
+            onDelete()
         },
-        onMutate: () => toast.loading("Deleting mission..."),
+        onMutate: (missionIds) => toast.loading(`Deleting ${missionIds.length} missions...`),
         onError: (err) =>
             toast.error((err as Error).message, {
                 duration: 3000,
