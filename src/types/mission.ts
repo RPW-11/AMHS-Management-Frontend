@@ -38,10 +38,12 @@ export type AssignedEmployee = {
 
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
-    imageUrl: string,
+    imageUrls: string[],
     rgvMap: {
         rowDim: number,
         colDim: number,
+        widthLength: number,
+        heightLength: number
     }
     score: {
         throughput: number,

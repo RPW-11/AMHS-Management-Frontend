@@ -1,11 +1,11 @@
-import { Mission } from '@/types/mission';
+import { MissionDetail } from '@/types/mission';
 import { create } from 'zustand';
 
 type MissionDetailStore = {
-    mission: Mission | null
+    mission: MissionDetail | null
     refetchFlag: boolean
     triggerRefetch: () => void
-    onMissionChange: (newMission: Mission) => void
+    onMissionChange: (newMission: MissionDetail) => void
 }
 
 export const useMissionDetailStore  = create<MissionDetailStore>((set) => ({
