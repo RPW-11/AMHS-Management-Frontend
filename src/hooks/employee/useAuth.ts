@@ -32,7 +32,7 @@ export const useAuth = () => {
         })
 
         return null
-    }, [])
+    }, [setIsAuthenticated, setUser])
 
     return { login }
 }

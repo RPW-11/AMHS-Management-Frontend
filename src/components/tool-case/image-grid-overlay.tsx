@@ -18,7 +18,6 @@ import EditPointDialog from "./edit-point-dialog";
 import { useAutoLabelMap } from "@/hooks/tool-case/useAutoLabelMap";
 import { toast } from "sonner";
 import ModeToggle from "./mode-toggle";
-import { Label } from "../ui/label";
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan & { image: File };

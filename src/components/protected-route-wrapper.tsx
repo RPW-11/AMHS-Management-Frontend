@@ -13,7 +13,7 @@ const ProtectedRouteWrapper = ({ children }: { children: ReactNode }) => {
         if (isHydrated && !isAuthenticated) {
             push(Routes.Login)
         }
-    }, [isHydrated, isAuthenticated])
+    }, [isHydrated, isAuthenticated, push])
 
     if (!isHydrated) {
         return (

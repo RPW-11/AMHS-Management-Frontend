@@ -91,14 +91,13 @@ export const useEmployeeProfile = (employeeId?: string) => {
         } finally {
             setIsFetchingProfile(false)
         }
-    }, [user, employeeId])
+    }, [user, employeeId, push])
 
     useEffect(() => {
-        const fetchData = () => fetchEmployeeById()
         if (isHydrated && employeeId) {
-            fetchData()
+            fetchEmployeeById()
         }
-    }, [isHydrated, employeeId])
+    }, [isHydrated, employeeId, fetchEmployeeById])
 
     return {
         employeeDetails,

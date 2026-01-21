@@ -27,7 +27,6 @@ interface TableViewProps {
 const TableView = ({ missions }: TableViewProps) => {
     const { page, pageSize, totalCount, totalPages, hasNext, hasPrevious } =
         useLoadMission();
-    const [currentStatus, setCurrentStatus] = useState<string>("All");
     const [selectedMissionIds, setSelectedMissionIds] = useState<Set<string>>(
         new Set()
     );

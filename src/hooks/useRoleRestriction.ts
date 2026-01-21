@@ -13,23 +13,43 @@ export function useRoleRestriction() {
     ])
 
     const pathname = usePathname()
-    const { user } = useUserStore()
+    const { user, isHydrated } = useUserStore()
     const { push } = useRouter()
     const [loadingVerification, setLoadingVerification] = useState<boolean>(true)
 
     useEffect(() => {
-        if(protectedRoutes.has(pathname)) {
-            if(!user) {return}
-            const exist = protectedRoutes.get(pathname)?.includes(getPositionEnumByStr(user.position))
-            
-            if(!exist) {
-                setLoadingVerification(false)
-                return push(Routes.NotFound)
-            }
-            
+        if (!protectedRoutes.has(pathname)) {
             setLoadingVerification(false)
+            return
         }
-    }, [user])
+
+        if (!isHydrated) return
+
+        setLoadingVerification(true)
+
+        if (!user) {
+            push(Routes.Login);
+            return;
+        }
+
+        const allowedPositions = protectedRoutes.get(pathname)
+
+        if (!Array.isArray(allowedPositions)) {
+            console.warn(`Invalid route config for ${pathname}`)
+            push(Routes.NotFound);
+            return;
+        }
+
+        const userPosition = getPositionEnumByStr(user.position);
+
+        if (!allowedPositions.includes(userPosition)) {
+            push(Routes.NotFound);
+            return;
+        }
+
+        setLoadingVerification(false);
+
+    }, [user, pathname, isHydrated, push])
 
     return { loadingVerification }
 }

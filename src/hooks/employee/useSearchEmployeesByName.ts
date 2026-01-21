@@ -16,15 +16,19 @@ export const useSearchEmployeesByName = () => {
     const [isFetching, setIsFetching] = useState<boolean>(true)
     const [fetchError, setFetchError] = useState<string | null>(null)
     
-    const fetchEmployeesByName = useCallback(async () => {
-        if (!searchedName) {
+    const fetchEmployeesByName = useCallback(async (name: string) => {
+        if (!name.trim()) {
+            setEmployess([])
+            setFetchError(null)
             setIsFetching(false)
             return
         }
 
         setIsFetching(true)
+        setFetchError(null)
+
         try {
-            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/search?name=${searchedName}`, {
+            const result = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/employees/search?name=${encodeURIComponent(name)}`, {
                 headers: {
                     'Authorization': `Bearer ${user?.token}`
                 }
@@ -37,27 +41,24 @@ export const useSearchEmployeesByName = () => {
             const data = await result.json()
 
             if(!result.ok) {
-                return setFetchError(data.title)
+                return setFetchError(data.title ?? 'Failed to fetch employees')
             }
 
             setEmployess(data)
-            setFetchError(null)
-
         } catch (error) {
             setFetchError((error as Error).message)
         } finally {
             setIsFetching(false)
         }
-    }, [user, searchedName])
+    }, [user?.token, push])
 
-    const debouncedFetchEmployeesByName = useDebouncedCallback(fetchEmployeesByName, 400)
+    const debouncedFetchEmployeesByName = useDebouncedCallback((name: string) => fetchEmployeesByName(name), 400)
 
     useEffect(() => {
-        const fetchData = () => debouncedFetchEmployeesByName()
         if (isHydrated) {
-            fetchData()
+            debouncedFetchEmployeesByName(searchedName)
         }
-    }, [isHydrated, searchedName])
+    }, [isHydrated, searchedName, debouncedFetchEmployeesByName])
     
     return {
         employees,

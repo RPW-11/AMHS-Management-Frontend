@@ -13,7 +13,7 @@ export const useLoadDetailedMission = (missionId?: string) => {
     const { mission, refetchFlag, onMissionChange } = useMissionDetailStore()
     const [isFetchingMission, setIsFetchingMission] = useState<boolean>(true)
 
-    const fetchMissionById = useCallback(async () => {
+    const fetchMissionById = useCallback(async (missionId: string) => {
         setIsFetchingMission(true)
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`, {
@@ -39,14 +39,13 @@ export const useLoadDetailedMission = (missionId?: string) => {
         } finally {
             setIsFetchingMission(false)
         }
-    }, [user, missionId])
+    }, [user?.token, push, onMissionChange])
 
     useEffect(() => {
-        const fetchData = () => fetchMissionById()
         if (isHydrated && missionId) {
-            fetchData()
+            fetchMissionById(missionId)
         }
-    }, [isHydrated, missionId, refetchFlag])
+    }, [isHydrated, missionId, refetchFlag, fetchMissionById])
 
     return {
         mission,

@@ -37,6 +37,6 @@ export const useRgvRouteSolver = () => {
         } catch (error) {
             return { title: (error as Error).message }
         }
-    }, [])
+    }, [user?.token, push])
     return { submitRgvRoutePlan }
 }

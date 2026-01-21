@@ -13,7 +13,7 @@ import TableView from "./table-view";
 
 const MissionPage = () => {
     const [viewMode, setViewMode] = useState<ListMissionsViewMode>(ListMissionsViewMode.Table);
-    const { missions, isLoading, isFetching, error } = useLoadMission();
+    const { missions, isLoading, error } = useLoadMission();
     const { push } = useRouter()
 
     if (isLoading) {

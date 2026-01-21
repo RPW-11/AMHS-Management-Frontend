@@ -54,7 +54,7 @@ export const useAddMission = () => {
             return [{ title: (error as Error).message, details: "" } as ApiError, null]
 
         }
-    }, []);
+    }, [user?.token, push]);
 
     const validateMissionForm = (addMissionForm: AddMissionForm): boolean => {
         let isValid = true;

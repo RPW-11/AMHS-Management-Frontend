@@ -44,7 +44,7 @@ export const useEmployeeRegis = () => {
         } catch (error) {
             return { title: (error as Error).message }
         }
-    }, [])
+    }, [user?.token, push])
 
     const validateField = useCallback((field: keyof EmployeeRegisterRequest, value: string): string => {
         switch (field) {

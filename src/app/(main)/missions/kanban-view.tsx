@@ -20,7 +20,7 @@ const KanbanView = ({
     const [finishedMission, setFinishedMission] = useState<Mission[]>(missions.filter(m => m.status === MissionStatus.Finished))
 
     const { updateMissionApi } = useModifyMission()
-    const { deleteMissionApi } = useDeleteMission()
+    const { mutate: deleteMissionApi } = useDeleteMission()
     
     const handleUpdateMission = async (mission: Mission) => {
         const updateReq: UpdateMissionRequest = {
@@ -67,11 +67,8 @@ const KanbanView = ({
         setInactiveMissions([mission, ...inactiveMissions])
     }
 
-    const handleDeleteMission = async (mission: Mission) => {
-        const error = await deleteMissionApi(mission.id)
-        if (error) {
-            toast.error(error.title)
-        }
+    const handleDeleteMission = (mission: Mission) => {
+        deleteMissionApi(mission.id)
         setActiveMissions(prev => prev.filter(m => m.id !== mission.id))
         setInactiveMissions(prev => prev.filter(m => m.id !== mission.id))
         setFinishedMission(prev => prev.filter(m => m.id !== mission.id))

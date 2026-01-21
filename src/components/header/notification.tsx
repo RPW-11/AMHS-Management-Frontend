@@ -4,7 +4,7 @@ import { Button } from "../ui/button"
 import { Popover, PopoverContent } from "../ui/popover"
 import { PopoverTrigger } from "@radix-ui/react-popover"
 import { Label } from "../ui/label"
-import { useEffect, useState } from "react"
+import { useCallback, useEffect, useState } from "react"
 import { Separator } from "../ui/separator"
 import { NotificationData } from "@/types/general"
 import NotificationCard from "./notification-card"
@@ -96,7 +96,7 @@ const Notification = () => {
     ])
     const [filteredNotifications, setFilteredNotifications] = useState<NotificationData[]>(notifications)
 
-    const filterNotifications = () => {
+    const filterNotifications = useCallback(() => {
         let newNotifcations: NotificationData[] = []
         if (displayType === "READ") {
             newNotifcations = notifications.filter(item => item.isRead)
@@ -105,7 +105,7 @@ const Notification = () => {
             newNotifcations = notifications.filter(item => !item.isRead)
         }
         setFilteredNotifications(displayType === "ALL" ? notifications : newNotifcations)
-    }
+    }, [displayType, notifications])
 
     const readNotificaton = (id: string) => setNotifications(prev => prev.map(item => item.id === id ? ({...item, isRead: true}) : item)) 
 
@@ -113,7 +113,7 @@ const Notification = () => {
 
     useEffect(() => {
         filterNotifications()
-    }, [displayType, notifications])
+    }, [filterNotifications])
 
 
     return (

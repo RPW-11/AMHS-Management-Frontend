@@ -9,6 +9,7 @@ import { useCallback } from "react";
 export const useModifyMission = () => {
     const { user } = useUserStore()
     const { push } = useRouter()
+
     const updateMissionApi = useCallback(async (updateMissionReq: UpdateMissionRequest, missionId: string): Promise<ApiError|null> => {
         try {
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`, {
@@ -34,7 +35,7 @@ export const useModifyMission = () => {
         } catch (error) {
             return { title: (error as Error).message, details: "" }
         }
-    }, []);
+    }, [user?.token, push]);
 
     return { updateMissionApi }
 }

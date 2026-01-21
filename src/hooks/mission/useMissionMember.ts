@@ -7,7 +7,7 @@ import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
 
-export const useMissionMember = (missionId?: string) => {
+export const useMissionMember = (missionId: string) => {
     const { user, isHydrated } = useUserStore();
     const [missionMembers, setMissionMembers] = useState<AssignedEmployee[]>(
         []
@@ -16,7 +16,7 @@ export const useMissionMember = (missionId?: string) => {
 
     const { push } = useRouter();
 
-    const fetchMissionMembers = useCallback(async () => {
+    const fetchMissionMembers = useCallback(async (missionId: string) => {
         setIsFetchingMembers(true);
         try {
             const response = await fetch(
@@ -46,10 +46,10 @@ export const useMissionMember = (missionId?: string) => {
         } finally {
             setIsFetchingMembers(false);
         }
-    }, [user]);
+    }, [user?.token, push]);
 
     const addMemberToMissionHandler = useCallback(
-        async (memberId: string) => {
+        async (memberId: string, missionId: string) => {
             try {
                 const response = await fetch(
                     `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/add/${memberId}`,
@@ -72,16 +72,16 @@ export const useMissionMember = (missionId?: string) => {
                 }
 
                 // refetch
-                fetchMissionMembers();
+                fetchMissionMembers(missionId);
             } catch (error) {
                 throw error;
             }
         },
-        [user]
+        [user?.token, push, fetchMissionMembers]
     );
 
     const deleteMemberFromMissionHandler = useCallback(
-        async (memberId: string) => {
+        async (memberId: string, missionId: string) => {
             try {
                 const response = await fetch(
                     `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}/members/delete/${memberId}`,
@@ -104,17 +104,18 @@ export const useMissionMember = (missionId?: string) => {
                 }
 
                 // refetch
-                fetchMissionMembers();
+                fetchMissionMembers(missionId);
             } catch (error) {
                 throw error;
             }
         },
-        [user]
+        [user?.token, push, fetchMissionMembers]
     );
 
     const changeMemberRoleHandler = useCallback(
         async (
             memberId: string,
+            missionId: string,
             changeMemberRoleRequest: ChangeMemberRoleRequest
         ) => {
             try {
@@ -140,23 +141,23 @@ export const useMissionMember = (missionId?: string) => {
                 }
 
                 // refetch
-                fetchMissionMembers();
+                fetchMissionMembers(missionId);
             } catch (error) {
                 throw error;
             }
         },
-        [user]
+        [user?.token, push, fetchMissionMembers]
     );
 
     const addMemberToMission = (memberId: string) =>
-        toast.promise(addMemberToMissionHandler(memberId), {
+        toast.promise(addMemberToMissionHandler(memberId, missionId), {
             loading: "Adding a member...",
             success: "Member added successfully",
             error: (error) => (error as Error).message,
         });
 
     const deleteMemberFromMission = (memberId: string) =>
-        toast.promise(deleteMemberFromMissionHandler(memberId), {
+        toast.promise(deleteMemberFromMissionHandler(memberId, missionId), {
             loading: "Deleting a member...",
             success: "Member deleted successfully",
             error: (error) => (error as Error).message,
@@ -167,7 +168,7 @@ export const useMissionMember = (missionId?: string) => {
         changeMemberRoleRequest: ChangeMemberRoleRequest
     ) =>
         toast.promise(
-            changeMemberRoleHandler(memberId, changeMemberRoleRequest),
+            changeMemberRoleHandler(memberId, missionId, changeMemberRoleRequest),
             {
                 loading: "Changing member's role...",
                 success: "Member's role changed successfully",
@@ -176,11 +177,10 @@ export const useMissionMember = (missionId?: string) => {
         );
 
     useEffect(() => {
-        const fetchData = () => fetchMissionMembers();
-        if (isHydrated) {
-            fetchData();
+        if (isHydrated && missionId) {
+            fetchMissionMembers(missionId);
         }
-    }, [isHydrated]);
+    }, [isHydrated, missionId, fetchMissionMembers]);
 
     return {
         missionMembers,
