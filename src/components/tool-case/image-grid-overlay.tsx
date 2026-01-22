@@ -224,16 +224,20 @@ const ImageGridOverlay = ({
 
                 return newMap;
             });
-
-            if (
-                stationsOrder.some(
-                    (station) =>
-                        station.rowPos === point.position.rowPos &&
-                        station.colPos === point.position.colPos
-                ) &&
+            
+            const isExist = stationsOrder.some(
+                (station) =>
+                    station.rowPos === point.position.rowPos &&
+                    station.colPos === point.position.colPos
+            )
+            if (isExist
+                 &&
                 point.category === PointCategory.Obstacle
             ) {
                 setStationsOrder([]);
+            }
+            else if (!isExist){
+                setStationsOrder([...stationsOrder, point.position])
             }
         }
         setCurrEdited(null);
