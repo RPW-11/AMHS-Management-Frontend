@@ -30,6 +30,17 @@ export function usePagination(initialPage = 1, initialPageSize = 10) {
         [searchParams, pathname, router, initialPageSize]
     );
 
+    const getSearchParamValue = useCallback((key: string): string | null => {
+        return searchParams?.get(key);
+    }, [searchParams])
+
+    const setSearchParamValue = useCallback((key: string, value: string) => {
+        const params = new URLSearchParams(searchParams?.toString() ?? "");
+        if (!value) params.delete(key);
+        else params.set(key, value);
+        router.replace(`${pathname}?${params}`, { scroll: false });
+    }, [searchParams, router, pathname])
+
     return {
         page: Math.max(1, isNaN(page) ? 1 : page),
         pageSize: Math.max(
@@ -38,5 +49,7 @@ export function usePagination(initialPage = 1, initialPageSize = 10) {
         ),
         setPage,
         setPageSize,
+        getSearchParamValue,
+        setSearchParamValue
     };
 }

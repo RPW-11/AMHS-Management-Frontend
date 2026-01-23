@@ -18,6 +18,7 @@ import EditPointDialog from "./edit-point-dialog";
 import { useAutoLabelMap } from "@/hooks/tool-case/useAutoLabelMap";
 import { toast } from "sonner";
 import ModeToggle from "./mode-toggle";
+import Image from "next/image";
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan
@@ -342,7 +343,7 @@ const ImageGridOverlay = ({
                         height: `${containerSize.height}px`,
                     }}
                 >
-                    {mapImgUrl && <img
+                    {mapImgUrl && <Image
                         src={mapImgUrl}
                         alt="Grid preview"
                         className="w-full h-full object-fill"

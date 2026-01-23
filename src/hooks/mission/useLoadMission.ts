@@ -12,12 +12,14 @@ import { useEffect } from "react";
 export const useLoadMission = () => {
     const { user, isHydrated } = useUserStore();
     const { push } = useRouter();
-    const { page, pageSize, setPage } = usePagination();
+    const { page, pageSize, setPage, getSearchParamValue } = usePagination();
+
+    const status = getSearchParamValue("status")
 
     const { data, isLoading, isFetching, error, refetch } = useQuery<
         PaginatedResponse<Mission>
     >({
-        queryKey: ["missions", page, pageSize],
+        queryKey: ["missions", page, pageSize, status],
         queryFn: async () => {
             if (!user?.token) {
                 push(Routes.Login);
@@ -25,7 +27,7 @@ export const useLoadMission = () => {
             }
             
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}${status ? `&status=${status}` : ""}`,
                 {
                     headers: { Authorization: `Bearer ${user.token}` },
                 }

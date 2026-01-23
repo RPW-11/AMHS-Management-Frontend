@@ -16,6 +16,7 @@ import {
     TableRow,
 } from "@/components/ui/table";
 import { useLoadMission } from "@/hooks/mission/useLoadMission";
+import { usePagination } from "@/hooks/usePagination";
 import { Mission } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import React, { useState } from "react";
@@ -27,9 +28,12 @@ interface TableViewProps {
 const TableView = ({ missions }: TableViewProps) => {
     const { page, pageSize, totalCount, totalPages, hasNext, hasPrevious } =
         useLoadMission();
+    const { getSearchParamValue, setSearchParamValue } = usePagination();
     const [selectedMissionIds, setSelectedMissionIds] = useState<Set<string>>(
         new Set()
     );
+
+    const status = getSearchParamValue("status") ?? "all";
 
     const handleToggleAllMissions = () => {
         if (selectedMissionIds.size === missions.length) {
@@ -51,6 +55,14 @@ const TableView = ({ missions }: TableViewProps) => {
         setSelectedMissionIds(newSelectedIds);
     };
 
+    const handleChangeStatus = (status: string) => {
+        if (status === "all") {
+            setSearchParamValue("status", "");
+        } else {
+            setSearchParamValue("status", status)
+        }
+    }
+
     return (
         <div className="space-y-4 relative">
             {selectedMissionIds.size > 0 && (
@@ -62,30 +74,34 @@ const TableView = ({ missions }: TableViewProps) => {
             <div className="flex justify-between items-center">
                 <div className="border rounded-md w-fit overflow-hidden">
                     <Button
+                        onClick={() => handleChangeStatus("all")}
                         size={"sm"}
                         className="rounded-none"
-                        variant={"secondary"}
+                        variant={status === "all" ? "secondary" : "ghost"}
                     >
                         All
                     </Button>
                     <Button
+                        onClick={() => handleChangeStatus("active")}
                         size={"sm"}
                         className="rounded-none"
-                        variant={"ghost"}
+                        variant={status === "active" ? "secondary" : "ghost"}
                     >
                         Active
                     </Button>
                     <Button
+                        onClick={() => handleChangeStatus("finished")}
                         size={"sm"}
                         className="rounded-none"
-                        variant={"ghost"}
+                        variant={status === "finished" ? "secondary" : "ghost"}
                     >
                         Finished
                     </Button>
                     <Button
+                        onClick={() => handleChangeStatus("inactive")}
                         size={"sm"}
                         className="rounded-none"
-                        variant={"ghost"}
+                        variant={status === "inactive" ? "secondary" : "ghost"}
                     >
                         Inactive
                     </Button>
