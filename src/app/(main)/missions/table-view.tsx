@@ -165,15 +165,13 @@ const TableView = ({ missions }: TableViewProps) => {
                     </TableRow>
                 </TableFooter>
             </Table>
-            {missions.length > 0 && (
-                <Pagination
-                    page={page}
-                    pageSize={pageSize}
-                    totalPages={totalPages}
-                    hasNext={hasNext}
-                    hasPrevious={hasPrevious}
-                />
-            )}
+            <Pagination
+                page={page}
+                pageSize={pageSize}
+                totalPages={totalPages}
+                hasNext={hasNext}
+                hasPrevious={hasPrevious}
+            />
         </div>
     );
 };

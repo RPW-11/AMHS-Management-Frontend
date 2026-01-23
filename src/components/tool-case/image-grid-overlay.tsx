@@ -21,13 +21,11 @@ import ModeToggle from "./mode-toggle";
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan
-    mapImageUrl: string
     onChangePlan: (plan: RgvPathPlan) => void;
 }
 
 const ImageGridOverlay = ({
     rgvPathPlan,
-    mapImageUrl,
     onChangePlan,
 }: ImageGridOverlayProps) => {
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
@@ -42,6 +40,7 @@ const ImageGridOverlay = ({
     );
     const [currEdited, setCurrEdited] = useState<RgvPathPoint | null>(null);
     const [mode, setMode] = useState<LabellingMode>(LabellingMode.Add);
+    const [mapImgUrl, setMapImgUrl] = useState<string>("")
 
     const [isRgvMounted, setIsRgvMounted] = useState<boolean>(false);
     const [isDrawing, setIsDrawing] = useState<boolean>(false);
@@ -56,7 +55,7 @@ const ImageGridOverlay = ({
 
     const handleAutomatedLabelling = async () => {
         const result = await analyzeGrid(
-            mapImageUrl,
+            mapImgUrl,
             rgvPathPlan.rowDim,
             rgvPathPlan.colDim
         );
@@ -290,11 +289,15 @@ const ImageGridOverlay = ({
             }
         };
 
+        if (rgvPathPlan.image) {
+            setMapImgUrl(URL.createObjectURL(rgvPathPlan.image));
+        }
+
         updateSize();
         window.addEventListener("resize", updateSize);
 
         return () => window.removeEventListener("resize", updateSize);
-    }, [rowDim, colDim]);
+    }, [rgvPathPlan.image, rowDim, colDim]);
 
     useEffect(() => {
         for (const point of rgvPathPlan.points) {
@@ -339,15 +342,15 @@ const ImageGridOverlay = ({
                         height: `${containerSize.height}px`,
                     }}
                 >
-                    <img
-                        src={mapImageUrl}
+                    {mapImgUrl && <img
+                        src={mapImgUrl}
                         alt="Grid preview"
                         className="w-full h-full object-fill"
                         style={{
                             display: "block",
                             objectPosition: "center center",
                         }}
-                    />
+                    />}
 
                     <div
                         className="absolute top-0 left-0 w-full h-full pointer-events-none"

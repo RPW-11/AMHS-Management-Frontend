@@ -7,11 +7,12 @@ import { Mission } from "@/types/mission";
 import { useRouter } from "next/navigation";
 import { usePagination } from "../usePagination";
 import { useQuery } from "@tanstack/react-query";
+import { useEffect } from "react";
 
 export const useLoadMission = () => {
     const { user, isHydrated } = useUserStore();
     const { push } = useRouter();
-    const { page, pageSize } = usePagination();
+    const { page, pageSize, setPage } = usePagination();
 
     const { data, isLoading, isFetching, error, refetch } = useQuery<
         PaginatedResponse<Mission>
@@ -50,6 +51,15 @@ export const useLoadMission = () => {
     const totalPages = data?.totalPages ?? 0;
     const hasNext = data?.hasNext ?? false;
     const hasPrevious = data?.hasPrevious ?? false;
+
+    useEffect(() => {
+        if (isLoading || isFetching || error || !data) return;
+
+        if (missions.length === 0 && page > 1) {
+            const targetPage = Math.max(1, page - 1);
+            setPage(targetPage);
+        }
+    }, [missions.length, page, isLoading, isFetching, error, data, setPage]);
 
     return {
         missions,

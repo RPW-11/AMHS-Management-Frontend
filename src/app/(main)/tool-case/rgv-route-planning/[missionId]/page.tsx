@@ -184,7 +184,6 @@ const RgvRoutePlanningPage = () => {
             {form.image && (
                 <ImageGridOverlay
                     rgvPathPlan={{ ...form }}
-                    mapImageUrl={URL.createObjectURL(form.image)}
                     onChangePlan={setForm}
                 />
             )}
