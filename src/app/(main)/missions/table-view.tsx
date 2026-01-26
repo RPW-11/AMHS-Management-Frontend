@@ -1,3 +1,4 @@
+import LoadingSpinner from "@/components/loading-spinner";
 import MissionCategoryBadge from "@/components/mission/mission-category-badge";
 import MissionStatusBadge from "@/components/mission/mission-status";
 import SelectedMissionActions from "@/components/mission/selected-mission-actions";
@@ -17,21 +18,29 @@ import {
 } from "@/components/ui/table";
 import { useLoadMission } from "@/hooks/mission/useLoadMission";
 import { usePagination } from "@/hooks/usePagination";
-import { Mission } from "@/types/mission";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
+import { CircleX } from "lucide-react";
 import React, { useState } from "react";
+import { useDebouncedCallback } from "use-debounce";
 
-interface TableViewProps {
-    missions: Mission[];
-}
-
-const TableView = ({ missions }: TableViewProps) => {
-    const { page, pageSize, totalCount, totalPages, hasNext, hasPrevious } =
-        useLoadMission();
+const TableView = () => {
+    const {
+        missions,
+        isLoading,
+        isFetching,
+        error,
+        page,
+        pageSize,
+        totalCount,
+        totalPages,
+        hasNext,
+        hasPrevious,
+    } = useLoadMission();
     const { getSearchParamValue, setSearchParamValue } = usePagination();
     const [selectedMissionIds, setSelectedMissionIds] = useState<Set<string>>(
-        new Set()
+        new Set(),
     );
+    const [searchTerm, setSearchTerm] = useState<string>("");
 
     const status = getSearchParamValue("status") ?? "all";
 
@@ -40,7 +49,7 @@ const TableView = ({ missions }: TableViewProps) => {
             setSelectedMissionIds(new Set());
         } else {
             setSelectedMissionIds(
-                new Set(missions.map((mission) => mission.id))
+                new Set(missions.map((mission) => mission.id)),
             );
         }
     };
@@ -59,8 +68,28 @@ const TableView = ({ missions }: TableViewProps) => {
         if (status === "all") {
             setSearchParamValue("status", "");
         } else {
-            setSearchParamValue("status", status)
+            setSearchParamValue("status", status);
         }
+    };
+
+    const debounceSearchMission = useDebouncedCallback((query: string) => {
+        setSearchParamValue("name", query);
+    }, 400)
+
+    const handleSearchMission = (searchTerm: string) => {
+        setSearchTerm(searchTerm);
+        debounceSearchMission(searchTerm);
+    }
+
+    if (error) {
+        return (
+            <div className="w-full h-full flex flex-col items-center justify-center text-center">
+                <CircleX size={24} className="text-red-500" />
+                <div className="text-lg text-red-500">
+                    Error fetching the data
+                </div>
+            </div>
+        );
     }
 
     return (
@@ -106,87 +135,102 @@ const TableView = ({ missions }: TableViewProps) => {
                         Inactive
                     </Button>
                 </div>
-                <Input placeholder="Search mission..." className="w-72" />
+                <Input
+                    placeholder="Search mission..."
+                    className="w-72"
+                    value={searchTerm}
+                    onChange={(e) => handleSearchMission(e.target.value)}
+                />
             </div>
-            <Table>
-                <TableHeader>
-                    <TableRow>
-                        <TableHead>
-                            <Checkbox
-                                checked={
-                                    selectedMissionIds.size !== 0 &&
-                                    selectedMissionIds.size === missions.length
-                                }
-                                onCheckedChange={handleToggleAllMissions}
-                            />
-                        </TableHead>
-                        <TableHead>No</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Category</TableHead>
-                        <TableHead>Status</TableHead>
-                        <TableHead>Updated At</TableHead>
-                        <TableHead></TableHead>
-                    </TableRow>
-                </TableHeader>
-                <TableBody>
-                    {missions.length > 0 ? (
-                        missions.map((mission, i) => (
-                            <TableRow key={mission.id}>
-                                <TableCell>
-                                    <Checkbox
-                                        checked={selectedMissionIds.has(
-                                            mission.id
+            {isLoading || isFetching ? (
+                <div className="w-full h-full flex justify-center">
+                    <LoadingSpinner />
+                </div>
+            ) : (
+                <Table>
+                    <TableHeader>
+                        <TableRow>
+                            <TableHead>
+                                <Checkbox
+                                    checked={
+                                        selectedMissionIds.size !== 0 &&
+                                        selectedMissionIds.size ===
+                                            missions.length
+                                    }
+                                    onCheckedChange={handleToggleAllMissions}
+                                />
+                            </TableHead>
+                            <TableHead>No</TableHead>
+                            <TableHead>Name</TableHead>
+                            <TableHead>Category</TableHead>
+                            <TableHead>Status</TableHead>
+                            <TableHead>Updated At</TableHead>
+                            <TableHead></TableHead>
+                        </TableRow>
+                    </TableHeader>
+                    <TableBody>
+                        {missions.length > 0 ? (
+                            missions.map((mission, i) => (
+                                <TableRow key={mission.id}>
+                                    <TableCell>
+                                        <Checkbox
+                                            checked={selectedMissionIds.has(
+                                                mission.id,
+                                            )}
+                                            onCheckedChange={() =>
+                                                handleToggleMission(mission.id)
+                                            }
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        {(page - 1) * pageSize + i + 1}
+                                    </TableCell>
+                                    <TableCell>{mission.name}</TableCell>
+                                    <TableCell>
+                                        <MissionCategoryBadge
+                                            category={mission.category}
+                                        />
+                                    </TableCell>
+                                    <TableCell>
+                                        <MissionStatusBadge mission={mission}/>
+                                    </TableCell>
+                                    <TableCell>
+                                        {parsedTimeStampToDateTime(
+                                            mission.updatedAt,
                                         )}
-                                        onCheckedChange={() =>
-                                            handleToggleMission(mission.id)
-                                        }
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    {(page - 1) * pageSize + i + 1}
-                                </TableCell>
-                                <TableCell>{mission.name}</TableCell>
-                                <TableCell>
-                                    <MissionCategoryBadge
-                                        category={mission.category}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    <MissionStatusBadge
-                                        status={mission.status}
-                                    />
-                                </TableCell>
-                                <TableCell>
-                                    {parsedTimeStampToDateTime(
-                                        mission.updatedAt
-                                    )}
-                                </TableCell>
-                                <TableCell>
-                                    <TableViewActionButtons mission={mission} />
+                                    </TableCell>
+                                    <TableCell>
+                                        <TableViewActionButtons
+                                            mission={mission}
+                                        />
+                                    </TableCell>
+                                </TableRow>
+                            ))
+                        ) : (
+                            <TableRow>
+                                <TableCell colSpan={6} className="text-center">
+                                    No missions available.
                                 </TableCell>
                             </TableRow>
-                        ))
-                    ) : (
+                        )}
+                    </TableBody>
+                    <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={6} className="text-center">
-                                No missions available.
+                            <TableCell colSpan={6}>Total missions</TableCell>
+                            <TableCell className="text-right">
+                                {totalCount}
                             </TableCell>
                         </TableRow>
-                    )}
-                </TableBody>
-                <TableFooter>
-                    <TableRow>
-                        <TableCell colSpan={6}>Total missions</TableCell>
-                        <TableCell className="text-right">{totalCount}</TableCell>
-                    </TableRow>
-                </TableFooter>
-            </Table>
+                    </TableFooter>
+                </Table>
+            )}
             <Pagination
                 page={page}
                 pageSize={pageSize}
                 totalPages={totalPages}
                 hasNext={hasNext}
                 hasPrevious={hasPrevious}
+                disabled={isLoading}
             />
         </div>
     );

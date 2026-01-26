@@ -18,7 +18,7 @@ const Sidebar = () => {
         push(Routes.Login)
     }
     return (
-        <div className="fixed p-6 w-64 h-screen bg-gray-100 border-r flex flex-col justify-between">
+        <div className="fixed p-6 w-64 h-screen bg-white border-r flex flex-col justify-between">
             <div className="space-y-8">
                 <div className="">
                     <h1 className="font-bold text-2xl text-primary">SAA Inc.</h1>

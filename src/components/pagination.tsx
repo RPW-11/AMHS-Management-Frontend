@@ -9,6 +9,7 @@ interface PaginationProps {
     totalPages: number;
     hasNext?: boolean;
     hasPrevious?: boolean;
+    disabled?:boolean;
 }
 
 const Pagination = ({
@@ -16,17 +17,18 @@ const Pagination = ({
     pageSize,
     totalPages,
     hasNext = false,
-    hasPrevious = false
+    hasPrevious = false,
+    disabled = false
 }: PaginationProps) => {
     const { setPage, setPageSize } = usePagination();
 
     return (
         <div className="flex justify-between gap-4 items-center">
-            <div className="text-sm font-medium">Page {page} of {totalPages}</div>
+            <div className="text-sm font-medium">Page {page} of {totalPages || 1}</div>
             <div className="flex items-center gap-4">
                 <div className="flex items-center text-sm font-medium gap-2">
                     Rows per page
-                    <Select defaultValue={pageSize.toString()} onValueChange={(val) => setPageSize(Number(val))}>
+                    <Select defaultValue={pageSize.toString()} onValueChange={(val) => setPageSize(Number(val))} disabled={disabled}>
                         <SelectTrigger className="w-[96px]">
                             <SelectValue/>
                         </SelectTrigger>
@@ -43,10 +45,10 @@ const Pagination = ({
                     </Select>
                 </div>
                 <div className="flex items-center gap-2">
-                    <Button variant={"ghost"} size={"sm"} disabled={!hasPrevious} onClick={() => setPage(page - 1)}>
+                    <Button variant={"ghost"} size={"sm"} disabled={!hasPrevious || disabled} onClick={() => setPage(page - 1)}>
                         <ChevronLeft />
                     </Button>
-                    <Button variant={"ghost"} size={"sm"} disabled={!hasNext} onClick={() => setPage(page + 1)}>
+                    <Button variant={"ghost"} size={"sm"} disabled={!hasNext || disabled} onClick={() => setPage(page + 1)}>
                         <ChevronRight />
                     </Button>
                 </div>

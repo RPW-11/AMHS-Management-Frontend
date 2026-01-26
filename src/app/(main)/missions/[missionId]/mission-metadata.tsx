@@ -53,7 +53,7 @@ const MissionMetadata = ({ mission }: MissionMetadataProps) => {
                 <div className="font-medium">Status</div>
             </div>
             <div className="col-span-5">
-                <MissionStatusBadge status={mission.status} />
+                <MissionStatusBadge mission={mission}/>
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <Users size={15} />

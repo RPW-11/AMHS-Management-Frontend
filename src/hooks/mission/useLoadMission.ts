@@ -14,12 +14,13 @@ export const useLoadMission = () => {
     const { push } = useRouter();
     const { page, pageSize, setPage, getSearchParamValue } = usePagination();
 
-    const status = getSearchParamValue("status")
+    const status = getSearchParamValue("status");
+    const name = getSearchParamValue("name");
 
     const { data, isLoading, isFetching, error, refetch } = useQuery<
         PaginatedResponse<Mission>
     >({
-        queryKey: ["missions", page, pageSize, status],
+        queryKey: ["missions", page, pageSize, status, name],
         queryFn: async () => {
             if (!user?.token) {
                 push(Routes.Login);
@@ -27,7 +28,7 @@ export const useLoadMission = () => {
             }
             
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}${status ? `&status=${status}` : ""}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}${status ? `&status=${status}` : ""}${name ? `&name=${name}` : ""}`,
                 {
                     headers: { Authorization: `Bearer ${user.token}` },
                 }
