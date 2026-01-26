@@ -18,8 +18,8 @@ const MissionStatusBadge = ({ mission }: MissionStatusProps) => {
         localStatus === MissionStatus.Active
             ? "success"
             : localStatus === MissionStatus.Finished
-              ? "default"
-              : "destructive";
+            ? "default"
+            : "destructive";
 
     const handleChangeStatus = (status: string) =>{
         setIsOpen(false);

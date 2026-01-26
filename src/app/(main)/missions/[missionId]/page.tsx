@@ -9,6 +9,7 @@ import { Routes, ToolCaseRoutes } from "@/constants/general";
 import MissionMetadata from "./mission-metadata";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
+import MissionDescription from "@/components/mission/mission-description";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
@@ -43,17 +44,7 @@ const MissionDetailPage = () => {
 
             <div className="space-y-4">
                 <Label>Mission Description</Label>
-                <div className="p-2 bg-gray-100 rounded-md w-full">
-                    {mission.description ? (
-                        <p className="text-sm text-muted-foreground">
-                            {mission.description}
-                        </p>
-                    ) : (
-                        <p className="text-sm italic text-center text-muted-foreground">
-                            No description
-                        </p>
-                    )}
-                </div>
+                <MissionDescription mission={mission}/>
             </div>
 
             {mission.category === MissionCategory.RoutePlanning && (
