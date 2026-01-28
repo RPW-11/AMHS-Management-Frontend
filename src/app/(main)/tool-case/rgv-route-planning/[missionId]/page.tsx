@@ -163,7 +163,7 @@ const RgvRoutePlanningPage = () => {
 
                 <div className="col-span-2 space-y-2">
                     <Label>Algorithms</Label>
-                    <div className="grid grid-cols-3 gap-2">
+                    <div className="grid grid-cols-2 gap-2">
                         {ROUTE_PLANNING_ALGORITHMS.map((algo) => (
                             <Label
                                 key={algo.name}

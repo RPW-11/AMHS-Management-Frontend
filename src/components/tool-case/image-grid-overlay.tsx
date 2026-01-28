@@ -19,6 +19,8 @@ import { useAutoLabelMap } from "@/hooks/tool-case/useAutoLabelMap";
 import { toast } from "sonner";
 import ModeToggle from "./mode-toggle";
 import Image from "next/image";
+import { Button } from "../ui/button";
+import { Label } from "../ui/label";
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan
@@ -35,7 +37,7 @@ const ImageGridOverlay = ({
     const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(
         new Map<string, RgvPathPoint>()
     );
-    const [stationsOrder, setStationsOrder] = useState<Position[]>([]);
+    const [stationsOrder, setStationsOrder] = useState<Position[][]>([]);
     const [sampleSolution, setSampleSolution] = useState<SampleSolution>(
         new SampleSolution()
     );
@@ -53,6 +55,14 @@ const ImageGridOverlay = ({
 
     // Automated labelling
     const { analyzeGrid } = useAutoLabelMap();
+
+    const handleAddStationOrder = (idx: number, stationOrder: Position[]) => {
+        setStationsOrder(stationsOrder.map((curr, i) => (
+            i === idx ? stationOrder : curr
+        )))
+    }
+
+    const handleDeleteStationOrder = (idx: number) => setStationsOrder(stationsOrder.filter((_curr, i) => i !== idx))
 
     const handleAutomatedLabelling = async () => {
         const result = await analyzeGrid(
@@ -167,8 +177,9 @@ const ImageGridOverlay = ({
     const removePoint = (rowPos: number, colPos: number) => {
         if (
             stationsOrder.some(
-                (station) =>
-                    station.rowPos === rowPos && station.colPos === colPos
+                (stations) => stations.some (
+                    (station) => station.rowPos === rowPos && station.colPos === colPos
+                )
             )
         ) {
             setStationsOrder([]);
@@ -226,18 +237,17 @@ const ImageGridOverlay = ({
             });
             
             const isExist = stationsOrder.some(
-                (station) =>
-                    station.rowPos === point.position.rowPos &&
-                    station.colPos === point.position.colPos
+                (stations) =>
+                    stations.some (
+                        (station) => station.rowPos === point.position.rowPos 
+                        && station.colPos === point.position.colPos
+                    )
             )
             if (isExist
                  &&
                 point.category === PointCategory.Obstacle
             ) {
                 setStationsOrder([]);
-            }
-            else if (!isExist){
-                setStationsOrder([...stationsOrder, point.position])
             }
         }
         setCurrEdited(null);
@@ -324,18 +334,36 @@ const ImageGridOverlay = ({
 
     return (
         <div className="space-y-4">
-            <StationFlow
-                stationsOrder={stationsOrder}
-                pointsMap={pointsMap}
-                onChangeStationsOrder={setStationsOrder}
-            />
+            <div className="space-y-4">
+                <Label>Define station flow</Label>
+                <div className="space-y-2">
+                    {stationsOrder.map((stations, i) => (
+                        <StationFlow
+                            key={i}
+                            stationsOrder={stations}
+                            pointsMap={pointsMap}
+                            onChangeStationsOrder={(stationOrder) => handleAddStationOrder(i, stationOrder)}
+                            onDelete={() => handleDeleteStationOrder(i)}
+                        />
+                    ))}
+                </div>
+                <div className="rounded-lg bg-white px-8 py-4 flex justify-center items-center border border-dashed">
+                    <Button onClick={() => setStationsOrder([...stationsOrder, []])}>
+                        Add Flow
+                    </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                    {`Inorder to add a flow, you need to have at least one station
+                    with a type of "Station"`}
+                </p>
+            </div>
             <ModeToggle
                 mode={mode}
                 onChangeMode={setMode}
                 handleResetMap={handleResetMap}
                 handleAutomatedLabelling={handleAutomatedLabelling}
             />
-            <div className="max-w-3xl w-full mx-auto">
+            <div className="max-w-5xl w-full mx-auto">
                 <div
                     className="relative border black rounded-md overflow-hidden bg-gray-100"
                     ref={containerRef}
@@ -344,6 +372,7 @@ const ImageGridOverlay = ({
                     }}
                 >
                     {mapImgUrl && <Image
+                        fill={true}
                         src={mapImgUrl}
                         alt="Grid preview"
                         className="w-full h-full object-fill"

@@ -45,11 +45,11 @@ export const ROUTE_PLANNING_ALGORITHMS = [
         description: "Find optimal route based on chromosome crossover. Quite optimal for mid-sized matrix",
         value: RoutePlanningAlgorithm.GeneticAlgorithm
     },
-    {
-        name: "Reinforcement Learning PPO",
-        description: "Optimal for large matrix",
-        value: RoutePlanningAlgorithm.ReinforcementLearning
-    },
+    // {
+    //     name: "Reinforcement Learning PPO",
+    //     description: "Optimal for large matrix",
+    //     value: RoutePlanningAlgorithm.ReinforcementLearning
+    // },
 ]
 
 export const DEFAULT_RGV_PLAN: RgvPathPlan = {

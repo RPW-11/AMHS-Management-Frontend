@@ -20,7 +20,7 @@ export type RgvPathPlan = {
     widthLength: number
     heightLength: number
     algorithm: string
-    stationsOrder: Position[]
+    stationsOrder: Position[][]
     sampleSolutions: Position[][]
     points: RgvPathPoint[]
 }

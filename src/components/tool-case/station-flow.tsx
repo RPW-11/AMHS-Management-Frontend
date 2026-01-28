@@ -1,7 +1,7 @@
 import { MoveRight, X } from "lucide-react";
 import { Button } from "../ui/button";
-import { Label } from "../ui/label";
 import { Separator } from "../ui/separator";
+import { HexColorPicker } from "react-colorful";
 import {
     DropdownMenu,
     DropdownMenuContent,
@@ -12,18 +12,23 @@ import {
 } from "../ui/dropdown-menu";
 import { Position, RgvPathPoint } from "@/types/toolcase";
 import { PointCategory } from "@/constants/tool-case";
+import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
+import { useState } from "react";
 
 interface StationFlowProps {
     stationsOrder: Position[];
     pointsMap: Map<string, RgvPathPoint>;
     onChangeStationsOrder: (stationsOrder: Position[]) => void;
+    onDelete: () => void;
 }
 
 const StationFlow = ({
     stationsOrder,
     pointsMap,
     onChangeStationsOrder,
+    onDelete
 }: StationFlowProps) => {
+    const [arrowColor, setArrowColor] = useState<string>("#000000")
     const hasStation = (): boolean =>
         pointsMap
             .values()
@@ -38,9 +43,22 @@ const StationFlow = ({
         onChangeStationsOrder(stationsOrder.filter((_stat, i) => i !== idx));
 
     return (
-        <div className="space-y-2">
-            <Label>Define station flow</Label>
-            <div className="flex flex-wrap gap-2 rounded-md p-4 bg-gray-100">
+        <div className="relative rounded-md p-4 bg-gray-100 space-y-4">
+            <Button onClick={onDelete} size={"icon-sm"} variant={"secondary"} className="absolute w-fit h-fit p-1 -top-2 -right-2 z-10">
+                <X/>
+            </Button>
+            <Popover>
+                <PopoverTrigger asChild>
+                    <Button variant={"outline"} size={"sm"} className="w-32 justify-start gap-2">
+                        <div className="w-4 h-4 rounded-full" style={{ backgroundColor: arrowColor }}></div>
+                        { arrowColor }
+                    </Button>
+                </PopoverTrigger>
+                <PopoverContent align="start">
+                    <HexColorPicker color={arrowColor} onChange={setArrowColor}/>
+                </PopoverContent>
+            </Popover>
+            <div className="flex flex-wrap gap-2">
                 {stationsOrder.map((station, i) => (
                     <div
                         className="flex items-center gap-2 text-primary"
@@ -78,7 +96,7 @@ const StationFlow = ({
 
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
-                        <Button variant={"default"} disabled={!hasStation()}>
+                        <Button variant={"default"} size={"sm"} disabled={!hasStation()}>
                             Add
                         </Button>
                     </DropdownMenuTrigger>
@@ -105,10 +123,6 @@ const StationFlow = ({
                     </DropdownMenuContent>
                 </DropdownMenu>
             </div>
-            <p className="text-xs text-muted-foreground">
-                {`Inorder to add a flow, you need to have at least one station
-                with a type of "Station"`}
-            </p>
         </div>
     );
 };
