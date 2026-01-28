@@ -5,6 +5,11 @@ export type Position = {
     colPos: number
 }
 
+export type RouteFlow = {
+    stationsOrder: Position[]
+    arrowColor: string
+}
+
 export type RgvPathPoint = {
     name: string
     category: PointCategory
@@ -20,7 +25,7 @@ export type RgvPathPlan = {
     widthLength: number
     heightLength: number
     algorithm: string
-    stationsOrder: Position[][]
+    routeFlows: RouteFlow[]
     sampleSolutions: Position[][]
     points: RgvPathPoint[]
 }
@@ -33,7 +38,7 @@ export interface CreateRgvPathPlanReq {
         widthLength: number
         heightLength: number
         algorithm: string
-        stationsOrder: Position[]
+        routeFlows: RouteFlow[]
         sampleSolutions: Position[][]
         points: RgvPathPoint[]
     }

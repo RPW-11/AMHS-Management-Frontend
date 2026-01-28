@@ -66,7 +66,7 @@ const RgvRoutePlanningPage = () => {
             form.colDim > 0 &&
             form.image !== null &&
             form.points.length > 0 &&
-            form.stationsOrder.length > 1
+            form.routeFlows.every((routeFlow) => routeFlow.stationsOrder.length > 1)
         );
     };
 

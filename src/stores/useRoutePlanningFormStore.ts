@@ -31,7 +31,7 @@ export const createRoutePlanningFormStore = (missionId: string) => {
             {
                 name: storageKey,
                 partialize: (state) => ({
-                    form: {...state.form, image: null, points: [], stationsOrder: [], sampleSolutions: []},
+                    form: {...state.form, image: null, points: [], routeFlows: [], sampleSolutions: []},
                 }),
                 version: 1
             },

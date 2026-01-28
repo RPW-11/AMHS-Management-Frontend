@@ -39,17 +39,21 @@ export type AssignedEmployee = {
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
     imageUrls: string[],
-    rgvMap: {
-        rowDim: number,
-        colDim: number,
-        widthLength: number,
-        heightLength: number
-    }
-    score: {
-        throughput: number,
-        trackLength: number,
-        numOfRgvs: number
-    }
+    routeSolutions: [
+        {
+            rgvMap: {
+                rowDim: number,
+                colDim: number,
+                widthLength: number,
+                heightLength: number
+            }
+            score: {
+                throughput: number,
+                trackLength: number,
+                numOfRgvs: number
+            }
+        }
+    ]
 }
 
 export interface AddMissionForm {

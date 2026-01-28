@@ -10,25 +10,25 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Position, RgvPathPoint } from "@/types/toolcase";
+import { Position, RgvPathPoint, RouteFlow } from "@/types/toolcase";
 import { PointCategory } from "@/constants/tool-case";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
 
 interface StationFlowProps {
-    stationsOrder: Position[];
+    routeFlow: RouteFlow;
     pointsMap: Map<string, RgvPathPoint>;
-    onChangeStationsOrder: (stationsOrder: Position[]) => void;
+    onChangeRouteFlow: (routeFlow: RouteFlow) => void;
     onDelete: () => void;
 }
 
 const StationFlow = ({
-    stationsOrder,
+    routeFlow,
     pointsMap,
-    onChangeStationsOrder,
+    onChangeRouteFlow,
     onDelete
 }: StationFlowProps) => {
-    const [arrowColor, setArrowColor] = useState<string>("#000000")
+    const [arrowColor, setArrowColor] = useState<string>(routeFlow.arrowColor || "#000000")
     const hasStation = (): boolean =>
         pointsMap
             .values()
@@ -38,9 +38,15 @@ const StationFlow = ({
                     station.category === PointCategory.StationAsPath
             );
     const handleAddStation = (station: RgvPathPoint) =>
-        onChangeStationsOrder([...stationsOrder, station.position]);
+        onChangeRouteFlow({...routeFlow, stationsOrder: [...routeFlow.stationsOrder, station.position]});
+    
     const handleRemoveStation = (idx: number) =>
-        onChangeStationsOrder(stationsOrder.filter((_stat, i) => i !== idx));
+        onChangeRouteFlow({...routeFlow, stationsOrder: routeFlow.stationsOrder.filter((_stat, i) => i !== idx)});
+
+    const handleChangeArrowColor = (color: string) => {
+        setArrowColor(color);
+        onChangeRouteFlow({...routeFlow, arrowColor: color});
+    }
 
     return (
         <div className="relative rounded-md p-4 bg-gray-100 space-y-4">
@@ -55,11 +61,11 @@ const StationFlow = ({
                     </Button>
                 </PopoverTrigger>
                 <PopoverContent align="start">
-                    <HexColorPicker color={arrowColor} onChange={setArrowColor}/>
+                    <HexColorPicker color={arrowColor} onChange={handleChangeArrowColor}/>
                 </PopoverContent>
             </Popover>
             <div className="flex flex-wrap gap-2">
-                {stationsOrder.map((station, i) => (
+                {routeFlow.stationsOrder.map((station, i) => (
                     <div
                         className="flex items-center gap-2 text-primary"
                         key={i}
@@ -82,10 +88,10 @@ const StationFlow = ({
                             </span>
                             <X className="hidden group-hover:block text-red-700" />
                         </Button>
-                        {i !== stationsOrder.length - 1 && <MoveRight />}
+                        {i !== routeFlow.stationsOrder.length - 1 && <MoveRight />}
                     </div>
                 ))}
-                {stationsOrder.length > 0 && (
+                {routeFlow.stationsOrder.length > 0 && (
                     <div>
                         <Separator
                             orientation="vertical"

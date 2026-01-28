@@ -36,31 +36,31 @@ const RoutePlanningSummarySection = ({
                 </div>
                 <div className="col-span-1">Row Dimension</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.rowDim}
+                    {routePlanningSumarry.routeSolutions[0].rgvMap.rowDim}
                 </div>
                 <div className="col-span-1">Column Dimension</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.colDim}
+                    {routePlanningSumarry.routeSolutions[0].rgvMap.colDim}
                 </div>
                 <div className="col-span-1">Actual Width Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.widthLength} meter
+                    {routePlanningSumarry.routeSolutions[0].rgvMap.widthLength} meter
                 </div>
                 <div className="col-span-1">Actual Height Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.heightLength} meter
+                    {routePlanningSumarry.routeSolutions[0].rgvMap.heightLength} meter
                 </div>
                 <div className="col-span-1">Total Throughput</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {`${Math.floor(routePlanningSumarry.score.throughput)} products per hour`}
+                    {`${Math.floor(routePlanningSumarry.routeSolutions[0].score.throughput)} products per hour`}
                 </div>
                 <div className="col-span-1">Track Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.score.trackLength} meter`}
+                    {`${routePlanningSumarry.routeSolutions[0].score.trackLength} meter`}
                 </div>
                 <div className="col-span-1">Maximum Number of RGVs</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.score.numOfRgvs} rgvs`}
+                    {`${routePlanningSumarry.routeSolutions[0].score.numOfRgvs} rgvs`}
                 </div>
             </div>
 

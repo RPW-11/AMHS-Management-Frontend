@@ -1,9 +1,9 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import {
-    Position,
     RgvPathPlan,
     RgvPathPoint,
+    RouteFlow,
     SampleSolution,
 } from "../../types/toolcase";
 import { MapPinCheckInside } from "lucide-react";
@@ -37,7 +37,7 @@ const ImageGridOverlay = ({
     const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(
         new Map<string, RgvPathPoint>()
     );
-    const [stationsOrder, setStationsOrder] = useState<Position[][]>([]);
+    const [routeFlows, setRouteFlows] = useState<RouteFlow[]>([]);
     const [sampleSolution, setSampleSolution] = useState<SampleSolution>(
         new SampleSolution()
     );
@@ -56,13 +56,13 @@ const ImageGridOverlay = ({
     // Automated labelling
     const { analyzeGrid } = useAutoLabelMap();
 
-    const handleAddStationOrder = (idx: number, stationOrder: Position[]) => {
-        setStationsOrder(stationsOrder.map((curr, i) => (
-            i === idx ? stationOrder : curr
+    const handleAddRouteFlow = (idx: number, routeFlow: RouteFlow) => {
+        setRouteFlows(routeFlows.map((curr, i) => (
+            i === idx ? routeFlow : curr
         )))
     }
 
-    const handleDeleteStationOrder = (idx: number) => setStationsOrder(stationsOrder.filter((_curr, i) => i !== idx))
+    const handleDeleteRouteFlow = (idx: number) => setRouteFlows(routeFlows.filter((_curr, i) => i !== idx))
 
     const handleAutomatedLabelling = async () => {
         const result = await analyzeGrid(
@@ -83,7 +83,7 @@ const ImageGridOverlay = ({
     const debouncedOnChangePlan = useDebouncedCallback(() => {
         onChangePlan({
             ...rgvPathPlan,
-            stationsOrder: stationsOrder,
+            routeFlows: routeFlows,
             points: Array.from(pointsMap.values()),
         });
     }, 400);
@@ -176,13 +176,13 @@ const ImageGridOverlay = ({
 
     const removePoint = (rowPos: number, colPos: number) => {
         if (
-            stationsOrder.some(
-                (stations) => stations.some (
+            routeFlows.some(
+                (routeFlow) => routeFlow.stationsOrder.some (
                     (station) => station.rowPos === rowPos && station.colPos === colPos
                 )
             )
         ) {
-            setStationsOrder([]);
+            setRouteFlows([]);
         }
 
         setPointsMap((prev) => {
@@ -236,9 +236,9 @@ const ImageGridOverlay = ({
                 return newMap;
             });
             
-            const isExist = stationsOrder.some(
-                (stations) =>
-                    stations.some (
+            const isExist = routeFlows.some(
+                (routeFlow) =>
+                    routeFlow.stationsOrder.some (
                         (station) => station.rowPos === point.position.rowPos 
                         && station.colPos === point.position.colPos
                     )
@@ -247,7 +247,7 @@ const ImageGridOverlay = ({
                  &&
                 point.category === PointCategory.Obstacle
             ) {
-                setStationsOrder([]);
+                setRouteFlows([]);
             }
         }
         setCurrEdited(null);
@@ -255,7 +255,7 @@ const ImageGridOverlay = ({
 
     const handleResetMap = () => {
         setPointsMap(new Map<string, RgvPathPoint>());
-        setStationsOrder([]);
+        setRouteFlows([]);
         setCurrEdited(null);
         setSampleSolution(new SampleSolution());
     };
@@ -320,7 +320,7 @@ const ImageGridOverlay = ({
                 return newMap;
             });
         }
-        setStationsOrder(rgvPathPlan.stationsOrder);
+        setRouteFlows(rgvPathPlan.routeFlows);
         setIsRgvMounted(true);
     }, []);
 
@@ -328,7 +328,7 @@ const ImageGridOverlay = ({
         if (isRgvMounted) {
             debouncedOnChangePlan();
         }
-    }, [stationsOrder, pointsMap]);
+    }, [routeFlows, pointsMap]);
 
     const cellSize = containerSize.width / colDim;
 
@@ -337,18 +337,18 @@ const ImageGridOverlay = ({
             <div className="space-y-4">
                 <Label>Define station flow</Label>
                 <div className="space-y-2">
-                    {stationsOrder.map((stations, i) => (
+                    {routeFlows.map((routeFlow, i) => (
                         <StationFlow
                             key={i}
-                            stationsOrder={stations}
+                            routeFlow={routeFlow}
                             pointsMap={pointsMap}
-                            onChangeStationsOrder={(stationOrder) => handleAddStationOrder(i, stationOrder)}
-                            onDelete={() => handleDeleteStationOrder(i)}
+                            onChangeRouteFlow={(routeFlow) => handleAddRouteFlow(i, routeFlow)}
+                            onDelete={() => handleDeleteRouteFlow(i)}
                         />
                     ))}
                 </div>
                 <div className="rounded-lg bg-white px-8 py-4 flex justify-center items-center border border-dashed">
-                    <Button onClick={() => setStationsOrder([...stationsOrder, []])}>
+                    <Button onClick={() => setRouteFlows([...routeFlows, { stationsOrder: [], arrowColor: "#000000" }])}>
                         Add Flow
                     </Button>
                 </div>
