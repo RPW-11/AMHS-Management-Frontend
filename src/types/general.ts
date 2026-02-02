@@ -1,6 +1,14 @@
+import { LucideIcon } from "lucide-react";
+
 export type Option = {
     name: string;
     value: string;
+}
+
+export type SidebarItemType = {
+    name: string;
+    icon: LucideIcon;
+    path: string;
 }
 
 export interface NotificationData {

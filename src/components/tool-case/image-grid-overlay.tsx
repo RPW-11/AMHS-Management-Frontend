@@ -34,10 +34,15 @@ const ImageGridOverlay = ({
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
 
-    const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(
-        new Map<string, RgvPathPoint>()
-    );
-    const [routeFlows, setRouteFlows] = useState<RouteFlow[]>([]);
+    const [pointsMap, setPointsMap] = useState<Map<string, RgvPathPoint>>(() => {
+    const initialMap = new Map<string, RgvPathPoint>();
+        for (const point of rgvPathPlan.points ?? []) {
+            const key = `${point.position.rowPos}-${point.position.colPos}`;
+            initialMap.set(key, point);
+        }
+        return initialMap;
+    });
+    const [routeFlows, setRouteFlows] = useState(rgvPathPlan.routeFlows ?? []);
     const [sampleSolution, setSampleSolution] = useState<SampleSolution>(
         new SampleSolution()
     );
@@ -80,7 +85,8 @@ const ImageGridOverlay = ({
         }
     };
 
-    const debouncedOnChangePlan = useDebouncedCallback(() => {
+    const debouncedOnChangePlan = useDebouncedCallback(
+        (routeFlows: RouteFlow[], pointsMap: Map<string, RgvPathPoint>) => {
         onChangePlan({
             ...rgvPathPlan,
             routeFlows: routeFlows,
@@ -311,24 +317,14 @@ const ImageGridOverlay = ({
     }, [rgvPathPlan.image, rowDim, colDim]);
 
     useEffect(() => {
-        for (const point of rgvPathPlan.points) {
-            setPointsMap((prev) => {
-                const newMap = new Map<string, RgvPathPoint>(prev);
-                newMap.delete(
-                    `${point.position.rowPos}-${point.position.colPos}`
-                );
-                return newMap;
-            });
-        }
-        setRouteFlows(rgvPathPlan.routeFlows);
         setIsRgvMounted(true);
     }, []);
 
     useEffect(() => {
         if (isRgvMounted) {
-            debouncedOnChangePlan();
+            debouncedOnChangePlan(routeFlows, pointsMap);
         }
-    }, [routeFlows, pointsMap]);
+    }, [routeFlows, pointsMap, isRgvMounted, debouncedOnChangePlan]);
 
     const cellSize = containerSize.width / colDim;
 

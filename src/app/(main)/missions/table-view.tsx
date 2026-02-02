@@ -93,7 +93,7 @@ const TableView = () => {
     }
 
     return (
-        <div className="space-y-4 relative">
+        <div className="space-y-4">
             {selectedMissionIds.size > 0 && (
                 <SelectedMissionActions
                     onDelete={() => setSelectedMissionIds(new Set())}

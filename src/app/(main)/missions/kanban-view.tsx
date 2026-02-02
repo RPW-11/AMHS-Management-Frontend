@@ -6,7 +6,6 @@ import { useDeleteMission } from "@/hooks/mission/useDeleteMission";
 import { useModifyMission } from "@/hooks/mission/useModifyMission";
 import { Mission, UpdateMissionRequest } from "@/types/mission";
 import { useState } from "react";
-import { toast } from "sonner";
 
 interface KanbanViewProps {
     missions: Mission[];
@@ -19,7 +18,7 @@ const KanbanView = ({
     const [inactiveMissions, setInactiveMissions] = useState<Mission[]>(missions.filter(m => m.status === MissionStatus.Inactive))
     const [finishedMission, setFinishedMission] = useState<Mission[]>(missions.filter(m => m.status === MissionStatus.Finished))
 
-    const { updateMissionApi } = useModifyMission()
+    const { mutate: updateMissionApi } = useModifyMission()
     const { mutate: deleteMissionApi } = useDeleteMission()
     
     const handleUpdateMission = async (mission: Mission) => {
@@ -28,10 +27,7 @@ const KanbanView = ({
             description: mission.description,
             status: mission.status
         }
-        const result = await updateMissionApi(updateReq, mission.id);
-        if (result) {
-            toast.error(result.title)
-        }
+        updateMissionApi({missionId: mission.id, data: updateReq});
     }
 
     const handleMoveToActiveSection = (mission: Mission) => {

@@ -1,7 +1,8 @@
 import { LayoutDashboard, LayoutList, ToolCase, Users } from "lucide-react";
 import { Routes } from "./general";
+import { SidebarItemType } from "@/types/general";
 
-export const SIDEBAR_MENU = [
+export const SIDEBAR_MENU: SidebarItemType[] = [
     {
         name: "Dashboard",
         icon: LayoutDashboard,

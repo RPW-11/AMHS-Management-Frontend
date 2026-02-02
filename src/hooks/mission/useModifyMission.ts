@@ -2,12 +2,11 @@
 import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { UpdateMissionRequest } from "@/types/mission";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
 
 export const useModifyMission = () => {
-    const queryClient = useQueryClient();
     const { user } = useUserStore();
     const { push } = useRouter();
 

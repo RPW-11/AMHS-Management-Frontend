@@ -10,7 +10,7 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { Position, RgvPathPoint, RouteFlow } from "@/types/toolcase";
+import { RgvPathPoint, RouteFlow } from "@/types/toolcase";
 import { PointCategory } from "@/constants/tool-case";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
