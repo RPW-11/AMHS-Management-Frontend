@@ -13,11 +13,13 @@ export type SidebarItemType = {
 
 export interface NotificationData {
     id: string;
-    userName: string;
-    description: string;
-    dayWithTime: string;
-    date: string;
+    actorAvatarUrl?: string;
+    actorName: string;
+    message: string;
+    targetType: string;
+    targetId: string;
     isRead: boolean;
+    createdAt: string;
 }
 
 export interface PaginatedResponse<T> {

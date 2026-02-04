@@ -27,6 +27,11 @@ export const useLoadDetailedMission = (missionId?: string) => {
                 return
             }
 
+            if (response.status === 404) {
+                push(Routes.NotFound)
+                return null
+            }
+
             const data = await response.json()
 
             if (!response.ok) {

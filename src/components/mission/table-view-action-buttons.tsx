@@ -2,7 +2,6 @@
 import { Info, Trash } from "lucide-react";
 import { Button } from "../ui/button";
 import { Tooltip, TooltipContent, TooltipTrigger } from "../ui/tooltip";
-import { useRouter } from "next/navigation";
 import { MissionRoutes } from "@/constants/general";
 import { Mission } from "@/types/mission";
 import { useState } from "react";
@@ -16,6 +15,7 @@ import {
     AlertDialogTitle,
 } from "../ui/alert-dialog";
 import { useDeleteMission } from "@/hooks/mission/useDeleteMission";
+import Link from "next/link";
 
 interface TableViewActionButtonsProp {
     mission: Mission;
@@ -23,7 +23,6 @@ interface TableViewActionButtonsProp {
 
 const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
     const { mutate: deleteMission  } = useDeleteMission();
-    const { push } = useRouter();
     const [openDialog, setOpenDialog] = useState<boolean>(false);
 
     const handleDeleteMission = () => {
@@ -31,20 +30,17 @@ const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
         deleteMission(mission.id);
     }
 
-    const handleViewDetail = () => push(MissionRoutes.Detail(mission.id));
-
     return (
         <div>
             <div className="flex justify-end">
                 <Tooltip>
                     <TooltipTrigger asChild>
-                        <Button
-                            size={"sm"}
-                            variant={"ghost"}
-                            onClick={handleViewDetail}
+                        <Link
+                            href={MissionRoutes.Detail(mission.id)}
+                            className="h-8 rounded-md gap-1.5 px-3 has-[>svg]:px-2.5 hover:bg-accent hover:text-accent-foreground dark:hover:bg-accent/50 flex items-center justify-center"
                         >
-                            <Info />
-                        </Button>
+                            <Info size={17}/>
+                        </Link>
                     </TooltipTrigger>
                     <TooltipContent>View Detail</TooltipContent>
                 </Tooltip>

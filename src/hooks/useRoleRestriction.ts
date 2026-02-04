@@ -36,14 +36,14 @@ export function useRoleRestriction() {
 
         if (!Array.isArray(allowedPositions)) {
             console.warn(`Invalid route config for ${pathname}`)
-            push(Routes.NotFound);
+            push(Routes.Forbidden);
             return;
         }
 
         const userPosition = getPositionEnumByStr(user.position);
 
         if (!allowedPositions.includes(userPosition)) {
-            push(Routes.NotFound);
+            push(Routes.Forbidden);
             return;
         }
 

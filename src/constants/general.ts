@@ -5,6 +5,8 @@ export const Routes = class {
     static Missions: string = "/missions"
     static Login: string = "/login"
     static NotFound: string = "/not-found"
+    static Forbidden: string = "/forbidden"
+
 }
 
 export const EmployeeRoutes = class extends Routes {

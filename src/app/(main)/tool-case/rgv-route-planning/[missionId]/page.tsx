@@ -8,13 +8,15 @@ import { ROUTE_PLANNING_ALGORITHMS, RoutePlanningAlgorithm } from "@/constants/t
 import { useRgvRouteSolver } from "@/hooks/tool-case/useRgvRouteSolver";
 import { createRoutePlanningFormStore } from "@/stores/useRoutePlanningFormStore";
 import { useParams, useRouter } from "next/navigation";
-import { useMemo } from "react";
+import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const RgvRoutePlanningPage = () => {
     const { submitRgvRoutePlan } = useRgvRouteSolver();
     const { push } = useRouter();
     const { missionId } = useParams();
+
+    const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
 
     const useFormStore = useMemo(
         () => createRoutePlanningFormStore(missionId as string),
@@ -74,10 +76,14 @@ const RgvRoutePlanningPage = () => {
         if (!form.image || !missionId)
             throw new Error("Image or missionId cannot be empty");
 
+        setIsSubmitting(true);
+
         const error = await submitRgvRoutePlan(
             { image: form.image, routeMetaData: { ...form } },
             missionId.toString(),
         );
+        
+        setIsSubmitting(false);
 
         if (error) {
             throw new Error(error.title);
@@ -189,7 +195,7 @@ const RgvRoutePlanningPage = () => {
             )}
             <div className="flex justify-end">
                 <Button
-                    disabled={!isAbleToProceed()}
+                    disabled={!isAbleToProceed() || isSubmitting}
                     onClick={handleSubmitRgvPlanWithToast}
                 >
                     Submit

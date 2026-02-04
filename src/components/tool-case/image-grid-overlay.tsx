@@ -306,15 +306,17 @@ const ImageGridOverlay = ({
             }
         };
 
-        if (rgvPathPlan.image) {
-            setMapImgUrl(URL.createObjectURL(rgvPathPlan.image));
-        }
-
         updateSize();
         window.addEventListener("resize", updateSize);
 
         return () => window.removeEventListener("resize", updateSize);
-    }, [rgvPathPlan.image, rowDim, colDim]);
+    }, [rowDim, colDim]);
+
+    useEffect(() => {
+        if (rgvPathPlan.image) {
+            setMapImgUrl(URL.createObjectURL(rgvPathPlan.image));
+        }   
+    }, [rgvPathPlan.image])
 
     useEffect(() => {
         setIsRgvMounted(true);
