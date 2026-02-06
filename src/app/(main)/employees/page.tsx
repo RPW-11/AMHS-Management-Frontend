@@ -1,7 +1,7 @@
 
 "use client"
-import AllEmployeeTable from "@/components/employees/all-employee-table";
-import NavigationEmployee from "@/components/employees/navigation-employee";
+import AllEmployeeTable from "@/components/employee/all-employee-table";
+import NavigationEmployee from "@/components/employee/navigation-employee";
 import LoadingSpinner from "@/components/loading-spinner";
 import { useEmployee } from "@/hooks/employee/useEmployee";
 import { CircleX } from "lucide-react";

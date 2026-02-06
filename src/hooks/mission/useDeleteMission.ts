@@ -35,16 +35,10 @@ export const useDeleteMission = () => {
         },
         onSuccess: () => {
             queryClient.invalidateQueries({ queryKey: ["missions"] });
-            toast.success("Mission deleted", {
-                duration: 3000,
-                onAutoClose: () => toast.dismiss(),
-            });
+            toast.success("Mission deleted");
         },
         onMutate: () => toast.loading("Deleting mission..."),
-        onError: (err) =>
-            toast.error((err as Error).message, {
-                duration: 3000,
-                onAutoClose: () => toast.dismiss(),
-            }),
+        onSettled: (_, __, ___, toastId) => toast.dismiss(toastId),
+        onError: (err) => toast.error((err as Error).message),
     });
 };

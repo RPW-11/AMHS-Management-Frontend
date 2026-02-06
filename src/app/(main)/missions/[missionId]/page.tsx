@@ -1,6 +1,6 @@
 "use client";
 import LoadingSpinner from "@/components/loading-spinner";
-import { MissionCategory } from "@/constants/mission";
+import { MissionCategory, MissionStatus } from "@/constants/mission";
 import { useLoadDetailedMission } from "@/hooks/mission/useLoadDetailedMission";
 import { useParams, useRouter } from "next/navigation";
 import RoutePlanningSummarySection from "./route-planning-detail";
@@ -13,12 +13,12 @@ import MissionDescription from "@/components/mission/mission-description";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
-    const { isFetchingMission, mission } = useLoadDetailedMission(
+    const { mission, isLoading, isFetching, error } = useLoadDetailedMission(
         typeof missionId === "string" ? missionId : undefined,
     );
     const { push } = useRouter();
 
-    if (isFetchingMission) {
+    if (isLoading || isFetching) {
         return (
             <div className="w-full h-full flex justify-center">
                 <LoadingSpinner />
@@ -26,7 +26,7 @@ const MissionDetailPage = () => {
         );
     }
 
-    if (!mission) {
+    if (!mission || error) {
         return (
             <div className="w-full h-full flex justify-center">
                 Mission is not found
@@ -55,7 +55,15 @@ const MissionDetailPage = () => {
                             resourceLink={mission.resourceLink}
                             routePlanningSumarry={mission.routePlanningSummary}
                         />
-                    ) : (
+                    ) : 
+                    mission.status === MissionStatus.Processing ?
+                    (
+                        <div className="bg-gray-100 text-sm p-2 rounded-md text-muted-foreground">
+                            This mission is still being processed
+                        </div>
+                    )
+                    :
+                    (
                         <div className="bg-gray-100 text-sm p-2 rounded-md text-muted-foreground">
                             This mission has no route configured, click{" "}
                             <Link

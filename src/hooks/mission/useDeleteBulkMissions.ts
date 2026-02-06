@@ -43,17 +43,11 @@ export const useDeleteBulkMissions = (
         },
         onSuccess: (_, missionIds) => {
             queryClient.invalidateQueries({ queryKey: ["missions"] });
-            toast.success(`${missionIds.length} missions have been deleted`, {
-                duration: 3000,
-                onAutoClose: () => toast.dismiss(),
-            });
+            toast.success(`${missionIds.length} missions have been deleted`);
             onDelete()
         },
         onMutate: (missionIds) => toast.loading(`Deleting ${missionIds.length} missions...`),
-        onError: (err) =>
-            toast.error((err as Error).message, {
-                duration: 3000,
-                onAutoClose: () => toast.dismiss(),
-            }),
+        onSettled: (_, __, ___, toastId) => toast.dismiss(toastId),
+        onError: (err) => toast.error((err as Error).message),
     });
 };

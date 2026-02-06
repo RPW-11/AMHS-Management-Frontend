@@ -5,59 +5,29 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Routes, ToolCaseRoutes } from "@/constants/general";
 import {
     MISSION_CATEGORIES_OPTIONS,
     MissionCategory,
 } from "@/constants/mission";
 import { useAddMission } from "@/hooks/mission/useAddMission";
 import { getOption } from "@/utils/general-util";
-import { useRouter } from "next/navigation";
-import { useState } from "react";
-import { toast } from "sonner";
 
 const AddMissionPage = () => {
-    const { push } = useRouter();
     const {
         addMissionForm,
         setAddMissionForm,
         errorsForm,
-        addMissionApi,
+        mutate: addMissionApi,
+        isPending,
         validateMissionForm,
     } = useAddMission();
-
-    const [isAddingMission, setIsAddingMission] = useState<boolean>(false);
 
     const handleAddMission = async () => {
         if (!validateMissionForm(addMissionForm)) {
             return;
         }
 
-        toast.loading("Adding mission...");
-        setIsAddingMission(true);
-
-        const [apiError, result] = await addMissionApi(addMissionForm);
-        if (apiError) {
-            toast.error(apiError.title, {
-                duration: 3000,
-                onAutoClose: () => toast.dismiss(),
-            });
-
-            setIsAddingMission(false);
-            return;
-        }
-        if (result) {
-            toast.success(
-                `The mission ${addMissionForm.name} has been created`,
-                { duration: 3000, onAutoClose: () => toast.dismiss() },
-            );
-            setIsAddingMission(false)
-            push(
-                addMissionForm.category === MissionCategory.RoutePlanning
-                    ? ToolCaseRoutes.RgvRoutePlanning(result.id)
-                    : Routes.Missions,
-            );
-        }
+        addMissionApi(addMissionForm);
     };
 
     return (
@@ -148,7 +118,7 @@ const AddMissionPage = () => {
                 </p>
             </div>
             <div className="flex justify-end">
-                <Button size={"sm"} onClick={handleAddMission} disabled={isAddingMission}>
+                <Button size={"sm"} onClick={handleAddMission} disabled={isPending}>
                     Add
                 </Button>
             </div>

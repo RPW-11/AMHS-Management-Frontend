@@ -14,7 +14,9 @@ export enum MissionCategory {
 export enum MissionStatus {
     Active = "Active",
     Inactive = "Inactive",
-    Finished = "Finished"
+    Finished = "Finished",
+    Failed = "Failed",
+    Processing = "Processing"
 }
 
 export enum MissionRole {

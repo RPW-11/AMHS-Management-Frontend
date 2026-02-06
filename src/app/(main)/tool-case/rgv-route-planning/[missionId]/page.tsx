@@ -7,11 +7,13 @@ import { MissionRoutes } from "@/constants/general";
 import { ROUTE_PLANNING_ALGORITHMS, RoutePlanningAlgorithm } from "@/constants/tool-case";
 import { useRgvRouteSolver } from "@/hooks/tool-case/useRgvRouteSolver";
 import { createRoutePlanningFormStore } from "@/stores/useRoutePlanningFormStore";
+import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
 
 const RgvRoutePlanningPage = () => {
+    const queryClient = useQueryClient();
     const { submitRgvRoutePlan } = useRgvRouteSolver();
     const { push } = useRouter();
     const { missionId } = useParams();
@@ -87,6 +89,8 @@ const RgvRoutePlanningPage = () => {
 
         if (error) {
             throw new Error(error.title);
+        } else {
+            queryClient.invalidateQueries({ queryKey: ["missions"] });
         }
     };
 
@@ -95,8 +99,8 @@ const RgvRoutePlanningPage = () => {
         toast.promise(handleSubmitRgvPlan, {
             success: () => {
                 resetForm()
-                push(MissionRoutes.Detail(missionId.toString()));
-                return "The route has been solved!";
+                push(MissionRoutes.Missions);
+                return "The route is being processed!";
             },
             loading: "Solving the route. This may take a while...",
             error: (err) => (err as Error).message,

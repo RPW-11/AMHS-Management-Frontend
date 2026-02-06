@@ -1,11 +1,24 @@
+"use client"
 import { useCallback, useEffect } from "react";
 import { fetchEventSource } from "@microsoft/fetch-event-source";
 import { useUserStore } from "@/stores/useAuthStore";
-import { toast } from "sonner";
 import { NotificationData } from "@/types/general";
+import { toastNotification } from "./toastNotificationHandler";
+import { useQueryClient } from "@tanstack/react-query";
 
 export const useStreamNotification = () => {
     const { user, isHydrated } = useUserStore();
+    const queryClient = useQueryClient();
+
+    const handleNotificationMessage = async (data: NotificationData) => {
+        toastNotification(data);
+        if (data.targetType.toLowerCase() === "mission") {
+            await Promise.all([
+                queryClient.invalidateQueries({ queryKey: ["mission", data.targetId]}),
+                queryClient.invalidateQueries({ queryKey: ["missions"]})
+            ])
+        }
+    }
 
     const handleStreamNotification = useCallback((token: string) => {
         const ctrl = new AbortController();
@@ -16,14 +29,11 @@ export const useStreamNotification = () => {
             onmessage(msg) {
                 if (msg.data) {
                     const data = JSON.parse(msg.data) as NotificationData;
-                    console.log(data);
-                    toast.info(data.message, {
-                        position: "top-right"
-                    })
+                    handleNotificationMessage(data)
                 }
             },
             onerror(err) {
-                console.log(err);
+                console.log(`Notification streaming error: ${err}`);
                 // handle retry or abort
             },
         });

@@ -1,5 +1,5 @@
 "use client";
-import EmployeeActionButton from "@/components/employees/employee-action-button";
+import EmployeeActionButton from "@/components/employee/employee-action-button";
 import { Checkbox } from "@/components/ui/checkbox";
 import UserAvatar from "@/components/user-avatar";
 import {
