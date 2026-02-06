@@ -15,7 +15,8 @@ export const useStreamNotification = () => {
         if (data.targetType.toLowerCase() === "mission") {
             await Promise.all([
                 queryClient.invalidateQueries({ queryKey: ["mission", data.targetId]}),
-                queryClient.invalidateQueries({ queryKey: ["missions"]})
+                queryClient.invalidateQueries({ queryKey: ["missions"]}),
+                queryClient.invalidateQueries({ queryKey: ["notifications"]})
             ])
         }
     }

@@ -34,7 +34,15 @@ export const useDeleteMission = () => {
             return null;
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["missions"] });
+            queryClient.invalidateQueries({ 
+                predicate: (query) => {
+                    const queryKey = query.queryKey;
+                    return (
+                        queryKey[0] === 'missions' ||
+                        queryKey[0] === 'mission'
+                    );
+                } 
+            });
             toast.success("Mission deleted");
         },
         onMutate: () => toast.loading("Deleting mission..."),

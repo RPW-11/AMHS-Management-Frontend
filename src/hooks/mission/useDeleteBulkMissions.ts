@@ -42,7 +42,15 @@ export const useDeleteBulkMissions = (
             return null;
         },
         onSuccess: (_, missionIds) => {
-            queryClient.invalidateQueries({ queryKey: ["missions"] });
+            queryClient.invalidateQueries({ 
+                predicate: (query) => {
+                    const queryKey = query.queryKey;
+                    return (
+                        queryKey[0] === 'missions' ||
+                        queryKey[0] === 'mission'
+                    );
+                } 
+             });
             toast.success(`${missionIds.length} missions have been deleted`);
             onDelete()
         },
