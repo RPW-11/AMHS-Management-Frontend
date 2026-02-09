@@ -11,12 +11,14 @@ import { useEffect } from "react";
 export const useLoadNotification = () => {
     const { user, isHydrated } = useUserStore();
     const { push } = useRouter();
-    const { page, pageSize, setPage } = usePagination();
+    const { page, pageSize, setPage, getSearchParamValue } = usePagination();
+
+    const type = getSearchParamValue("type") || "all";
 
     const { data, isLoading, isFetching, error, refetch } = useQuery<
         PaginatedResponse<NotificationData>
     >({
-        queryKey: ["notifications", page, pageSize],
+        queryKey: ["notifications", page, pageSize, type],
         queryFn: async () => {
             if (!user?.token) {
                 push(Routes.Login);
@@ -24,7 +26,7 @@ export const useLoadNotification = () => {
             }
             
             const response = await fetch(
-                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/notifications?page=${page}&pageSize=${pageSize}`,
+                `${process.env.NEXT_PUBLIC_BACKEND_HOST}/notifications?page=${page}&pageSize=${pageSize}${type ? `&type=${type}` : ""}`,
                 {
                     headers: { Authorization: `Bearer ${user.token}` },
                 }
@@ -71,6 +73,7 @@ export const useLoadNotification = () => {
         hasPrevious,
         error,
         isFetching,
+        type,
         refresh: refetch,
     };
 };

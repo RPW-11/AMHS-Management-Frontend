@@ -11,7 +11,7 @@ const RoutePlanningFinishedCard = ({
     notificationData,
 }: RoutePlanningFinishedCardProps) => {
     return (
-        <Link href={MissionRoutes.Detail(notificationData.targetId)}>
+        <Link href={MissionRoutes.Detail(notificationData.targetId)} >
             <div className="px-4 py-3 rounded-md border bg-white w-92 hover:bg-gray-50 shadow">
                 <div className="flex items-center gap-3">
                     <div className="bg-secondary rounded-lg p-2">
