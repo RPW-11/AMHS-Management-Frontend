@@ -1,4 +1,4 @@
-import RoutePlanningFinishedCard from "@/components/notification/route-planning-finished-card";
+import RoutePlanningFinishedCard from "@/components/custom-toaster/route-planning-finished-card";
 import { NotificationData } from "@/types/general";
 import { toast } from "sonner";
 

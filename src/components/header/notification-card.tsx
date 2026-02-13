@@ -4,6 +4,8 @@ import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import { Button } from "../ui/button";
 import { MailOpen } from "lucide-react";
 import { useState } from "react";
+import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
+import { useDeleteNotification } from "@/hooks/notification/useDeleteNotification";
 
 interface NotificationCardProps {
     data: NotificationData;
@@ -16,15 +18,24 @@ const NotificationCard = ({
     onRead,
     onMarkAsRead,
 }: NotificationCardProps) => {
+    const { mutate:deleteNotification, isPending } = useDeleteNotification()
     const [isReadLocal, setIsLocalRead] = useState<boolean>(
         data.isRead || false,
     );
+    const [openDeleteDialog, setOpenDeleteDialog] = useState<boolean>(false);
 
     const handleMarkAsRead = (e: React.MouseEvent<HTMLButtonElement>) => {
         e.stopPropagation();
         onMarkAsRead(data.id);
         setIsLocalRead(true);
     };
+    
+
+    function handleDeleteNotification(event: React.MouseEvent<HTMLButtonElement, MouseEvent>): void {
+        event.stopPropagation();
+        setOpenDeleteDialog(false);
+        deleteNotification(data.id);
+    }
 
     return (
         <div
@@ -68,11 +79,32 @@ const NotificationCard = ({
                             variant={"ghostDestructive"}
                             size={"sm"}
                             className="text-xs"
+                            onClick={(e) => {
+                                e.stopPropagation();
+                                setOpenDeleteDialog(true);
+                            }}
                         >
                             Delete
                         </Button>
                     </div>
                 </div>
+                <AlertDialog open={openDeleteDialog} onOpenChange={setOpenDeleteDialog}>
+                    <AlertDialogContent>
+                        <AlertDialogHeader>
+                            <AlertDialogTitle>
+                                Are you absolutely sure?
+                            </AlertDialogTitle>
+                            <AlertDialogDescription>
+                                This will
+                                permanently delete thi notification from the system.
+                            </AlertDialogDescription>
+                        </AlertDialogHeader>
+                        <AlertDialogFooter>
+                            <AlertDialogCancel>Cancel</AlertDialogCancel>
+                            <Button variant={"destructive"} onClick={handleDeleteNotification} >Delete</Button>
+                        </AlertDialogFooter>
+                    </AlertDialogContent>
+                </AlertDialog>
             </div>
         </div>
     );
