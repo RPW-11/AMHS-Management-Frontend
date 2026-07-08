@@ -1,9 +1,10 @@
 "use client";
 import { useState, useRef, useEffect } from "react";
 import {
+    Cluster,
+    ClusterFlow,
     RgvPathPlan,
     RgvPathPoint,
-    RouteFlow,
     SampleSolution,
 } from "../../types/toolcase";
 import { MapPinCheckInside } from "lucide-react";
@@ -13,7 +14,8 @@ import {
     PointCategory,
 } from "@/constants/tool-case";
 import { useDebouncedCallback } from "use-debounce";
-import StationFlow from "./station-flow";
+import ClusterEditor from "./cluster-editor";
+import ClusterFlowEditor from "./cluster-flow-editor";
 import EditPointDialog from "./edit-point-dialog";
 import { useAutoLabelMap } from "@/hooks/tool-case/useAutoLabelMap";
 import { toast } from "sonner";
@@ -42,7 +44,8 @@ const ImageGridOverlay = ({
         }
         return initialMap;
     });
-    const [routeFlows, setRouteFlows] = useState(rgvPathPlan.routeFlows ?? []);
+    const [clusters, setClusters] = useState(rgvPathPlan.clusters ?? []);
+    const [clusterFlows, setClusterFlows] = useState(rgvPathPlan.clusterFlows ?? []);
     const [sampleSolution, setSampleSolution] = useState<SampleSolution>(
         new SampleSolution()
     );
@@ -61,13 +64,34 @@ const ImageGridOverlay = ({
     // Automated labelling
     const { analyzeGrid } = useAutoLabelMap();
 
-    const handleAddRouteFlow = (idx: number, routeFlow: RouteFlow) => {
-        setRouteFlows(routeFlows.map((curr, i) => (
-            i === idx ? routeFlow : curr
+    const handleChangeCluster = (idx: number, cluster: Cluster) => {
+        setClusters(clusters.map((curr, i) => (
+            i === idx ? cluster : curr
         )))
     }
 
-    const handleDeleteRouteFlow = (idx: number) => setRouteFlows(routeFlows.filter((_curr, i) => i !== idx))
+    const handleDeleteCluster = (idx: number) => {
+        setClusters(clusters.filter((_curr, i) => i !== idx));
+        // cluster flows reference clusters by index, so drop references to the
+        // removed cluster and shift down indices that came after it
+        setClusterFlows((prev) =>
+            prev.map((clusterFlow) => ({
+                ...clusterFlow,
+                clusterOrder: clusterFlow.clusterOrder
+                    .filter((clusterIdx) => clusterIdx !== idx)
+                    .map((clusterIdx) => (clusterIdx > idx ? clusterIdx - 1 : clusterIdx)),
+            }))
+        );
+    };
+
+    const handleChangeClusterFlow = (idx: number, clusterFlow: ClusterFlow) => {
+        setClusterFlows(clusterFlows.map((curr, i) => (
+            i === idx ? clusterFlow : curr
+        )))
+    }
+
+    const handleDeleteClusterFlow = (idx: number) =>
+        setClusterFlows(clusterFlows.filter((_curr, i) => i !== idx))
 
     const handleAutomatedLabelling = async () => {
         const result = await analyzeGrid(
@@ -86,10 +110,11 @@ const ImageGridOverlay = ({
     };
 
     const debouncedOnChangePlan = useDebouncedCallback(
-        (routeFlows: RouteFlow[], pointsMap: Map<string, RgvPathPoint>) => {
+        (clusters: Cluster[], clusterFlows: ClusterFlow[], pointsMap: Map<string, RgvPathPoint>) => {
         onChangePlan({
             ...rgvPathPlan,
-            routeFlows: routeFlows,
+            clusters: clusters,
+            clusterFlows: clusterFlows,
             points: Array.from(pointsMap.values()),
         });
     }, 400);
@@ -182,13 +207,14 @@ const ImageGridOverlay = ({
 
     const removePoint = (rowPos: number, colPos: number) => {
         if (
-            routeFlows.some(
-                (routeFlow) => routeFlow.stationsOrder.some (
+            clusters.some(
+                (cluster) => cluster.stations.some (
                     (station) => station.rowPos === rowPos && station.colPos === colPos
                 )
             )
         ) {
-            setRouteFlows([]);
+            setClusters([]);
+            setClusterFlows([]);
         }
 
         setPointsMap((prev) => {
@@ -241,11 +267,11 @@ const ImageGridOverlay = ({
 
                 return newMap;
             });
-            
-            const isExist = routeFlows.some(
-                (routeFlow) =>
-                    routeFlow.stationsOrder.some (
-                        (station) => station.rowPos === point.position.rowPos 
+
+            const isExist = clusters.some(
+                (cluster) =>
+                    cluster.stations.some (
+                        (station) => station.rowPos === point.position.rowPos
                         && station.colPos === point.position.colPos
                     )
             )
@@ -253,7 +279,8 @@ const ImageGridOverlay = ({
                  &&
                 point.category === PointCategory.Obstacle
             ) {
-                setRouteFlows([]);
+                setClusters([]);
+                setClusterFlows([]);
             }
         }
         setCurrEdited(null);
@@ -261,7 +288,8 @@ const ImageGridOverlay = ({
 
     const handleResetMap = () => {
         setPointsMap(new Map<string, RgvPathPoint>());
-        setRouteFlows([]);
+        setClusters([]);
+        setClusterFlows([]);
         setCurrEdited(null);
         setSampleSolution(new SampleSolution());
     };
@@ -315,7 +343,7 @@ const ImageGridOverlay = ({
     useEffect(() => {
         if (rgvPathPlan.image) {
             setMapImgUrl(URL.createObjectURL(rgvPathPlan.image));
-        }   
+        }
     }, [rgvPathPlan.image])
 
     useEffect(() => {
@@ -324,35 +352,61 @@ const ImageGridOverlay = ({
 
     useEffect(() => {
         if (isRgvMounted) {
-            debouncedOnChangePlan(routeFlows, pointsMap);
+            debouncedOnChangePlan(clusters, clusterFlows, pointsMap);
         }
-    }, [routeFlows, pointsMap, isRgvMounted, debouncedOnChangePlan]);
+    }, [clusters, clusterFlows, pointsMap, isRgvMounted, debouncedOnChangePlan]);
 
     const cellSize = containerSize.width / colDim;
 
     return (
         <div className="space-y-4">
             <div className="space-y-4">
-                <Label>Define station flow</Label>
+                <Label>Define clusters</Label>
                 <div className="space-y-2">
-                    {routeFlows.map((routeFlow, i) => (
-                        <StationFlow
+                    {clusters.map((cluster, i) => (
+                        <ClusterEditor
                             key={i}
-                            routeFlow={routeFlow}
+                            cluster={cluster}
                             pointsMap={pointsMap}
-                            onChangeRouteFlow={(routeFlow) => handleAddRouteFlow(i, routeFlow)}
-                            onDelete={() => handleDeleteRouteFlow(i)}
+                            onChangeCluster={(cluster) => handleChangeCluster(i, cluster)}
+                            onDelete={() => handleDeleteCluster(i)}
                         />
                     ))}
                 </div>
                 <div className="rounded-lg bg-white px-8 py-4 flex justify-center items-center border border-dashed">
-                    <Button onClick={() => setRouteFlows([...routeFlows, { stationsOrder: [], arrowColor: "#000000" }])}>
-                        Add Flow
+                    <Button onClick={() => setClusters([...clusters, { name: "", stations: [], arrowColor: "#000000" }])}>
+                        Add Cluster
                     </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    {`Inorder to add a flow, you need to have at least one station
+                    {`Inorder to add a cluster, you need to have at least one station
                     with a type of "Station"`}
+                </p>
+            </div>
+            <div className="space-y-4">
+                <Label>Define cluster flow</Label>
+                <div className="space-y-2">
+                    {clusterFlows.map((clusterFlow, i) => (
+                        <ClusterFlowEditor
+                            key={i}
+                            clusterFlow={clusterFlow}
+                            clusters={clusters}
+                            onChangeClusterFlow={(clusterFlow) => handleChangeClusterFlow(i, clusterFlow)}
+                            onDelete={() => handleDeleteClusterFlow(i)}
+                        />
+                    ))}
+                </div>
+                <div className="rounded-lg bg-white px-8 py-4 flex justify-center items-center border border-dashed">
+                    <Button
+                        disabled={clusters.length < 2}
+                        onClick={() => setClusterFlows([...clusterFlows, { clusterOrder: [], arrowColor: "#000000" }])}
+                    >
+                        Add Cluster Flow
+                    </Button>
+                </div>
+                <p className="text-xs text-muted-foreground">
+                    {`Inorder to add a cluster flow, you need to have at least two
+                    clusters defined`}
                 </p>
             </div>
             <ModeToggle

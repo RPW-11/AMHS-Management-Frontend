@@ -1,5 +1,6 @@
-import { MoveRight, X } from "lucide-react";
+import { X } from "lucide-react";
 import { Button } from "../ui/button";
+import { Input } from "../ui/input";
 import { Separator } from "../ui/separator";
 import { HexColorPicker } from "react-colorful";
 import {
@@ -10,25 +11,25 @@ import {
     DropdownMenuLabel,
     DropdownMenuTrigger,
 } from "../ui/dropdown-menu";
-import { RgvPathPoint, RouteFlow } from "@/types/toolcase";
+import { Cluster, RgvPathPoint } from "@/types/toolcase";
 import { PointCategory } from "@/constants/tool-case";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
 
-interface StationFlowProps {
-    routeFlow: RouteFlow;
+interface ClusterEditorProps {
+    cluster: Cluster;
     pointsMap: Map<string, RgvPathPoint>;
-    onChangeRouteFlow: (routeFlow: RouteFlow) => void;
+    onChangeCluster: (cluster: Cluster) => void;
     onDelete: () => void;
 }
 
-const StationFlow = ({
-    routeFlow,
+const ClusterEditor = ({
+    cluster,
     pointsMap,
-    onChangeRouteFlow,
+    onChangeCluster,
     onDelete
-}: StationFlowProps) => {
-    const [arrowColor, setArrowColor] = useState<string>(routeFlow.arrowColor || "#000000")
+}: ClusterEditorProps) => {
+    const [arrowColor, setArrowColor] = useState<string>(cluster.arrowColor || "#000000")
     const hasStation = (): boolean =>
         pointsMap
             .values()
@@ -38,14 +39,17 @@ const StationFlow = ({
                     station.category === PointCategory.StationAsPath
             );
     const handleAddStation = (station: RgvPathPoint) =>
-        onChangeRouteFlow({...routeFlow, stationsOrder: [...routeFlow.stationsOrder, station.position]});
-    
+        onChangeCluster({...cluster, stations: [...cluster.stations, station.position]});
+
     const handleRemoveStation = (idx: number) =>
-        onChangeRouteFlow({...routeFlow, stationsOrder: routeFlow.stationsOrder.filter((_stat, i) => i !== idx)});
+        onChangeCluster({...cluster, stations: cluster.stations.filter((_stat, i) => i !== idx)});
+
+    const handleChangeName = (e: React.ChangeEvent<HTMLInputElement>) =>
+        onChangeCluster({...cluster, name: e.target.value});
 
     const handleChangeArrowColor = (color: string) => {
         setArrowColor(color);
-        onChangeRouteFlow({...routeFlow, arrowColor: color});
+        onChangeCluster({...cluster, arrowColor: color});
     }
 
     return (
@@ -53,6 +57,12 @@ const StationFlow = ({
             <Button onClick={onDelete} size={"icon-sm"} variant={"secondary"} className="absolute w-fit h-fit p-1 -top-2 -right-2 z-10">
                 <X/>
             </Button>
+            <Input
+                placeholder="Cluster name"
+                value={cluster.name}
+                onChange={handleChangeName}
+                className="w-48 bg-white"
+            />
             <Popover>
                 <PopoverTrigger asChild>
                     <Button variant={"outline"} size={"sm"} className="w-32 justify-start gap-2">
@@ -65,7 +75,7 @@ const StationFlow = ({
                 </PopoverContent>
             </Popover>
             <div className="flex flex-wrap gap-2">
-                {routeFlow.stationsOrder.map((station, i) => (
+                {cluster.stations.map((station, i) => (
                     <div
                         className="flex items-center gap-2 text-primary"
                         key={i}
@@ -88,10 +98,9 @@ const StationFlow = ({
                             </span>
                             <X className="hidden group-hover:block text-red-700" />
                         </Button>
-                        {i !== routeFlow.stationsOrder.length - 1 && <MoveRight />}
                     </div>
                 ))}
-                {routeFlow.stationsOrder.length > 0 && (
+                {cluster.stations.length > 0 && (
                     <div>
                         <Separator
                             orientation="vertical"
@@ -133,4 +142,4 @@ const StationFlow = ({
     );
 };
 
-export default StationFlow;
+export default ClusterEditor;

@@ -36,20 +36,10 @@ export const POINT_TYPE_STYLE = new Map<string, string>([
 
 export const ROUTE_PLANNING_ALGORITHMS = [
     {
-        name: "Depth-First Search (DFS)",
-        description: "Find all possible routes and grab the best result. Not suitable for high-dimensional matrix (optimal at 6x6)",
-        value: RoutePlanningAlgorithm.Dfs
-    },
-    {
         name: "Genetic Algorithm (GA)",
         description: "Find optimal route based on chromosome crossover. Quite optimal for mid-sized matrix",
         value: RoutePlanningAlgorithm.GeneticAlgorithm
     },
-    // {
-    //     name: "Reinforcement Learning PPO",
-    //     description: "Optimal for large matrix",
-    //     value: RoutePlanningAlgorithm.ReinforcementLearning
-    // },
 ]
 
 export const DEFAULT_RGV_PLAN: RgvPathPlan = {
@@ -60,7 +50,8 @@ export const DEFAULT_RGV_PLAN: RgvPathPlan = {
     widthLength: 100,
     heightLength: 100,
     algorithm: "",
-    routeFlows: [],
+    clusters: [],
+    clusterFlows: [],
     sampleSolutions: [],
     points: []
 }

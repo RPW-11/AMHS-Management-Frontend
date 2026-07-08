@@ -70,7 +70,8 @@ const RgvRoutePlanningPage = () => {
             form.colDim > 0 &&
             form.image !== null &&
             form.points.length > 0 &&
-            form.routeFlows.every((routeFlow) => routeFlow.stationsOrder.length > 1)
+            form.clusters.every((cluster) => cluster.stations.length > 0) &&
+            form.clusterFlows.every((clusterFlow) => clusterFlow.clusterOrder.length > 1)
         );
     };
 
