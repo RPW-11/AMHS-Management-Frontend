@@ -9,7 +9,6 @@ export type MissionDetail = {
     status: MissionStatus
     leader: AssignedEmployee
     finishedAt: string
-    resourceLink?: string
     createdAt: string
     updatedAt: string
     numberOfMembers: number
@@ -39,21 +38,18 @@ export type AssignedEmployee = {
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
     imageUrls: string[],
-    routeSolutions: [
-        {
-            rgvMap: {
-                rowDim: number,
-                colDim: number,
-                widthLength: number,
-                heightLength: number
-            }
-            score: {
-                throughput: number,
-                trackLength: number,
-                numOfRgvs: number
-            }
-        }
-    ]
+    rgvMap: {
+        rowDim: number,
+        colDim: number,
+        widthLength: number,
+        heightLength: number
+    }
+    score: {
+        throughput: number,
+        trackLength: number,
+        numOfRgvs: number,
+        optimality: number
+    }
 }
 
 export interface AddMissionForm {

@@ -9,58 +9,51 @@ import { useState } from "react";
 
 interface RoutePlanningSummaryProps {
     routePlanningSumarry: RoutePlanningSummary;
-    resourceLink: string;
 }
 const RoutePlanningSummarySection = ({
-    routePlanningSumarry,
-    resourceLink,
+    routePlanningSumarry
 }: RoutePlanningSummaryProps) => {
     const solutions: Option[] = [
         { name: "Solution 1", value: "1" },
-        { name: "Solution 2", value: "2" },
     ]
 
-    const imageUrls = [`data:image/jpeg;base64,${routePlanningSumarry.imageUrls[0]}`, `data:image/jpeg;base64,${routePlanningSumarry.imageUrls[1]}`];
+    const base64Img = `data:image/jpeg;base64,${routePlanningSumarry.imageUrls[0]}`
     const [currSolution, setCurrSolution] = useState<Option>(solutions[0])
 
     return (
         <div className="space-y-6 text-sm">
             <div className="grid grid-cols-2 gap-4 w-4/5 lg:w-1/4 items-center">
-                <div className="col-span-1">Detailed JSON File</div>
-                <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {resourceLink}
-                </div>
                 <div className="col-span-1">Algorithm</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     {routePlanningSumarry.algorithm}
                 </div>
                 <div className="col-span-1">Row Dimension</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.routeSolutions[0].rgvMap.rowDim}
+                    {routePlanningSumarry.rgvMap.rowDim}
                 </div>
                 <div className="col-span-1">Column Dimension</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.routeSolutions[0].rgvMap.colDim}
+                    {routePlanningSumarry.rgvMap.colDim}
                 </div>
                 <div className="col-span-1">Actual Width Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.routeSolutions[0].rgvMap.widthLength} meter
+                    {routePlanningSumarry.rgvMap.widthLength} meter
                 </div>
                 <div className="col-span-1">Actual Height Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.routeSolutions[0].rgvMap.heightLength} meter
+                    {routePlanningSumarry.rgvMap.heightLength} meter
                 </div>
                 <div className="col-span-1">Total Throughput</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {`${Math.floor(routePlanningSumarry.routeSolutions[0].score.throughput)} products per hour`}
+                    {`${Math.floor(routePlanningSumarry.score.throughput)} products per hour`}
                 </div>
                 <div className="col-span-1">Track Length</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.routeSolutions[0].score.trackLength} meter`}
+                    {`${routePlanningSumarry.score.trackLength} meter`}
                 </div>
                 <div className="col-span-1">Maximum Number of RGVs</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.routeSolutions[0].score.numOfRgvs} rgvs`}
+                    {`${routePlanningSumarry.score.numOfRgvs} rgvs`}
                 </div>
             </div>
 
@@ -85,7 +78,7 @@ const RoutePlanningSummarySection = ({
                     </Tooltip>
                 </div>
                 <Image
-                    src={currSolution.value === "1" ? imageUrls[0] : imageUrls[1]}
+                    src={base64Img}
                     width={0}
                     height={0}
                     sizes="100vw"

@@ -50,9 +50,8 @@ const MissionDetailPage = () => {
             {mission.category === MissionCategory.RoutePlanning && (
                 <div className="py-4 space-y-4">
                     <Label>Mission Detail</Label>
-                    {mission.routePlanningSummary && mission.resourceLink ? (
+                    {mission.routePlanningSummary && mission.status == MissionStatus.Finished ? (
                         <RoutePlanningSummarySection
-                            resourceLink={mission.resourceLink}
                             routePlanningSumarry={mission.routePlanningSummary}
                         />
                     ) : 
