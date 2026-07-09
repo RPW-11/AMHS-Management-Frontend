@@ -17,7 +17,6 @@ const RoutePlanningSummarySection = ({
         { name: "Solution 1", value: "1" },
     ]
 
-    const base64Img = `data:image/jpeg;base64,${routePlanningSumarry.imageUrls[0]}`
     const [currSolution, setCurrSolution] = useState<Option>(solutions[0])
 
     return (
@@ -78,7 +77,7 @@ const RoutePlanningSummarySection = ({
                     </Tooltip>
                 </div>
                 <Image
-                    src={base64Img}
+                    src={routePlanningSumarry.imageUrls[0]}
                     width={0}
                     height={0}
                     sizes="100vw"
