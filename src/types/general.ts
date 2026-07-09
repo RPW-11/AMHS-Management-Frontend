@@ -17,6 +17,7 @@ export interface NotificationData {
     actorName: string;
     message: string;
     targetType: string;
+    notificationType: string;
     targetId: string;
     isRead: boolean;
     createdAt: string;
