@@ -14,6 +14,7 @@ import LoadingSpinner from "@/components/loading-spinner"
 import { Routes } from "@/constants/general"
 import LanguageSwitcher from "@/components/header/language-switcher"
 import { useTranslation } from "react-i18next"
+import { useUserStore } from "@/stores/useAuthStore"
 
 const LoginPage = () => {
     const { t } = useTranslation()
@@ -26,6 +27,13 @@ const LoginPage = () => {
 
     const { login } = useAuth()
     const { push } = useRouter()
+    const { isHydrated, isAuthenticated } = useUserStore()
+
+    useEffect(() => {
+        if (isHydrated && isAuthenticated) {
+            push(Routes.Dashboard)
+        }
+    }, [isHydrated, isAuthenticated, push])
 
     const handleLogin = async (e: FormEvent<HTMLFormElement>) => {
         e.preventDefault()
@@ -49,7 +57,15 @@ const LoginPage = () => {
         }, 3000);
         return () => clearInterval(interval);
     }, []);
-    
+
+    if (!isHydrated || isAuthenticated) {
+        return (
+            <div className="flex justify-center items-center w-full h-screen">
+                <LoadingSpinner />
+            </div>
+        )
+    }
+
     return (
         <div className="rounded-xl lg:border bg-white m-auto h-screen w-full lg:h-144 lg:w-3/5 overflow-hidden shadow flex">
             <div className="space-y-8 p-8 w-1/2">
