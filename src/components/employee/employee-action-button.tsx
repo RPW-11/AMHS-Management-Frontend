@@ -3,6 +3,7 @@ import ActionsButton from "../actions-button";
 import { Button } from "../ui/button";
 import { useRouter } from "next/navigation";
 import { EmployeeRoutes } from "@/constants/general";
+import { useTranslation } from "react-i18next";
 
 interface EmployeeActionButtonProps {
     employeeId: string
@@ -12,20 +13,21 @@ const EmployeeActionButton = ({
     employeeId
 }: EmployeeActionButtonProps) => {
     const { push } = useRouter()
+    const { t } = useTranslation()
 
     return (
         <ActionsButton>
             <Button
             onClick={() => push(EmployeeRoutes.Profile(employeeId))}
-            className="w-full justify-start" 
+            className="w-full justify-start"
             size={"sm"} variant={"ghost"}>
                 <ContactRound />
-                Profile
+                {t("employees.actions.profile")}
             </Button>
-            <Button className="w-full justify-start" 
+            <Button className="w-full justify-start"
             size={"sm"} variant={"ghost"}>
                 <Mail />
-                Email
+                {t("employees.actions.email")}
             </Button>
         </ActionsButton>
     )

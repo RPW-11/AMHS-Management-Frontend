@@ -6,6 +6,7 @@ import { RoutePlanningSummary } from "@/types/mission";
 import { Download } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface RoutePlanningSummaryProps {
     routePlanningSumarry: RoutePlanningSummary;
@@ -13,8 +14,9 @@ interface RoutePlanningSummaryProps {
 const RoutePlanningSummarySection = ({
     routePlanningSumarry
 }: RoutePlanningSummaryProps) => {
+    const { t } = useTranslation();
     const solutions: Option[] = [
-        { name: "Solution 1", value: "1" },
+        { name: t("missions.detail.routePlanning.solutionName", { num: 1 }), value: "1" },
     ]
 
     const [currSolution, setCurrSolution] = useState<Option>(solutions[0])
@@ -22,37 +24,37 @@ const RoutePlanningSummarySection = ({
     return (
         <div className="space-y-6 text-sm">
             <div className="grid grid-cols-2 gap-4 w-4/5 lg:w-1/4 items-center">
-                <div className="col-span-1">Algorithm</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.algorithm")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     {routePlanningSumarry.algorithm}
                 </div>
-                <div className="col-span-1">Row Dimension</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.rowDimension")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     {routePlanningSumarry.rgvMap.rowDim}
                 </div>
-                <div className="col-span-1">Column Dimension</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.columnDimension")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
                     {routePlanningSumarry.rgvMap.colDim}
                 </div>
-                <div className="col-span-1">Actual Width Length</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.actualWidthLength")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.widthLength} meter
+                    {t("missions.detail.routePlanning.meter", { value: routePlanningSumarry.rgvMap.widthLength })}
                 </div>
-                <div className="col-span-1">Actual Height Length</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.actualHeightLength")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {routePlanningSumarry.rgvMap.heightLength} meter
+                    {t("missions.detail.routePlanning.meter", { value: routePlanningSumarry.rgvMap.heightLength })}
                 </div>
-                <div className="col-span-1">Total Throughput</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.totalThroughput")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {`${Math.floor(routePlanningSumarry.score.throughput)} products per hour`}
+                    {t("missions.detail.routePlanning.productsPerHour", { value: Math.floor(routePlanningSumarry.score.throughput) })}
                 </div>
-                <div className="col-span-1">Track Length</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.trackLength")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.score.trackLength} meter`}
+                    {t("missions.detail.routePlanning.meter", { value: routePlanningSumarry.score.trackLength })}
                 </div>
-                <div className="col-span-1">Maximum Number of RGVs</div>
+                <div className="col-span-1">{t("missions.detail.routePlanning.maxNumberOfRgvs")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {`${routePlanningSumarry.score.numOfRgvs} rgvs`}
+                    {t("missions.detail.routePlanning.rgvs", { value: routePlanningSumarry.score.numOfRgvs })}
                 </div>
             </div>
 
@@ -63,8 +65,8 @@ const RoutePlanningSummarySection = ({
                             value={currSolution}
                             options={solutions}
                             onValueChange={(op) => setCurrSolution(op)}
-                            labelName={"Solution"}
-                            placeholder={"Choose solution"}
+                            labelName={t("missions.detail.routePlanning.solution")}
+                            placeholder={t("missions.detail.routePlanning.chooseSolution")}
                         />
                     </div>
                     <Tooltip>
@@ -73,7 +75,7 @@ const RoutePlanningSummarySection = ({
                                 <Download />
                             </Button>
                         </TooltipTrigger>
-                        <TooltipContent align="end">Download image</TooltipContent>
+                        <TooltipContent align="end">{t("missions.detail.routePlanning.downloadImage")}</TooltipContent>
                     </Tooltip>
                 </div>
                 <Image

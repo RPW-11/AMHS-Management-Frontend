@@ -17,6 +17,7 @@ import SelectedEmployeeActions from "./selected-employee-actions";
 import { parsedTimeStampToDate } from "@/utils/general-util";
 import { useEmployee } from "@/hooks/employee/useEmployee";
 import Pagination from "../pagination";
+import { useTranslation } from "react-i18next";
 
 interface AllEmployeeTable {
     employees: Employee[];
@@ -25,6 +26,7 @@ interface AllEmployeeTable {
 const AllEmployeeTable = ({ employees }: AllEmployeeTable) => {
     const { page, pageSize, totalCount, totalPages, hasNext, hasPrevious } =
         useEmployee();
+    const { t } = useTranslation();
     const [selectedIds, setSelectedIds] = useState<Set<string>>(
         new Set<string>()
     );
@@ -65,13 +67,13 @@ const AllEmployeeTable = ({ employees }: AllEmployeeTable) => {
                                 onCheckedChange={toggleSelectAllEmployees}
                             />
                         </TableHead>
-                        <TableHead>No</TableHead>
-                        <TableHead>Name</TableHead>
-                        <TableHead>Age</TableHead>
-                        <TableHead>Date of Birth</TableHead>
-                        <TableHead>Email</TableHead>
-                        <TableHead>Phone Number</TableHead>
-                        <TableHead className="text-right">Action</TableHead>
+                        <TableHead>{t("employees.table.no")}</TableHead>
+                        <TableHead>{t("employees.table.name")}</TableHead>
+                        <TableHead>{t("employees.table.age")}</TableHead>
+                        <TableHead>{t("employees.table.dateOfBirth")}</TableHead>
+                        <TableHead>{t("employees.table.email")}</TableHead>
+                        <TableHead>{t("employees.table.phoneNumber")}</TableHead>
+                        <TableHead className="text-right">{t("employees.table.action")}</TableHead>
                     </TableRow>
                 </TableHeader>
                 <TableBody>
@@ -103,7 +105,7 @@ const AllEmployeeTable = ({ employees }: AllEmployeeTable) => {
                 </TableBody>
                 <TableFooter>
                     <TableRow>
-                        <TableCell colSpan={7}>Total Employees</TableCell>
+                        <TableCell colSpan={7}>{t("employees.table.totalEmployees")}</TableCell>
                         <TableCell className="text-right">
                             {totalCount}
                         </TableCell>

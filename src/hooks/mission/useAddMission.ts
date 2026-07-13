@@ -14,10 +14,12 @@ import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 export const useAddMission = () => {
     const { user } = useUserStore();
     const { push } = useRouter();
+    const { t } = useTranslation();
     const queryClient = useQueryClient();
     const [addMissionForm, setAddMissionForm] = useState<AddMissionForm>({
         name: "",
@@ -35,7 +37,7 @@ export const useAddMission = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (addMissionForm: AddMissionForm) => {
-            if (!user?.token) throw new Error("Unauthorized");
+            if (!user?.token) throw new Error(t("missions.add.toast.unauthorized"));
 
             const addMissionReq = addMissionFormToRequest(addMissionForm);
             const response = await fetch(
@@ -52,20 +54,20 @@ export const useAddMission = () => {
 
             if (response.status === 401) {
                 push(Routes.Login);
-                throw new Error("Unauthorized");
+                throw new Error(t("missions.add.toast.unauthorized"));
             }
 
             const data = await response.json();
 
             if (!response.ok) {
-                throw new Error((data as ApiError).title || "Delete failed");
+                throw new Error((data as ApiError).title || t("missions.add.toast.addFailed"));
             }
 
             return data as AddMissionResponse;
         },
         onSuccess: (data, formData) => {
             queryClient.invalidateQueries({ queryKey: ["missions"] });
-            toast.success("Mission added", {
+            toast.success(t("missions.add.toast.added"), {
                 duration: 3000,
                 onAutoClose: () => toast.dismiss(),
             });
@@ -76,7 +78,7 @@ export const useAddMission = () => {
                     : MissionRoutes.Missions,
             );
         },
-        onMutate: () => toast.loading("Adding mission.."),
+        onMutate: () => toast.loading(t("missions.add.toast.adding")),
         onSettled: (_, __, ___, toastId) => toast.dismiss(toastId),
         onError: (err) => toast.error((err as Error).message)
     });
@@ -91,7 +93,7 @@ export const useAddMission = () => {
 
         if (!addMissionForm.name) {
             isValid = false;
-            newErrors.name = "Name can't be empty";
+            newErrors.name = t("missions.add.errors.nameRequired");
         }
 
         const currDate = new Date();
@@ -101,7 +103,7 @@ export const useAddMission = () => {
 
         if (selectedDate < currDate) {
             isValid = false;
-            newErrors.dueDateTime = `Deadline is in the past: ${selectedDate.toLocaleString()} < today`;
+            newErrors.dueDateTime = t("missions.add.errors.deadlineInPast", { date: selectedDate.toLocaleString() });
         }
 
         setErrorsForm(newErrors);

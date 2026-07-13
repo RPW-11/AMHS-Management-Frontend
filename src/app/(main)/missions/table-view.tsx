@@ -22,8 +22,10 @@ import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import { CircleX } from "lucide-react";
 import React, { useState } from "react";
 import { useDebouncedCallback } from "use-debounce";
+import { useTranslation } from "react-i18next";
 
 const TableView = () => {
+    const { t } = useTranslation();
     const {
         missions,
         isLoading,
@@ -86,7 +88,7 @@ const TableView = () => {
             <div className="w-full h-full flex flex-col items-center justify-center text-center">
                 <CircleX size={24} className="text-red-500" />
                 <div className="text-lg text-red-500">
-                    Error fetching the data
+                    {t("missions.errorFetching")}
                 </div>
             </div>
         );
@@ -108,7 +110,7 @@ const TableView = () => {
                         className="rounded-none"
                         variant={status === "all" ? "secondary" : "ghost"}
                     >
-                        All
+                        {t("missions.filter.all")}
                     </Button>
                     <Button
                         onClick={() => handleChangeStatus("active")}
@@ -116,7 +118,7 @@ const TableView = () => {
                         className="rounded-none"
                         variant={status === "active" ? "secondary" : "ghost"}
                     >
-                        Active
+                        {t("missions.filter.active")}
                     </Button>
                     <Button
                         onClick={() => handleChangeStatus("finished")}
@@ -124,7 +126,7 @@ const TableView = () => {
                         className="rounded-none"
                         variant={status === "finished" ? "secondary" : "ghost"}
                     >
-                        Finished
+                        {t("missions.filter.finished")}
                     </Button>
                     <Button
                         onClick={() => handleChangeStatus("inactive")}
@@ -132,11 +134,11 @@ const TableView = () => {
                         className="rounded-none"
                         variant={status === "inactive" ? "secondary" : "ghost"}
                     >
-                        Inactive
+                        {t("missions.filter.inactive")}
                     </Button>
                 </div>
                 <Input
-                    placeholder="Search mission..."
+                    placeholder={t("missions.searchPlaceholder")}
                     className="w-72"
                     value={searchTerm}
                     onChange={(e) => handleSearchMission(e.target.value)}
@@ -160,11 +162,11 @@ const TableView = () => {
                                     onCheckedChange={handleToggleAllMissions}
                                 />
                             </TableHead>
-                            <TableHead>No</TableHead>
-                            <TableHead>Name</TableHead>
-                            <TableHead>Category</TableHead>
-                            <TableHead>Status</TableHead>
-                            <TableHead>Updated At</TableHead>
+                            <TableHead>{t("missions.table.no")}</TableHead>
+                            <TableHead>{t("missions.table.name")}</TableHead>
+                            <TableHead>{t("missions.table.category")}</TableHead>
+                            <TableHead>{t("missions.table.status")}</TableHead>
+                            <TableHead>{t("missions.table.updatedAt")}</TableHead>
                             <TableHead></TableHead>
                         </TableRow>
                     </TableHeader>
@@ -209,14 +211,14 @@ const TableView = () => {
                         ) : (
                             <TableRow>
                                 <TableCell colSpan={6} className="text-center">
-                                    No missions available.
+                                    {t("missions.table.noMissionsAvailable")}
                                 </TableCell>
                             </TableRow>
                         )}
                     </TableBody>
                     <TableFooter>
                         <TableRow>
-                            <TableCell colSpan={6}>Total missions</TableCell>
+                            <TableCell colSpan={6}>{t("missions.table.totalMissions")}</TableCell>
                             <TableCell className="text-right">
                                 {totalCount}
                             </TableCell>

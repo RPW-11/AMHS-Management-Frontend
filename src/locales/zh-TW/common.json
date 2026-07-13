@@ -1,0 +1,363 @@
+{
+    "header": {
+        "searchPlaceholder": "搜尋任何內容",
+        "language": "語言"
+    },
+    "dashboard": {
+        "greeting": "哈囉 Rainata Putra，",
+        "viewDetails": "查看詳情",
+        "productSummary": {
+            "rgv": "軌道導引車",
+            "agv": "自動導引車",
+            "wis": "倉儲整合系統",
+            "stock": "庫存"
+        },
+        "employeeSummary": {
+            "title": "員工出勤",
+            "subtitle": "查看今日員工出勤狀況",
+            "employee": "員工",
+            "status": "狀態",
+            "time": "時間",
+            "employeeAtOffice": "在辦公室員工",
+            "position": {
+                "staff": "職員",
+                "manager": "經理",
+                "engineer": "工程師"
+            },
+            "attendanceStatus": {
+                "onTime": "準時",
+                "late": "遲到",
+                "absent": "缺席"
+            }
+        }
+    },
+    "sidebar": {
+        "logout": "登出",
+        "menu": {
+            "dashboard": "儀表板",
+            "employees": "員工",
+            "missions": "任務",
+            "tools": "工具",
+            "notification": "通知"
+        }
+    },
+    "pagination": {
+        "pageOf": "第 {{page}} 頁，共 {{totalPages}} 頁",
+        "rowsPerPage": "每頁筆數",
+        "numberOfRows": "筆數"
+    },
+    "missions": {
+        "tabs": {
+            "table": "表格",
+            "kanban": "看板"
+        },
+        "tableView": {
+            "title": "表格檢視",
+            "subtitle": "即時監控、篩選並管理進行中的任務部署與團隊指派。"
+        },
+        "addMission": "新增任務",
+        "filter": {
+            "all": "全部",
+            "active": "進行中",
+            "finished": "已完成",
+            "inactive": "未啟用"
+        },
+        "searchPlaceholder": "搜尋任務...",
+        "errorFetching": "資料讀取失敗",
+        "table": {
+            "no": "編號",
+            "name": "名稱",
+            "category": "類別",
+            "status": "狀態",
+            "updatedAt": "更新時間",
+            "noMissionsAvailable": "目前沒有任務。",
+            "totalMissions": "任務總數"
+        },
+        "status": {
+            "active": "進行中",
+            "inactive": "未啟用",
+            "finished": "已完成",
+            "failed": "失敗",
+            "processing": "處理中"
+        },
+        "category": {
+            "routePlanning": "路徑規劃",
+            "normal": "一般",
+            "notFound": "找不到"
+        },
+        "actions": {
+            "viewDetail": "查看詳情",
+            "delete": "刪除",
+            "cancel": "取消",
+            "confirmDeleteTitle": "您確定要這麼做嗎？",
+            "confirmDeleteDescription": "此操作將永久刪除任務 <b>{{name}}</b>。"
+        },
+        "selectedActions": {
+            "missionsSelected": "已選取 {{count}} 個任務",
+            "delete": "刪除"
+        },
+        "kanban": {
+            "noActiveMissions": "目前沒有進行中的任務",
+            "noFinishedMissions": "目前沒有已完成的任務",
+            "noInactiveMissions": "目前沒有未啟用的任務",
+            "moveTo": "移至{{status}}",
+            "delete": "刪除"
+        },
+        "detail": {
+            "notFound": "找不到此任務",
+            "back": "返回",
+            "description": "任務說明",
+            "detail": "任務詳情",
+            "processing": "此任務仍在處理中",
+            "noRouteConfigured": "此任務尚未設定路徑，點擊<rgvLink>這裡</rgvLink>進行規劃。",
+            "metadata": {
+                "type": "類型",
+                "deadline": "截止日期",
+                "leader": "負責人",
+                "createdDate": "建立日期",
+                "status": "狀態",
+                "members": "成員"
+            },
+            "editDescription": {
+                "placeholder": "輸入說明內容...",
+                "cancel": "取消",
+                "save": "儲存",
+                "noDescription": "尚無說明"
+            },
+            "members": {
+                "membersCount": "{{count}} 位成員",
+                "dialogTitle": "專案成員",
+                "dialogDescription": "管理此任務的成員",
+                "missionRole": "任務角色",
+                "changeRole": "變更角色",
+                "removeMember": "移除成員"
+            },
+            "memberSearch": {
+                "placeholder": "搜尋或新增成員",
+                "noEmployeeFound": "找不到員工"
+            },
+            "routePlanning": {
+                "algorithm": "演算法",
+                "rowDimension": "列維度",
+                "columnDimension": "欄維度",
+                "actualWidthLength": "實際寬度長度",
+                "actualHeightLength": "實際高度長度",
+                "totalThroughput": "總產能",
+                "trackLength": "軌道長度",
+                "maxNumberOfRgvs": "最大 RGV 數量",
+                "meter": "{{value}} 公尺",
+                "productsPerHour": "每小時 {{value}} 件產品",
+                "rgvs": "{{value}} 台 RGV",
+                "solution": "方案",
+                "chooseSolution": "選擇方案",
+                "downloadImage": "下載圖片",
+                "solutionName": "方案 {{num}}"
+            }
+        },
+        "add": {
+            "title": "新增任務。",
+            "name": "名稱",
+            "namePlaceholder": "輸入任務名稱...",
+            "category": "類別",
+            "missionCategory": "任務類別",
+            "selectMissionCategory": "選擇任務類別",
+            "description": "說明",
+            "descriptionPlaceholder": "輸入任務說明...",
+            "dueDate": "截止日期",
+            "dueTime": "截止時間",
+            "addButton": "新增",
+            "errors": {
+                "nameRequired": "名稱不可為空",
+                "deadlineInPast": "截止日期已過去：{{date}} 早於今天"
+            },
+            "toast": {
+                "adding": "新增任務中...",
+                "added": "任務已新增",
+                "unauthorized": "未授權",
+                "addFailed": "新增失敗"
+            }
+        }
+    },
+    "employees": {
+        "errorFetching": "資料讀取失敗",
+        "title": "員工詳細資訊",
+        "subtitle": "輕鬆監控與管理您的員工。",
+        "addEmployee": "新增員工",
+        "table": {
+            "no": "編號",
+            "name": "姓名",
+            "age": "年齡",
+            "dateOfBirth": "出生日期",
+            "email": "電子郵件",
+            "phoneNumber": "電話號碼",
+            "action": "操作",
+            "totalEmployees": "員工總數"
+        },
+        "actions": {
+            "profile": "個人資料",
+            "email": "寄送郵件"
+        },
+        "selectedActions": {
+            "employeesSelected": "已選取 {{count}} 位員工",
+            "email": "寄送郵件"
+        },
+        "positions": {
+            "staff": "職員",
+            "seniorStaff": "資深職員",
+            "supervisor": "主管",
+            "manager": "經理"
+        },
+        "errors": {
+            "firstNameRequired": "名字不可為空",
+            "lastNameRequired": "姓氏不可為空",
+            "passwordRequired": "密碼不可為空",
+            "emailRequired": "請輸入電子郵件",
+            "emailInvalid": "電子郵件格式錯誤",
+            "emailTooLong": "電子郵件過長（最多 254 字元）",
+            "phoneRequired": "請輸入電話號碼",
+            "phoneInvalidChars": "僅允許數字與「+」符號",
+            "phoneTooShort": "號碼過短（至少 8 碼）",
+            "phoneTooLong": "號碼過長（最多 15 碼）"
+        },
+        "add": {
+            "verifyingAccess": "正在驗證權限",
+            "title": "填寫員工資訊",
+            "firstName": "名字",
+            "firstNamePlaceholder": "輸入員工名字",
+            "lastName": "姓氏",
+            "lastNamePlaceholder": "輸入員工姓氏",
+            "email": "電子郵件",
+            "emailPlaceholder": "輸入員工電子郵件",
+            "password": "密碼",
+            "passwordPlaceholder": "輸入員工密碼",
+            "dateOfBirth": "出生日期",
+            "phoneNumber": "電話號碼",
+            "phoneNumberPlaceholder": "輸入員工電話號碼",
+            "position": "職位",
+            "positionPlaceholder": "輸入員工職位",
+            "addButton": "新增"
+        },
+        "profile": {
+            "notFound": "找不到此員工",
+            "title": "員工個人資料",
+            "profileImage": "個人照片",
+            "firstName": "名字",
+            "firstNamePlaceholder": "輸入您的名字...",
+            "lastName": "姓氏",
+            "lastNamePlaceholder": "輸入您的姓氏...",
+            "email": "電子郵件",
+            "emailPlaceholder": "輸入您的電子郵件...",
+            "phoneNumber": "電話號碼",
+            "phoneNumberPlaceholder": "輸入您的電話號碼...",
+            "position": "職位",
+            "positionPlaceholder": "選擇員工職位",
+            "dateOfBirth": "出生日期",
+            "save": "儲存",
+            "notImplemented": "此功能尚未實作。點擊的值：{{value}}"
+        }
+    },
+    "toolCase": {
+        "title": "AMHS 工具",
+        "subtitle": "與自動化物料搬運系統（AMHS）相關的工具清單",
+        "rgvRoutePlanning": {
+            "title": "RGV 路徑規劃",
+            "description": "根據所選演算法找出最佳的 RGV 路徑（軌道）",
+            "pageSubtitle": "為您的 RGV 系統找出最有效率的路徑",
+            "uploadImage": "上傳配置圖",
+            "rowDimension": "列維度",
+            "rowDimensionHelper": "列維度越大，運算量越高",
+            "columnDimension": "欄維度",
+            "columnDimensionHelper": "欄維度越大，運算量越高",
+            "widthLength": "寬度長度",
+            "widthLengthHelper": "以公尺為單位的實際寬度",
+            "heightLength": "高度長度",
+            "heightLengthHelper": "以公尺為單位的實際高度",
+            "algorithms": "演算法",
+            "submit": "提交",
+            "toast": {
+                "processing": "路徑正在處理中！",
+                "solving": "正在求解路徑，這可能需要一些時間...",
+                "missingImageOrMission": "圖片或任務 ID 不可為空"
+            },
+            "modeToggle": {
+                "mapTools": "地圖工具",
+                "eraseTile": "清除格子",
+                "addObstacle": "新增障礙物",
+                "editTile": "編輯格子",
+                "addSolutionPath": "新增解決路徑",
+                "resetMap": "重設地圖",
+                "automatedLabelling": "自動標記"
+            },
+            "editPointDialog": {
+                "title": "編輯點位",
+                "description": "填寫此點位的資訊",
+                "pointName": "點位名稱",
+                "pointNamePlaceholder": "輸入點位名稱",
+                "pointType": "點位類型",
+                "selectPointType": "選擇點位類型",
+                "processingTime": "處理時間（秒）",
+                "processingTimePlaceholder": "輸入處理時間",
+                "save": "儲存"
+            },
+            "pointCategory": {
+                "obstacle": "障礙物",
+                "station": "站點"
+            },
+            "clusters": {
+                "defineClusters": "定義群集",
+                "addCluster": "新增群集",
+                "addClusterHelper": "若要新增群集，至少需要一個類型為「站點」的站點",
+                "defineClusterFlow": "定義群集流程",
+                "addClusterFlow": "新增群集流程",
+                "addClusterFlowHelper": "若要新增群集流程，至少需要定義兩個群集",
+                "gridPreviewAlt": "網格預覽"
+            },
+            "clusterEditor": {
+                "namePlaceholder": "群集名稱",
+                "add": "新增",
+                "stations": "站點"
+            },
+            "clusterFlowEditor": {
+                "add": "新增",
+                "clusters": "群集",
+                "clusterFallbackName": "群集 {{num}}"
+            },
+            "errors": {
+                "nonConnectedPath": "無法新增不相連的路徑",
+                "cannotAddSamePath": "無法新增相同的路徑"
+            }
+        },
+        "algorithms": {
+            "geneticAlgorithm": {
+                "name": "基因演算法（GA）",
+                "description": "透過染色體交配找出最佳路徑，適合中型矩陣使用"
+            }
+        }
+    },
+    "notification": {
+        "title": "通知",
+        "subtitle": "在這裡查看所有通知。",
+        "errorOccurred": "發生錯誤",
+        "noNotifications": "目前沒有通知",
+        "markAsRead": "標示為已讀",
+        "markAllAsRead": "全部標示為已讀",
+        "viewAllNotification": "查看所有通知",
+        "delete": "刪除",
+        "cancel": "取消",
+        "confirmDeleteTitle": "您確定要這麼做嗎？",
+        "confirmDeleteDescription": "此操作將永久刪除此通知。",
+        "displayTypes": {
+            "all": "全部",
+            "unread": "未讀",
+            "read": "已讀"
+        }
+    },
+    "login": {
+        "subtitle": "請登入以繼續",
+        "email": "電子郵件",
+        "emailPlaceholder": "輸入您的電子郵件",
+        "password": "密碼",
+        "passwordPlaceholder": "輸入您的密碼",
+        "loginButton": "登入"
+    }
+}

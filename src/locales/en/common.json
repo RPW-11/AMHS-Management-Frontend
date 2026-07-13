@@ -1,0 +1,363 @@
+{
+    "header": {
+        "searchPlaceholder": "Search for anything",
+        "language": "Language"
+    },
+    "dashboard": {
+        "greeting": "Hello Rainata Putra,",
+        "viewDetails": "View details",
+        "productSummary": {
+            "rgv": "Rail-Guided Vehicle",
+            "agv": "Automated-Guided Vehicle",
+            "wis": "Warehouse Integration System",
+            "stock": "stock"
+        },
+        "employeeSummary": {
+            "title": "Employees Attendance",
+            "subtitle": "Check the employees attendance today",
+            "employee": "Employee",
+            "status": "Status",
+            "time": "Time",
+            "employeeAtOffice": "Employee at office",
+            "position": {
+                "staff": "Staff",
+                "manager": "Manager",
+                "engineer": "Engineer"
+            },
+            "attendanceStatus": {
+                "onTime": "On time",
+                "late": "Late",
+                "absent": "Absent"
+            }
+        }
+    },
+    "sidebar": {
+        "logout": "Log out",
+        "menu": {
+            "dashboard": "Dashboard",
+            "employees": "Employees",
+            "missions": "Missions",
+            "tools": "Tools",
+            "notification": "Notification"
+        }
+    },
+    "pagination": {
+        "pageOf": "Page {{page}} of {{totalPages}}",
+        "rowsPerPage": "Rows per page",
+        "numberOfRows": "Number of rows"
+    },
+    "missions": {
+        "tabs": {
+            "table": "Table",
+            "kanban": "Kanban"
+        },
+        "tableView": {
+            "title": "Table View",
+            "subtitle": "Monitor, filter, and manage active mission deployments and team assignments in real-time."
+        },
+        "addMission": "Add mission",
+        "filter": {
+            "all": "All",
+            "active": "Active",
+            "finished": "Finished",
+            "inactive": "Inactive"
+        },
+        "searchPlaceholder": "Search mission...",
+        "errorFetching": "Error fetching the data",
+        "table": {
+            "no": "No",
+            "name": "Name",
+            "category": "Category",
+            "status": "Status",
+            "updatedAt": "Updated At",
+            "noMissionsAvailable": "No missions available.",
+            "totalMissions": "Total missions"
+        },
+        "status": {
+            "active": "Active",
+            "inactive": "Inactive",
+            "finished": "Finished",
+            "failed": "Failed",
+            "processing": "Processing"
+        },
+        "category": {
+            "routePlanning": "Route Planning",
+            "normal": "Normal",
+            "notFound": "Not found"
+        },
+        "actions": {
+            "viewDetail": "View Detail",
+            "delete": "Delete",
+            "cancel": "Cancel",
+            "confirmDeleteTitle": "Are you absolutely sure?",
+            "confirmDeleteDescription": "This will permanently delete mission <b>{{name}}</b> from the system."
+        },
+        "selectedActions": {
+            "missionsSelected": "{{count}} missions selected",
+            "delete": "Delete"
+        },
+        "kanban": {
+            "noActiveMissions": "There are no active missions",
+            "noFinishedMissions": "There are no finished missions",
+            "noInactiveMissions": "There are no inactive missions",
+            "moveTo": "Move to {{status}}",
+            "delete": "Delete"
+        },
+        "detail": {
+            "notFound": "Mission is not found",
+            "back": "Back",
+            "description": "Mission Description",
+            "detail": "Mission Detail",
+            "processing": "This mission is still being processed",
+            "noRouteConfigured": "This mission has no route configured, click <rgvLink>here</rgvLink> to solve one.",
+            "metadata": {
+                "type": "Type",
+                "deadline": "Deadline",
+                "leader": "Leader",
+                "createdDate": "Created Date",
+                "status": "Status",
+                "members": "Members"
+            },
+            "editDescription": {
+                "placeholder": "Write some description...",
+                "cancel": "Cancel",
+                "save": "Save",
+                "noDescription": "No description"
+            },
+            "members": {
+                "membersCount": "{{count}} members",
+                "dialogTitle": "Project members",
+                "dialogDescription": "Manage the members in your mission",
+                "missionRole": "Mission Role",
+                "changeRole": "Change Role",
+                "removeMember": "Remove member"
+            },
+            "memberSearch": {
+                "placeholder": "Search or add members",
+                "noEmployeeFound": "No employee found"
+            },
+            "routePlanning": {
+                "algorithm": "Algorithm",
+                "rowDimension": "Row Dimension",
+                "columnDimension": "Column Dimension",
+                "actualWidthLength": "Actual Width Length",
+                "actualHeightLength": "Actual Height Length",
+                "totalThroughput": "Total Throughput",
+                "trackLength": "Track Length",
+                "maxNumberOfRgvs": "Maximum Number of RGVs",
+                "meter": "{{value}} meter",
+                "productsPerHour": "{{value}} products per hour",
+                "rgvs": "{{value}} rgvs",
+                "solution": "Solution",
+                "chooseSolution": "Choose solution",
+                "downloadImage": "Download image",
+                "solutionName": "Solution {{num}}"
+            }
+        },
+        "add": {
+            "title": "Add a mission.",
+            "name": "Name",
+            "namePlaceholder": "Enter the mission's name...",
+            "category": "Category",
+            "missionCategory": "Mission Category",
+            "selectMissionCategory": "Select mission category",
+            "description": "Description",
+            "descriptionPlaceholder": "Enter the mission's description...",
+            "dueDate": "Due Date",
+            "dueTime": "Due Time",
+            "addButton": "Add",
+            "errors": {
+                "nameRequired": "Name can't be empty",
+                "deadlineInPast": "Deadline is in the past: {{date}} < today"
+            },
+            "toast": {
+                "adding": "Adding mission..",
+                "added": "Mission added",
+                "unauthorized": "Unauthorized",
+                "addFailed": "Add failed"
+            }
+        }
+    },
+    "employees": {
+        "errorFetching": "Error fetching the data",
+        "title": "Employees Detailed Information",
+        "subtitle": "Monitor and manage your employees easily.",
+        "addEmployee": "Add Employee",
+        "table": {
+            "no": "No",
+            "name": "Name",
+            "age": "Age",
+            "dateOfBirth": "Date of Birth",
+            "email": "Email",
+            "phoneNumber": "Phone Number",
+            "action": "Action",
+            "totalEmployees": "Total Employees"
+        },
+        "actions": {
+            "profile": "Profile",
+            "email": "Email"
+        },
+        "selectedActions": {
+            "employeesSelected": "{{count}} employees selected",
+            "email": "Email"
+        },
+        "positions": {
+            "staff": "Staff",
+            "seniorStaff": "Senior Staff",
+            "supervisor": "Supervisor",
+            "manager": "Manager"
+        },
+        "errors": {
+            "firstNameRequired": "First name can't be empty",
+            "lastNameRequired": "Last name can't be empty",
+            "passwordRequired": "Password can't be empty",
+            "emailRequired": "Email is required",
+            "emailInvalid": "Invalid email format",
+            "emailTooLong": "Email too long (max 254 chars)",
+            "phoneRequired": "Phone number is required",
+            "phoneInvalidChars": "Only numbers and '+' allowed",
+            "phoneTooShort": "Too short (min 8 digits)",
+            "phoneTooLong": "Too long (max 15 digits)"
+        },
+        "add": {
+            "verifyingAccess": "Verifying access",
+            "title": "Fill out the employee information",
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Enter employee's first name",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Enter employee's last name",
+            "email": "Email",
+            "emailPlaceholder": "Enter employee's email",
+            "password": "Password",
+            "passwordPlaceholder": "Enter employee's password",
+            "dateOfBirth": "Date of Birth",
+            "phoneNumber": "Phone Number",
+            "phoneNumberPlaceholder": "Enter employee's phone number",
+            "position": "Position",
+            "positionPlaceholder": "Enter employee's position",
+            "addButton": "Add"
+        },
+        "profile": {
+            "notFound": "Employee is not found",
+            "title": "Employee Profile",
+            "profileImage": "Profile Image",
+            "firstName": "First Name",
+            "firstNamePlaceholder": "Enter your first name...",
+            "lastName": "Last Name",
+            "lastNamePlaceholder": "Enter your last name...",
+            "email": "Email",
+            "emailPlaceholder": "Enter your email...",
+            "phoneNumber": "Phone Number",
+            "phoneNumberPlaceholder": "Enter your phone number...",
+            "position": "Position",
+            "positionPlaceholder": "Select employee position",
+            "dateOfBirth": "Date of Birth",
+            "save": "Save",
+            "notImplemented": "This function is not implemented yet. Clicked value: {{value}}"
+        }
+    },
+    "toolCase": {
+        "title": "AMHS Tools",
+        "subtitle": "A list of tools related to Automated Material Handling System (AMHS)",
+        "rgvRoutePlanning": {
+            "title": "RGV Route Planning",
+            "description": "Find the most optimal RGV route (track) based on the chosen algorithm",
+            "pageSubtitle": "Find the some routes that are most efficient for your RGV system",
+            "uploadImage": "Upload layout image",
+            "rowDimension": "Row dimension",
+            "rowDimensionHelper": "Bigger row dimension will yield to more computation",
+            "columnDimension": "Column dimension",
+            "columnDimensionHelper": "Bigger column dimension will yield to more computation",
+            "widthLength": "Width length",
+            "widthLengthHelper": "The actual width length in meter",
+            "heightLength": "Height length",
+            "heightLengthHelper": "The actual height length in meter",
+            "algorithms": "Algorithms",
+            "submit": "Submit",
+            "toast": {
+                "processing": "The route is being processed!",
+                "solving": "Solving the route. This may take a while...",
+                "missingImageOrMission": "Image or mission id cannot be empty"
+            },
+            "modeToggle": {
+                "mapTools": "Map tools",
+                "eraseTile": "Erase tile",
+                "addObstacle": "Add obstacle",
+                "editTile": "Edit tile",
+                "addSolutionPath": "Add solution path",
+                "resetMap": "Reset map",
+                "automatedLabelling": "Automated labelling"
+            },
+            "editPointDialog": {
+                "title": "Edit Point",
+                "description": "Fill the information of the point",
+                "pointName": "Point Name",
+                "pointNamePlaceholder": "Enter the point name",
+                "pointType": "Point Type",
+                "selectPointType": "Select point type",
+                "processingTime": "Processing time (s)",
+                "processingTimePlaceholder": "Enter the processing time",
+                "save": "Save"
+            },
+            "pointCategory": {
+                "obstacle": "Obstacle",
+                "station": "Station"
+            },
+            "clusters": {
+                "defineClusters": "Define clusters",
+                "addCluster": "Add Cluster",
+                "addClusterHelper": "Inorder to add a cluster, you need to have at least one station with a type of \"Station\"",
+                "defineClusterFlow": "Define cluster flow",
+                "addClusterFlow": "Add Cluster Flow",
+                "addClusterFlowHelper": "Inorder to add a cluster flow, you need to have at least two clusters defined",
+                "gridPreviewAlt": "Grid preview"
+            },
+            "clusterEditor": {
+                "namePlaceholder": "Cluster name",
+                "add": "Add",
+                "stations": "Stations"
+            },
+            "clusterFlowEditor": {
+                "add": "Add",
+                "clusters": "Clusters",
+                "clusterFallbackName": "Cluster {{num}}"
+            },
+            "errors": {
+                "nonConnectedPath": "Cannot add non-connected path",
+                "cannotAddSamePath": "Cannot add the same path"
+            }
+        },
+        "algorithms": {
+            "geneticAlgorithm": {
+                "name": "Genetic Algorithm (GA)",
+                "description": "Find optimal route based on chromosome crossover. Quite optimal for mid-sized matrix"
+            }
+        }
+    },
+    "notification": {
+        "title": "Notifications",
+        "subtitle": "View all notifications here.",
+        "errorOccurred": "Error has occured",
+        "noNotifications": "No notifications",
+        "markAsRead": "Mark as read",
+        "markAllAsRead": "Mark all as read",
+        "viewAllNotification": "View all notification",
+        "delete": "Delete",
+        "cancel": "Cancel",
+        "confirmDeleteTitle": "Are you absolutely sure?",
+        "confirmDeleteDescription": "This will permanently delete this notification from the system.",
+        "displayTypes": {
+            "all": "All",
+            "unread": "Unread",
+            "read": "Read"
+        }
+    },
+    "login": {
+        "subtitle": "Please login to continue",
+        "email": "Email",
+        "emailPlaceholder": "Enter your email",
+        "password": "Password",
+        "passwordPlaceholder": "Enter your password",
+        "loginButton": "Login"
+    }
+}

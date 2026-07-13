@@ -8,6 +8,7 @@ import { usePathname, useRouter } from "next/navigation";
 import SidebarItem from "./sidebar-item";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "./ui/tooltip";
 import { Button } from "./ui/button";
+import { useTranslation } from "react-i18next";
 
 interface SidebarProps {
     isOpen: boolean,
@@ -18,6 +19,7 @@ interface SidebarProps {
 const Sidebar = ({ isOpen, onOpenChange, sidebarWidth }: SidebarProps) => {
     const { push } = useRouter();
     const { logout } = useUserStore();
+    const { t } = useTranslation();
     const pathname = usePathname();
     const currPath = "/" + pathname.split("/")[1];
 
@@ -59,11 +61,11 @@ const Sidebar = ({ isOpen, onOpenChange, sidebarWidth }: SidebarProps) => {
 
                     <div className="flex flex-col gap-2">
                         {SIDEBAR_MENU.map((menu) => (
-                            <SidebarItem 
-                                key={menu.name} 
-                                menu={menu} 
-                                isOpen={isOpen} 
-                                isActive={currPath === menu.path} 
+                            <SidebarItem
+                                key={menu.path}
+                                menu={menu}
+                                isOpen={isOpen}
+                                isActive={currPath === menu.path}
                             />
                         ))}
                     </div>
@@ -99,13 +101,13 @@ const Sidebar = ({ isOpen, onOpenChange, sidebarWidth }: SidebarProps) => {
                                     }}
                                     className="whitespace-nowrap overflow-hidden text-sm"
                                 >
-                                    Log out
+                                    {t("sidebar.logout")}
                                 </motion.span>
                             )}
                         </AnimatePresence>
                         </Button>
                     </TooltipTrigger>
-                    {!isOpen && <TooltipContent side="right">Log out</TooltipContent>}
+                    {!isOpen && <TooltipContent side="right">{t("sidebar.logout")}</TooltipContent>}
                 </Tooltip>
             </motion.nav>
         </TooltipProvider>

@@ -10,6 +10,7 @@ import MissionMetadata from "./mission-metadata";
 import { Label } from "@/components/ui/label";
 import Link from "next/link";
 import MissionDescription from "@/components/mission/mission-description";
+import { Trans, useTranslation } from "react-i18next";
 
 const MissionDetailPage = () => {
     const { missionId } = useParams();
@@ -17,6 +18,7 @@ const MissionDetailPage = () => {
         typeof missionId === "string" ? missionId : undefined,
     );
     const { push } = useRouter();
+    const { t } = useTranslation();
 
     if (isLoading || isFetching) {
         return (
@@ -29,7 +31,7 @@ const MissionDetailPage = () => {
     if (!mission || error) {
         return (
             <div className="w-full h-full flex justify-center">
-                Mission is not found
+                {t("missions.detail.notFound")}
             </div>
         );
     }
@@ -37,43 +39,46 @@ const MissionDetailPage = () => {
     return (
         <div className="rounded-md bg-white py-4 px-6 space-y-6">
             <Button size={"sm"} onClick={() => push(Routes.Missions)}>
-                Back
+                {t("missions.detail.back")}
             </Button>
             <h1 className="font-medium text-xl">{mission.name}</h1>
             <MissionMetadata mission={mission} />
 
             <div className="space-y-4">
-                <Label>Mission Description</Label>
+                <Label>{t("missions.detail.description")}</Label>
                 <MissionDescription mission={mission}/>
             </div>
 
             {mission.category === MissionCategory.RoutePlanning && (
                 <div className="py-4 space-y-4">
-                    <Label>Mission Detail</Label>
+                    <Label>{t("missions.detail.detail")}</Label>
                     {mission.routePlanningSummary && mission.status == MissionStatus.Finished ? (
                         <RoutePlanningSummarySection
                             routePlanningSumarry={mission.routePlanningSummary}
                         />
-                    ) : 
+                    ) :
                     mission.status === MissionStatus.Processing ?
                     (
                         <div className="bg-gray-100 text-sm p-2 rounded-md text-muted-foreground">
-                            This mission is still being processed
+                            {t("missions.detail.processing")}
                         </div>
                     )
                     :
                     (
                         <div className="bg-gray-100 text-sm p-2 rounded-md text-muted-foreground">
-                            This mission has no route configured, click{" "}
-                            <Link
-                                href={ToolCaseRoutes.RgvRoutePlanning(
-                                    mission.id,
-                                )}
-                                className="text-blue-500 hover:underline"
-                            >
-                                here
-                            </Link>{" "}
-                            to solve one.
+                            <Trans
+                                i18nKey="missions.detail.noRouteConfigured"
+                                components={{
+                                    rgvLink: (
+                                        <Link
+                                            href={ToolCaseRoutes.RgvRoutePlanning(
+                                                mission.id,
+                                            )}
+                                            className="text-blue-500 hover:underline"
+                                        />
+                                    ),
+                                }}
+                            />
                         </div>
                     )}
                 </div>

@@ -12,52 +12,55 @@ import {
     Loader,
     Users,
 } from "lucide-react";
+import { useTranslation } from "react-i18next";
 
 interface MissionMetadataProps {
     mission: MissionDetail;
 }
 
 const MissionMetadata = ({ mission }: MissionMetadataProps) => {
+    const { t } = useTranslation();
+
     return (
         <div className="grid grid-cols-6 text-sm gap-2">
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <Layers2 size={15} />
-                <div className="font-medium">Type</div>
+                <div className="font-medium">{t("missions.detail.metadata.type")}</div>
             </div>
             <div className="col-span-5">
                 <MissionCategoryBadge category={mission.category} />
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <CalendarFold size={15} />
-                <div className="font-medium">Deadline</div>
+                <div className="font-medium">{t("missions.detail.metadata.deadline")}</div>
             </div>
             <div className="col-span-5">
                 {parsedTimeStampToDateTime(mission.finishedAt)}
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <CircleUserRound size={15} />
-                <div className="font-medium">Leader</div>
+                <div className="font-medium">{t("missions.detail.metadata.leader")}</div>
             </div>
             <div className="col-span-5">
                 <MissionMember {...mission.leader} />
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <CalendarFold size={15} />
-                <div className="font-medium">Created Date</div>
+                <div className="font-medium">{t("missions.detail.metadata.createdDate")}</div>
             </div>
             <div className="col-span-5">
                 {parsedTimeStampToDateTime(mission.createdAt)}
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <Loader size={15} />
-                <div className="font-medium">Status</div>
+                <div className="font-medium">{t("missions.detail.metadata.status")}</div>
             </div>
             <div className="col-span-5">
                 <MissionStatusBadge mission={mission}/>
             </div>
             <div className="col-span-1 flex items-center gap-2 text-muted-foreground">
                 <Users size={15} />
-                <div className="font-medium">Members</div>
+                <div className="font-medium">{t("missions.detail.metadata.members")}</div>
             </div>
             <div className="col-span-5">
                 <MissionMembers mission={mission} />

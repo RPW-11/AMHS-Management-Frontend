@@ -1,23 +1,26 @@
 "use client"
 
 import { CarFront } from "lucide-react"
+import { useTranslation } from "react-i18next"
 
 const ProductSummary = () => {
+    const { t } = useTranslation()
+
     return (
         <div className="grid grid-cols-3 gap-4 w-full">
             <div className="col-span-3 lg:col-span-1">
-                <ProductCard 
-                productName="Rail-Guided Vehicle"
+                <ProductCard
+                productName={t("dashboard.productSummary.rgv")}
                 productStock={200}/>
             </div>
             <div className="col-span-3 lg:col-span-1">
-                <ProductCard 
-                productName="Automated-Guided Vehicle"
+                <ProductCard
+                productName={t("dashboard.productSummary.agv")}
                 productStock={200}/>
             </div>
             <div className="col-span-3 lg:col-span-1">
-                <ProductCard 
-                productName="Warehouse Integration System"
+                <ProductCard
+                productName={t("dashboard.productSummary.wis")}
                 productStock={200}/>
             </div>
         </div>
@@ -35,6 +38,8 @@ const ProductCard = ({
     productName,
     productStock
 }: ProductCardProps) => {
+    const { t } = useTranslation()
+
     return (
         <div className="rounded-md border p-4 bg-white space-y-3 text-primary flex flex-col justify-between h-full">
             <div className="flex items-center gap-3 font-medium">
@@ -45,10 +50,10 @@ const ProductCard = ({
             </div>
             <div className="flex gap-2 items-end justify-center">
                 <h1 className="text-3xl font-semibold">{ productStock }</h1>
-                <p className="font-medium">stock</p>
+                <p className="font-medium">{t("dashboard.productSummary.stock")}</p>
             </div>
             <div className="flex justify-end text-xs">
-                <a href="#" className="hover:underline">View details</a>
+                <a href="#" className="hover:underline">{t("dashboard.viewDetails")}</a>
             </div>
         </div>
     )

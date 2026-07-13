@@ -5,10 +5,12 @@ import { EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
 import { ApiError } from "@/types/general";
 import { useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react"
+import { useTranslation } from "react-i18next"
 
 export const useEmployeeRegis = () => {
     const { user } = useUserStore()
     const { push } = useRouter()
+    const { t } = useTranslation()
     const [employeeRegisReq, setEmployeeRegisReq] = useState<EmployeeRegisterRequest>({
         firstName: "",
         lastName: "",
@@ -49,30 +51,30 @@ export const useEmployeeRegis = () => {
     const validateField = useCallback((field: keyof EmployeeRegisterRequest, value: string): string => {
         switch (field) {
             case 'firstName':
-                return value.trim() === "" ? "First name can't be empty" : "";
+                return value.trim() === "" ? t("employees.errors.firstNameRequired") : "";
             case 'lastName':
-                return value.trim() === "" ? "Last name can't be empty" : "";
+                return value.trim() === "" ? t("employees.errors.lastNameRequired") : "";
             case 'password':
-                return value.trim() === "" ? "Password can't be empty" : "";
+                return value.trim() === "" ? t("employees.errors.passwordRequired") : "";
             case 'email': {
-                if (!value) return "Email is required";
+                if (!value) return t("employees.errors.emailRequired");
                 const regex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-                if (!regex.test(value)) return "Invalid email format";
-                if (value.length > 254) return "Email too long (max 254 chars)";
+                if (!regex.test(value)) return t("employees.errors.emailInvalid");
+                if (value.length > 254) return t("employees.errors.emailTooLong");
                 return "";
             }
             case 'phoneNumber': {
-                if (!value) return "Phone number is required";
-                if (!/^\+?\d+$/.test(value)) return "Only numbers and '+' allowed";
+                if (!value) return t("employees.errors.phoneRequired");
+                if (!/^\+?\d+$/.test(value)) return t("employees.errors.phoneInvalidChars");
                 const digitsOnly = value.replace(/^\+/, '');
-                if (digitsOnly.length < 8) return "Too short (min 8 digits)";
-                if (value.length > 16) return "Too long (max 15 digits)";
+                if (digitsOnly.length < 8) return t("employees.errors.phoneTooShort");
+                if (value.length > 16) return t("employees.errors.phoneTooLong");
                 return "";
             }
             default:
                 return "";
         }
-    }, []);
+    }, [t]);
 
     const [errors, setErrors] = useState<Record<string, string>>({
         firstName: "",

@@ -3,6 +3,7 @@ import { Calendar as CalendarComp } from "@/components/ui/calendar"
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover"
 import { Calendar } from "lucide-react"
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 
 interface CustomDatePickerProps {
     date?: Date
@@ -14,6 +15,7 @@ const CustomDatePicker = ({
     onDateChange
 }: CustomDatePickerProps) => {
     const [localDate, setLocalDate] = useState<Date>(date || new Date())
+    const { i18n } = useTranslation()
 
     const handleDateChange = (newDate: Date) => {
         if (newDate && onDateChange){
@@ -23,11 +25,11 @@ const CustomDatePicker = ({
     }
 
     const formatCurrDateToStr = (): string => {
-        return new Intl.DateTimeFormat('en-US', {
-            weekday: 'long',    
-            day: 'numeric',     
-            month: 'short',     
-            year: 'numeric',   
+        return new Intl.DateTimeFormat(i18n.language, {
+            weekday: 'long',
+            day: 'numeric',
+            month: 'short',
+            year: 'numeric',
         }).format(localDate).toString()
     }
     

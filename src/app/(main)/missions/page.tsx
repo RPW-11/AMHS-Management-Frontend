@@ -7,12 +7,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import KanbanView from "./kanban-view";
 import TableView from "./table-view";
+import { useTranslation } from "react-i18next";
 
 const MissionPage = () => {
     const [viewMode, setViewMode] = useState<ListMissionsViewMode>(
         ListMissionsViewMode.Table,
     );
     const { push } = useRouter();
+    const { t } = useTranslation();
 
     return (
         <div className="rounded-md p-4 bg-white border space-y-6">
@@ -28,7 +30,7 @@ const MissionPage = () => {
                     }
                 >
                     <Table />
-                    Table
+                    {t("missions.tabs.table")}
                 </Button>
                 <Button
                     onClick={() => setViewMode(ListMissionsViewMode.Kanban)}
@@ -41,7 +43,7 @@ const MissionPage = () => {
                     }
                 >
                     <Kanban />
-                    Kanban
+                    {t("missions.tabs.kanban")}
                 </Button>
             </div>
             <div className="w-full">
@@ -51,11 +53,11 @@ const MissionPage = () => {
                     <div className="space-y-4">
                         <div className="flex justify-between">
                             <div>
-                                <h1 className="text-xl font-semibold">Table View</h1>
-                                <p className="text-sm text-muted-foreground">Monitor, filter, and manage active mission deployments and team assignments in real-time.</p>
+                                <h1 className="text-xl font-semibold">{t("missions.tableView.title")}</h1>
+                                <p className="text-sm text-muted-foreground">{t("missions.tableView.subtitle")}</p>
                             </div>
                             <Button onClick={() => push(MissionRoutes.Add)}>
-                                Add mission
+                                {t("missions.addMission")}
                             </Button>
                         </div>
                         <TableView />

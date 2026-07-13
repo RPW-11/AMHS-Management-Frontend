@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Tooltip, TooltipContent, TooltipTrigger } from "./ui/tooltip";
 import { motion, AnimatePresence } from "framer-motion";
 import { SidebarItemType } from "@/types/general";
+import { useTranslation } from "react-i18next";
 
 const SidebarItem = ({
     menu,
@@ -12,6 +13,9 @@ const SidebarItem = ({
     isOpen: boolean;
     isActive: boolean;
 }) => {
+    const { t } = useTranslation();
+    const label = t(`sidebar.menu.${menu.name}`);
+
     return (
         <Tooltip delayDuration={0} disableHoverableContent={isOpen}>
             <TooltipTrigger asChild>
@@ -46,7 +50,7 @@ const SidebarItem = ({
                                 }}
                                 className="whitespace-nowrap overflow-hidden text-sm"
                             >
-                                {menu.name}
+                                {label}
                             </motion.span>
                         )}
                     </AnimatePresence>
@@ -54,7 +58,7 @@ const SidebarItem = ({
             </TooltipTrigger>
             {!isOpen && (
                 <TooltipContent side="right" sideOffset={10}>
-                    {menu.name}
+                    {label}
                 </TooltipContent>
             )}
         </Tooltip>

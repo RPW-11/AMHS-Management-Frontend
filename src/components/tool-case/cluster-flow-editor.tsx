@@ -13,6 +13,7 @@ import {
 import { Cluster, ClusterFlow } from "@/types/toolcase";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ClusterFlowEditorProps {
     clusterFlow: ClusterFlow;
@@ -27,6 +28,7 @@ const ClusterFlowEditor = ({
     onChangeClusterFlow,
     onDelete
 }: ClusterFlowEditorProps) => {
+    const { t } = useTranslation();
     const [arrowColor, setArrowColor] = useState<string>(clusterFlow.arrowColor || "#000000")
 
     const handleAddCluster = (clusterIdx: number) =>
@@ -89,18 +91,18 @@ const ClusterFlowEditor = ({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant={"default"} size={"sm"} disabled={clusters.length === 0}>
-                            Add
+                            {t("toolCase.rgvRoutePlanning.clusterFlowEditor.add")}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="start">
-                        <DropdownMenuLabel>Clusters</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t("toolCase.rgvRoutePlanning.clusterFlowEditor.clusters")}</DropdownMenuLabel>
                         <DropdownMenuGroup>
                             {clusters.map((cluster, i) => (
                                 <DropdownMenuItem
                                     key={i}
                                     onClick={() => handleAddCluster(i)}
                                 >
-                                    {cluster.name || `Cluster ${i + 1}`}
+                                    {cluster.name || t("toolCase.rgvRoutePlanning.clusterFlowEditor.clusterFallbackName", { num: i + 1 })}
                                 </DropdownMenuItem>
                             ))}
                         </DropdownMenuGroup>

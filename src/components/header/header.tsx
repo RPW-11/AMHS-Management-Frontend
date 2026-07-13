@@ -4,19 +4,23 @@ import Notification from "./notification"
 import UserAvatar from "../user-avatar"
 import { useMediaQuery } from "@/hooks/useMediaQuery"
 import UserSetting from "./user-setting"
+import LanguageSwitcher from "./language-switcher"
 import { useUserStore } from "@/stores/useAuthStore"
+import { useTranslation } from "react-i18next"
 
 const Header = () => {
     const isLargeScreen = useMediaQuery('lg')
     const { user } = useUserStore()
-    
+    const { t } = useTranslation()
+
     return (
         <div className="pl-6 pr-10 py-4 h-18  flex items-center justify-between">
             <div className="flex items-center gap-2 px-3 py-2 w-2/5 xl:w-3/5 bg-white rounded-md border text-sm">
                 <Search size={16} className="text-muted-foreground" />
-                <input placeholder="Search for anything" className="focus:outline-none w-full"/>
+                <input placeholder={t("header.searchPlaceholder")} className="focus:outline-none w-full"/>
             </div>
             {user && <div className="flex items-center gap-2 lg:gap-4">
+                <LanguageSwitcher />
                 <Notification />
                 <UserSetting />
                 <UserAvatar

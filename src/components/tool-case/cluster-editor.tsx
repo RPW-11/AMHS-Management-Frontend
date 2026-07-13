@@ -15,6 +15,7 @@ import { Cluster, RgvPathPoint } from "@/types/toolcase";
 import { PointCategory } from "@/constants/tool-case";
 import { Popover, PopoverContent, PopoverTrigger } from "../ui/popover";
 import { useState } from "react";
+import { useTranslation } from "react-i18next";
 
 interface ClusterEditorProps {
     cluster: Cluster;
@@ -29,6 +30,7 @@ const ClusterEditor = ({
     onChangeCluster,
     onDelete
 }: ClusterEditorProps) => {
+    const { t } = useTranslation();
     const [arrowColor, setArrowColor] = useState<string>(cluster.arrowColor || "#000000")
     const hasStation = (): boolean =>
         pointsMap
@@ -58,7 +60,7 @@ const ClusterEditor = ({
                 <X/>
             </Button>
             <Input
-                placeholder="Cluster name"
+                placeholder={t("toolCase.rgvRoutePlanning.clusterEditor.namePlaceholder")}
                 value={cluster.name}
                 onChange={handleChangeName}
                 className="w-48 bg-white"
@@ -112,11 +114,11 @@ const ClusterEditor = ({
                 <DropdownMenu>
                     <DropdownMenuTrigger asChild>
                         <Button variant={"default"} size={"sm"} disabled={!hasStation()}>
-                            Add
+                            {t("toolCase.rgvRoutePlanning.clusterEditor.add")}
                         </Button>
                     </DropdownMenuTrigger>
                     <DropdownMenuContent className="w-56" align="start">
-                        <DropdownMenuLabel>Stations</DropdownMenuLabel>
+                        <DropdownMenuLabel>{t("toolCase.rgvRoutePlanning.clusterEditor.stations")}</DropdownMenuLabel>
                         <DropdownMenuGroup>
                             {[...pointsMap.values()].map(
                                 (station, i) =>

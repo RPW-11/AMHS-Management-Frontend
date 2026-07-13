@@ -20,12 +20,14 @@ import { Trash } from "lucide-react";
 import MemberSearch from "./member-search";
 import { useMissionMember } from "@/hooks/mission/useMissionMember";
 import LoadingSpinner from "../loading-spinner";
+import { useTranslation } from "react-i18next";
 
 interface MissionMembersProps {
     mission: Mission;
 }
 
 const MissionMembers = ({ mission }: MissionMembersProps) => {
+    const { t } = useTranslation();
     const { user } = useUserStore();
     const {
         missionMembers,
@@ -48,15 +50,15 @@ const MissionMembers = ({ mission }: MissionMembersProps) => {
                     <LoadingSpinner size="sm" />
                 ) : (
                     <Button size={"sm"} variant={"ghost"}>
-                        {`${missionMembers.length} members`}
+                        {t("missions.detail.members.membersCount", { count: missionMembers.length })}
                     </Button>
                 )}
             </DialogTrigger>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Project members</DialogTitle>
+                    <DialogTitle>{t("missions.detail.members.dialogTitle")}</DialogTitle>
                     <DialogDescription>
-                        Manage the members in your mission
+                        {t("missions.detail.members.dialogDescription")}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="space-y-4">
@@ -86,13 +88,13 @@ const MissionMembers = ({ mission }: MissionMembersProps) => {
                                             )}
                                             options={MISSION_ROLES_OPTIONS}
                                             onValueChange={(val) => handleChangeRole(val, emp.id)}
-                                            labelName={"Mission Role"}
-                                            placeholder={"Change Role"}
+                                            labelName={t("missions.detail.members.missionRole")}
+                                            placeholder={t("missions.detail.members.changeRole")}
                                         />
                                         </div>
                                         {emp.id !== user?.id && isCurrentUserALeader && (
                                             <Button
-                                                title="Remove member"
+                                                title={t("missions.detail.members.removeMember")}
                                                 variant={"ghostDestructive"}
                                                 size={"icon"}
                                                 className="col-span-1"

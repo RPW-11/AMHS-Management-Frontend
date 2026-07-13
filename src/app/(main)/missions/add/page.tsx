@@ -11,8 +11,10 @@ import {
 } from "@/constants/mission";
 import { useAddMission } from "@/hooks/mission/useAddMission";
 import { getOption } from "@/utils/general-util";
+import { useTranslation } from "react-i18next";
 
 const AddMissionPage = () => {
+    const { t } = useTranslation();
     const {
         addMissionForm,
         setAddMissionForm,
@@ -33,11 +35,11 @@ const AddMissionPage = () => {
     return (
         <div className="rounded-md p-4 bg-white border space-y-4">
             <div className="space-y-2">
-                <h2 className="font-semibold text-lg">Add a mission.</h2>
+                <h2 className="font-semibold text-lg">{t("missions.add.title")}</h2>
             </div>
             <div className="grid grid-cols-4 gap-4">
                 <div className="col-span-4 lg:col-span-2 space-y-2">
-                    <Label>Name</Label>
+                    <Label>{t("missions.add.name")}</Label>
                     <Input
                         value={addMissionForm.name}
                         onChange={(e) =>
@@ -46,7 +48,7 @@ const AddMissionPage = () => {
                                 name: e.target.value,
                             })
                         }
-                        placeholder="Enter the mission's name..."
+                        placeholder={t("missions.add.namePlaceholder")}
                         className="text-sm"
                     />
                     <p className="text-destructive text-xs">
@@ -54,7 +56,7 @@ const AddMissionPage = () => {
                     </p>
                 </div>
                 <div className="col-span-4 lg:col-span-2 space-y-2">
-                    <Label>Category</Label>
+                    <Label>{t("missions.add.category")}</Label>
                     <SelectOption
                         value={getOption(
                             MISSION_CATEGORIES_OPTIONS,
@@ -67,15 +69,15 @@ const AddMissionPage = () => {
                                 category: option.value as MissionCategory,
                             })
                         }
-                        labelName={"Mission Category"}
-                        placeholder={"Select mission category"}
+                        labelName={t("missions.add.missionCategory")}
+                        placeholder={t("missions.add.selectMissionCategory")}
                     />
                     <p className="text-destructive text-xs">
                         {errorsForm.category}
                     </p>
                 </div>
                 <div className="col-span-4 space-y-2">
-                    <Label>Description</Label>
+                    <Label>{t("missions.add.description")}</Label>
                     <Textarea
                         value={addMissionForm.description}
                         onChange={(e) =>
@@ -84,12 +86,12 @@ const AddMissionPage = () => {
                                 description: e.target.value,
                             })
                         }
-                        placeholder="Enter the mission's description..."
+                        placeholder={t("missions.add.descriptionPlaceholder")}
                         className="text-sm"
                     />
                 </div>
                 <div className="col-span-4 lg:col-span-2 space-y-2">
-                    <Label>Due Date</Label>
+                    <Label>{t("missions.add.dueDate")}</Label>
                     <CustomDatePicker
                         date={addMissionForm.dueDate}
                         onDateChange={(newDate) =>
@@ -101,7 +103,7 @@ const AddMissionPage = () => {
                     />
                 </div>
                 <div className="col-span-4 lg:col-span-2 space-y-2">
-                    <Label>Due Time</Label>
+                    <Label>{t("missions.add.dueTime")}</Label>
                     <Input
                         type="time"
                         value={addMissionForm.dueTime}
@@ -119,7 +121,7 @@ const AddMissionPage = () => {
             </div>
             <div className="flex justify-end">
                 <Button size={"sm"} onClick={handleAddMission} disabled={isPending}>
-                    Add
+                    {t("missions.add.addButton")}
                 </Button>
             </div>
         </div>

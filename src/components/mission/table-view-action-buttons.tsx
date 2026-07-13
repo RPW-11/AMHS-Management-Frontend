@@ -16,6 +16,7 @@ import {
 } from "../ui/alert-dialog";
 import { useDeleteMission } from "@/hooks/mission/useDeleteMission";
 import Link from "next/link";
+import { Trans, useTranslation } from "react-i18next";
 
 interface TableViewActionButtonsProp {
     mission: Mission;
@@ -24,6 +25,7 @@ interface TableViewActionButtonsProp {
 const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
     const { mutate: deleteMission  } = useDeleteMission();
     const [openDialog, setOpenDialog] = useState<boolean>(false);
+    const { t } = useTranslation();
 
     const handleDeleteMission = () => {
         setOpenDialog(false);
@@ -42,7 +44,7 @@ const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
                             <Info size={17}/>
                         </Link>
                     </TooltipTrigger>
-                    <TooltipContent>View Detail</TooltipContent>
+                    <TooltipContent>{t("missions.actions.viewDetail")}</TooltipContent>
                 </Tooltip>
                 <Tooltip>
                     <TooltipTrigger asChild>
@@ -50,22 +52,25 @@ const TableViewActionButtons = ({ mission }: TableViewActionButtonsProp) => {
                             <Trash />
                         </Button>
                     </TooltipTrigger>
-                    <TooltipContent>Delete</TooltipContent>
+                    <TooltipContent>{t("missions.actions.delete")}</TooltipContent>
                 </Tooltip>
                 <AlertDialog open={openDialog} onOpenChange={setOpenDialog}>
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                Are you absolutely sure?
+                                {t("missions.actions.confirmDeleteTitle")}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                This will
-                                permanently delete mission <span className="font-bold">{mission.name}</span> from the system.
+                                <Trans
+                                    i18nKey="missions.actions.confirmDeleteDescription"
+                                    values={{ name: mission.name }}
+                                    components={{ b: <span className="font-bold" /> }}
+                                />
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <Button variant={"destructive"} onClick={handleDeleteMission} >Delete</Button>
+                            <AlertDialogCancel>{t("missions.actions.cancel")}</AlertDialogCancel>
+                            <Button variant={"destructive"} onClick={handleDeleteMission} >{t("missions.actions.delete")}</Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

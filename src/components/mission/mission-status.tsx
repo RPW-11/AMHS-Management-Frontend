@@ -5,6 +5,7 @@ import { useState } from "react";
 import { useModifyMission } from "@/hooks/mission/useModifyMission";
 import LoadingSpinner from "../loading-spinner";
 import { Mission } from "@/types/mission";
+import { useTranslation } from "react-i18next";
 
 interface MissionStatusProps {
     mission: Mission
@@ -14,6 +15,9 @@ const MissionStatusBadge = ({ mission }: MissionStatusProps) => {
     const { mutate: changeStatus, isPending } = useModifyMission();
     const [localStatus, setLocalStatus] = useState<string>(mission.status);
     const [isOpen, setIsOpen] = useState<boolean>(false);
+    const { t } = useTranslation();
+    const getStatusLabel = (status: string) =>
+        t(`missions.status.${status.charAt(0).toLowerCase()}${status.slice(1)}`);
     const getVariant = (status: string) => {
         return status === MissionStatus.Active
             ? "secondary"
@@ -51,7 +55,7 @@ const MissionStatusBadge = ({ mission }: MissionStatusProps) => {
                     className="hover:shadow"
                     variant={getVariant(localStatus)}
                 >
-                    {localStatus}
+                    {getStatusLabel(localStatus)}
                 </Badge>
                 }
             </PopoverTrigger>
@@ -64,35 +68,35 @@ const MissionStatusBadge = ({ mission }: MissionStatusProps) => {
                     variant={getVariant(MissionStatus.Active)}
                     onClick={() => handleChangeStatus(MissionStatus.Active)}
                 >
-                    {MissionStatus.Active}
+                    {getStatusLabel(MissionStatus.Active)}
                 </Badge>
                 <Badge
                     className="cursor-pointer hover:shadow"
                     variant={getVariant(MissionStatus.Finished)}
                     onClick={() => handleChangeStatus(MissionStatus.Finished)}
                 >
-                    {MissionStatus.Finished}
+                    {getStatusLabel(MissionStatus.Finished)}
                 </Badge>
                 <Badge
                     className="cursor-pointer hover:shadow"
                     variant={getVariant(MissionStatus.Inactive)}
                     onClick={() => handleChangeStatus(MissionStatus.Inactive)}
                 >
-                    {MissionStatus.Inactive}
+                    {getStatusLabel(MissionStatus.Inactive)}
                 </Badge>
                 <Badge
                     className="cursor-pointer hover:shadow"
                     variant={getVariant(MissionStatus.Failed)}
                     onClick={() => handleChangeStatus(MissionStatus.Failed)}
                 >
-                    {MissionStatus.Failed}
+                    {getStatusLabel(MissionStatus.Failed)}
                 </Badge>
                 <Badge
                     className="cursor-pointer hover:shadow"
                     variant={getVariant(MissionStatus.Processing)}
                     onClick={() => handleChangeStatus(MissionStatus.Processing)}
                 >
-                    {MissionStatus.Processing}
+                    {getStatusLabel(MissionStatus.Processing)}
                 </Badge>
             </PopoverContent>
         </Popover>

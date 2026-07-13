@@ -4,12 +4,14 @@ import { Textarea } from "../ui/textarea";
 import { Button } from "../ui/button";
 import { useModifyMission } from "@/hooks/mission/useModifyMission";
 import LoadingSpinner from "../loading-spinner";
+import { useTranslation } from "react-i18next";
 
 interface MissionDescriptionProps {
     mission: Mission;
 }
 
 const MissionDescription = ({ mission }: MissionDescriptionProps) => {
+    const { t } = useTranslation()
     const { mutate: modifyDescription, isPending } = useModifyMission()
     const [localDescription, setLocalDescription] = useState<string>(
         mission.description,
@@ -36,13 +38,13 @@ const MissionDescription = ({ mission }: MissionDescriptionProps) => {
                     disabled={isPending}
                     value={localDescription}
                     onChange={(e) => setLocalDescription(e.target.value)}
-                    placeholder="Write some description..."
+                    placeholder={t("missions.detail.editDescription.placeholder")}
                 />
                 <div className="flex gap-2 items-center">
-                    <Button disabled={isPending} size={"sm"} variant={"ghost"} onClick={() => setIsEditing(false)}>Cancel</Button>
+                    <Button disabled={isPending} size={"sm"} variant={"ghost"} onClick={() => setIsEditing(false)}>{t("missions.detail.editDescription.cancel")}</Button>
                     <Button disabled={isPending} size={"sm"} onClick={handleSubmitDescription}>
                         {isPending && <LoadingSpinner size="sm"/>}
-                        Save
+                        {t("missions.detail.editDescription.save")}
                     </Button>
                 </div>
             </div>
@@ -60,7 +62,7 @@ const MissionDescription = ({ mission }: MissionDescriptionProps) => {
                 </p>
             ) : (
                 <p className="text-sm italic text-center text-muted-foreground">
-                    No description
+                    {t("missions.detail.editDescription.noDescription")}
                 </p>
             )}
         </div>

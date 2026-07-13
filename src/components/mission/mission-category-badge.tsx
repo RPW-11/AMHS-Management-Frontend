@@ -1,5 +1,6 @@
 import { MissionCategory } from "@/constants/mission";
 import MissionIcon from "./mission-icon";
+import { useTranslation } from "react-i18next";
 
 interface MissionCategoryBadgeProps {
     category: MissionCategory
@@ -8,16 +9,17 @@ interface MissionCategoryBadgeProps {
 const MissionCategoryBadge = ({
     category
 }: MissionCategoryBadgeProps) => {
+    const { t } = useTranslation();
     const getFormattedMissionCategory = (): string => {
         switch (category) {
             case MissionCategory.RoutePlanning:
-                return "Route Planning"
-        
+                return t("missions.category.routePlanning")
+
             case MissionCategory.Normal:
-                return "Normal"
-            
+                return t("missions.category.normal")
+
             default:
-                return "Not found"
+                return t("missions.category.notFound")
         }
     }
     return (

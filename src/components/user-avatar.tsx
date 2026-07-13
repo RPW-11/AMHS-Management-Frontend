@@ -1,6 +1,7 @@
 import { User } from "@/types/general"
 import { Avatar, AvatarFallback, AvatarImage } from "./ui/avatar"
 import { formatEmployeePosition } from "@/utils/employee/employee-util"
+import { useTranslation } from "react-i18next"
 
 interface UserAvatarProps {
     userData: User
@@ -24,6 +25,7 @@ const UserAvatar = ({
     customSize,
     hideNames = false
 }: UserAvatarProps) => {
+    const { t } = useTranslation()
     const sizeClass = size === "custom" ? customSize : userAvatarVariants.size[size]
     return (
         <div className={`flex items-center gap-2`}>
@@ -37,7 +39,7 @@ const UserAvatar = ({
                 { `${userData.firstName.slice(0, 1).toUpperCase()}${userData.firstName.slice(1).toLowerCase()} ${userData.lastName.slice(0, 1).toUpperCase()}${userData.lastName.slice(1).toLowerCase()}`}
             </h3>
             <p className="text-muted-foreground text-xs">
-                { formatEmployeePosition(userData.position) }
+                { formatEmployeePosition(t, userData.position) }
             </p>
         </div>}
     </div>

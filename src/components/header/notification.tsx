@@ -14,6 +14,7 @@ import { useRouter } from "next/navigation";
 import { useStreamNotification } from "@/hooks/notification/useStreamNotification";
 import { useMarkAsReadNotification } from "@/hooks/notification/useMarkAsReadNotification";
 import { usePagination } from "@/hooks/usePagination";
+import { useTranslation } from "react-i18next";
 
 const Notification = () => {
     useStreamNotification();
@@ -25,6 +26,7 @@ const Notification = () => {
     const { mutate: markAsRead } = useMarkAsReadNotification();
     const { push } = useRouter();
     const { setSearchParamValue } = usePagination();
+    const { t } = useTranslation();
 
     const DISPLAY_TYPES = ["ALL", "UNREAD", "READ"];
     
@@ -72,7 +74,7 @@ const Notification = () => {
                 alignOffset={-40}
             >
                 <div className="space-y-1 flex flex-col h-full">
-                    <h2 className="text-lg font-semibold">Notifications</h2>
+                    <h2 className="text-lg font-semibold">{t("notification.title")}</h2>
                     <div className="flex-1 flex flex-col justify-between gap-2 overflow-hidden">
                         <div className="flex items-center">
                             {DISPLAY_TYPES.map((type) => (
@@ -81,8 +83,7 @@ const Notification = () => {
                                     key={type}
                                     className={`cursor-pointer text-sm w-16 py-0.5 px-2 border-b-2 transition-all duration-200 ${currType === type.toLowerCase() ? "border-primary text-primary" : "border-white hover:text-primary text-muted-foreground font-normal"}`}
                                 >
-                                    {type.slice(0, 1).toUpperCase() +
-                                        type.slice(1).toLowerCase()}
+                                    {t(`notification.displayTypes.${type.toLowerCase()}`)}
                                 </Label>
                             ))}
                         </div>
@@ -91,7 +92,7 @@ const Notification = () => {
                                 <div className="rounded-lg h-full bg-gray-100 animate-pulse"></div>
                             ) : notifications.length === 0 ? (
                                 <div className="text-muted-foreground text-sm font-medium h-full flex justify-center items-center">
-                                    No notifications
+                                    {t("notification.noNotifications")}
                                 </div>
                             ) : (
                                 notifications.map((item) => (
@@ -115,7 +116,7 @@ const Notification = () => {
                                     className="text-xs text-primary"
                                 >
                                     <CheckCheck />
-                                    Mark all as read
+                                    {t("notification.markAllAsRead")}
                                 </Button>
                                 <Button
                                     variant={"default"}
@@ -123,7 +124,7 @@ const Notification = () => {
                                     className="text-xs"
                                     onClick={handleClickViewNotification}
                                 >
-                                    View all notification
+                                    {t("notification.viewAllNotification")}
                                 </Button>
                             </div>
                         </div>

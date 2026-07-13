@@ -4,21 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { MissionRoutes } from "@/constants/general";
-import { ROUTE_PLANNING_ALGORITHMS, RoutePlanningAlgorithm } from "@/constants/tool-case";
+import { RoutePlanningAlgorithm } from "@/constants/tool-case";
 import { useRgvRouteSolver } from "@/hooks/tool-case/useRgvRouteSolver";
 import { createRoutePlanningFormStore } from "@/stores/useRoutePlanningFormStore";
+import { getTranslatedRoutePlanningAlgorithms } from "@/utils/tool-case/route-planning";
 import { useQueryClient } from "@tanstack/react-query";
 import { useParams, useRouter } from "next/navigation";
 import { useMemo, useState } from "react";
 import { toast } from "sonner";
+import { useTranslation } from "react-i18next";
 
 const RgvRoutePlanningPage = () => {
     const queryClient = useQueryClient();
     const { submitRgvRoutePlan } = useRgvRouteSolver();
     const { push } = useRouter();
     const { missionId } = useParams();
+    const { t } = useTranslation();
 
     const [isSubmitting, setIsSubmitting] = useState<boolean>(false);
+    const routePlanningAlgorithms = useMemo(() => getTranslatedRoutePlanningAlgorithms(t), [t]);
 
     const useFormStore = useMemo(
         () => createRoutePlanningFormStore(missionId as string),
@@ -77,7 +81,7 @@ const RgvRoutePlanningPage = () => {
 
     const handleSubmitRgvPlan = async () => {
         if (!form.image || !missionId)
-            throw new Error("Image or missionId cannot be empty");
+            throw new Error(t("toolCase.rgvRoutePlanning.toast.missingImageOrMission"));
 
         setIsSubmitting(true);
 
@@ -101,9 +105,9 @@ const RgvRoutePlanningPage = () => {
             success: () => {
                 resetForm()
                 push(MissionRoutes.Missions);
-                return "The route is being processed!";
+                return t("toolCase.rgvRoutePlanning.toast.processing");
             },
-            loading: "Solving the route. This may take a while...",
+            loading: t("toolCase.rgvRoutePlanning.toast.solving"),
             error: (err) => (err as Error).message,
         });
     };
@@ -111,15 +115,14 @@ const RgvRoutePlanningPage = () => {
     return (
         <div className="bg-white rounded-md p-4 border space-y-4">
             <div>
-                <h1 className="font-bold text-lg">RGV Route Planning</h1>
+                <h1 className="font-bold text-lg">{t("toolCase.rgvRoutePlanning.title")}</h1>
                 <p className="text-muted-foreground text-sm">
-                    Find the some routes that are most efficient for your RGV
-                    system{" "}
+                    {t("toolCase.rgvRoutePlanning.pageSubtitle")}
                 </p>
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 space-y-2">
-                    <Label>Upload layout image</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.uploadImage")}</Label>
                     <Input
                         type="file"
                         accept="image/*"
@@ -127,57 +130,57 @@ const RgvRoutePlanningPage = () => {
                     />
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Row dimension</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.rowDimension")}</Label>
                     <Input
                         type="number"
                         value={form.rowDim}
                         onChange={handleRowDimChange}
                     />
                     <p className="text-xs text-muted-foreground">
-                        Bigger row dimension will yield to more computation
+                        {t("toolCase.rgvRoutePlanning.rowDimensionHelper")}
                     </p>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Column dimension</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.columnDimension")}</Label>
                     <Input
                         type="number"
                         value={form.colDim}
                         onChange={handleColDimChange}
                     />
                     <p className="text-xs text-muted-foreground">
-                        Bigger column dimension will yield to more computation
+                        {t("toolCase.rgvRoutePlanning.columnDimensionHelper")}
                     </p>
                 </div>
 
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Width length</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.widthLength")}</Label>
                     <Input
                         type="number"
                         value={form.widthLength}
                         onChange={handleWidthLengthChange}
                     />
                     <p className="text-xs text-muted-foreground">
-                        The actual width length in meter
+                        {t("toolCase.rgvRoutePlanning.widthLengthHelper")}
                     </p>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Height length</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.heightLength")}</Label>
                     <Input
                         type="number"
                         value={form.heightLength}
                         onChange={handleHeightLengthChange}
                     />
                     <p className="text-xs text-muted-foreground">
-                        The actual height length in meter
+                        {t("toolCase.rgvRoutePlanning.heightLengthHelper")}
                     </p>
                 </div>
 
                 <div className="col-span-2 space-y-2">
-                    <Label>Algorithms</Label>
+                    <Label>{t("toolCase.rgvRoutePlanning.algorithms")}</Label>
                     <div className="grid grid-cols-2 gap-2">
-                        {ROUTE_PLANNING_ALGORITHMS.map((algo) => (
+                        {routePlanningAlgorithms.map((algo) => (
                             <Label
-                                key={algo.name}
+                                key={algo.value}
                                 className={`col-span-3 lg:col-span-1 p-4 rounded-md border items-start cursor-pointer ${getAlgorithmCardStyle(algo.value)}`}
                                 onClick={() => handleChangeAlgorithm(algo.value)}
                             >
@@ -203,7 +206,7 @@ const RgvRoutePlanningPage = () => {
                     disabled={!isAbleToProceed() || isSubmitting}
                     onClick={handleSubmitRgvPlanWithToast}
                 >
-                    Submit
+                    {t("toolCase.rgvRoutePlanning.submit")}
                 </Button>
             </div>
         </div>

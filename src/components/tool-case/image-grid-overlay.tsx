@@ -23,6 +23,7 @@ import ModeToggle from "./mode-toggle";
 import Image from "next/image";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
+import { useTranslation } from "react-i18next";
 
 interface ImageGridOverlayProps {
     rgvPathPlan: RgvPathPlan
@@ -33,6 +34,7 @@ const ImageGridOverlay = ({
     rgvPathPlan,
     onChangePlan,
 }: ImageGridOverlayProps) => {
+    const { t } = useTranslation();
     const [containerSize, setContainerSize] = useState({ width: 0, height: 0 });
     const containerRef = useRef<HTMLDivElement>(null);
 
@@ -201,7 +203,14 @@ const ImageGridOverlay = ({
                 return newMap;
             });
         } catch (error) {
-            toast.error((error as Error).message);
+            const message = (error as Error).message;
+            const translatedMessage =
+                message === "Cannot add non-connected path"
+                    ? t("toolCase.rgvRoutePlanning.errors.nonConnectedPath")
+                    : message === "Cannot add the same path"
+                    ? t("toolCase.rgvRoutePlanning.errors.cannotAddSamePath")
+                    : message;
+            toast.error(translatedMessage);
         }
     };
 
@@ -361,7 +370,7 @@ const ImageGridOverlay = ({
     return (
         <div className="space-y-4">
             <div className="space-y-4">
-                <Label>Define clusters</Label>
+                <Label>{t("toolCase.rgvRoutePlanning.clusters.defineClusters")}</Label>
                 <div className="space-y-2">
                     {clusters.map((cluster, i) => (
                         <ClusterEditor
@@ -375,16 +384,15 @@ const ImageGridOverlay = ({
                 </div>
                 <div className="rounded-lg bg-white px-8 py-4 flex justify-center items-center border border-dashed">
                     <Button onClick={() => setClusters([...clusters, { name: "", stations: [], arrowColor: "#000000" }])}>
-                        Add Cluster
+                        {t("toolCase.rgvRoutePlanning.clusters.addCluster")}
                     </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    {`Inorder to add a cluster, you need to have at least one station
-                    with a type of "Station"`}
+                    {t("toolCase.rgvRoutePlanning.clusters.addClusterHelper")}
                 </p>
             </div>
             <div className="space-y-4">
-                <Label>Define cluster flow</Label>
+                <Label>{t("toolCase.rgvRoutePlanning.clusters.defineClusterFlow")}</Label>
                 <div className="space-y-2">
                     {clusterFlows.map((clusterFlow, i) => (
                         <ClusterFlowEditor
@@ -401,12 +409,11 @@ const ImageGridOverlay = ({
                         disabled={clusters.length < 2}
                         onClick={() => setClusterFlows([...clusterFlows, { clusterOrder: [], arrowColor: "#000000" }])}
                     >
-                        Add Cluster Flow
+                        {t("toolCase.rgvRoutePlanning.clusters.addClusterFlow")}
                     </Button>
                 </div>
                 <p className="text-xs text-muted-foreground">
-                    {`Inorder to add a cluster flow, you need to have at least two
-                    clusters defined`}
+                    {t("toolCase.rgvRoutePlanning.clusters.addClusterFlowHelper")}
                 </p>
             </div>
             <ModeToggle
@@ -426,7 +433,7 @@ const ImageGridOverlay = ({
                     {mapImgUrl && <Image
                         fill={true}
                         src={mapImgUrl}
-                        alt="Grid preview"
+                        alt={t("toolCase.rgvRoutePlanning.clusters.gridPreviewAlt")}
                         className="w-full h-full object-fill"
                         style={{
                             display: "block",

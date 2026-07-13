@@ -7,6 +7,7 @@ import { MissionRoutes } from "@/constants/general";
 import { parsedTimeStampToDateTime } from "@/utils/general-util";
 import { ContextMenu, ContextMenuContent, ContextMenuItem, ContextMenuTrigger } from "../ui/context-menu";
 import { MissionStatus } from "@/constants/mission";
+import { useTranslation } from "react-i18next";
 
 interface MissionCardProps {
     mission: Mission,
@@ -23,7 +24,10 @@ const MissionCard = ({
     onMoveToInactiveSection,
     onDeleteMission
 }: MissionCardProps) => {
-    
+    const { t } = useTranslation();
+    const getStatusLabel = (status: string) =>
+        t(`missions.status.${status.charAt(0).toLowerCase()}${status.slice(1)}`);
+
     const functionCoordinator = (missionStatus: MissionStatus) => {
         if (missionStatus === MissionStatus.Active) {
             onMoveToActiveSection(mission)
@@ -56,23 +60,23 @@ const MissionCard = ({
                     mission.status === MissionStatus.Finished ? MissionStatus.Active :
                     MissionStatus.Finished
                 )}
-                >Move to {
-                    mission.status === MissionStatus.Active ? "Inactive" :
-                    mission.status === MissionStatus.Finished ? "Active" :
-                    "Finished"
-                }</ContextMenuItem>
+                >{t("missions.kanban.moveTo", { status: getStatusLabel(
+                    mission.status === MissionStatus.Active ? MissionStatus.Inactive :
+                    mission.status === MissionStatus.Finished ? MissionStatus.Active :
+                    MissionStatus.Finished
+                ) })}</ContextMenuItem>
                 <ContextMenuItem
                 onClick={() => functionCoordinator(
                     mission.status === MissionStatus.Active ? MissionStatus.Finished :
                     mission.status === MissionStatus.Finished ? MissionStatus.Inactive :
                     MissionStatus.Active
                 )}
-                >Move to {
-                    mission.status === MissionStatus.Active ? "Finished" :
-                    mission.status === MissionStatus.Finished ? "Inactive" :
-                    "Active"
-                }</ContextMenuItem>
-                <ContextMenuItem onClick={() => onDeleteMission(mission)}>Delete</ContextMenuItem>
+                >{t("missions.kanban.moveTo", { status: getStatusLabel(
+                    mission.status === MissionStatus.Active ? MissionStatus.Finished :
+                    mission.status === MissionStatus.Finished ? MissionStatus.Inactive :
+                    MissionStatus.Active
+                ) })}</ContextMenuItem>
+                <ContextMenuItem onClick={() => onDeleteMission(mission)}>{t("missions.kanban.delete")}</ContextMenuItem>
             </ContextMenuContent>
         </ContextMenu>
     );

@@ -1,4 +1,5 @@
 import { Button } from "../ui/button"
+import { useTranslation } from "react-i18next"
 
 interface SelectedEmployeeActionsProps {
     selectedIds: string[]
@@ -7,14 +8,16 @@ interface SelectedEmployeeActionsProps {
 const SelectedEmployeeActions = ({
     selectedIds
 }: SelectedEmployeeActionsProps) => {
+    const { t } = useTranslation()
+
     return (
         <div className="absolute left-1/2 bottom-0 -translate-x-1/2 z-10 rounded-md py-1 px-4 border bg-white shadow">
             <div className="flex items-center gap-2">
                 <h3 className="text-xs font-medium">
-                    { selectedIds.length } employees selected
+                    {t("employees.selectedActions.employeesSelected", { count: selectedIds.length })}
                 </h3>
                 <Button size={"sm"} variant={"secondary"} className="text-xs">
-                    Email
+                    {t("employees.selectedActions.email")}
                 </Button>
             </div>
         </div>

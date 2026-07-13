@@ -6,17 +6,18 @@ import SelectOption from "@/components/select-option"
 import { Button } from "@/components/ui/button"
 import { Label } from "@/components/ui/label"
 import UserAvatar from "@/components/user-avatar"
-import { EMPLOYEE_POSITIONS } from "@/constants/employee"
 import { useEmployeeProfile } from "@/hooks/employee/useEmployeeProfile"
 import { useUserStore } from "@/stores/useAuthStore"
 import { Option } from "@/types/general"
-import { getPositionEnumByStr } from "@/utils/employee/employee-util"
+import { formatEmployeePosition, getPositionEnumByStr, getTranslatedEmployeePositions } from "@/utils/employee/employee-util"
 import { useParams } from "next/navigation"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 
 const EmployeeProfilePage = () => {
     const { employeeId } = useParams()
     const { user } = useUserStore()
+    const { t } = useTranslation()
 
     const resolvedEmployeeId = employeeId?.toString() === "me" ? user?.id : employeeId?.toString();
 
@@ -25,11 +26,12 @@ const EmployeeProfilePage = () => {
     );
 
     const isMyProfile = (): boolean => resolvedEmployeeId === user?.id
+    const employeePositions = getTranslatedEmployeePositions(t)
 
     if (fetchError) {
         return (
             <div className="flex justify-center items-center w-full h-full text-4xl font-semibold text-muted-foreground">
-                Employee is not found
+                {t("employees.profile.notFound")}
             </div>
         )
     }
@@ -44,9 +46,9 @@ const EmployeeProfilePage = () => {
 
     return (
         <div className="rounded-md border bg-white p-4 space-y-6">
-            <h1 className="font-semibold text-2xl">Employee Profile</h1>
+            <h1 className="font-semibold text-2xl">{t("employees.profile.title")}</h1>
             <div className="space-y-4">
-                <Label>Profile Image</Label>
+                <Label>{t("employees.profile.profileImage")}</Label>
                 <UserAvatar
                 size="custom"
                 customSize="h-48 w-48 text-4xl"
@@ -56,60 +58,60 @@ const EmployeeProfilePage = () => {
             </div>
             <div className="grid grid-cols-2 gap-4">
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>First Name</Label>
-                    <InputWithValidation 
+                    <Label>{t("employees.profile.firstName")}</Label>
+                    <InputWithValidation
                     disabled={!isMyProfile()}
                     value={employeeDetails.firstName}
                     onChange={(val) => updateField('firstName', val)}
-                    placeholder="Enter your first name..."
+                    placeholder={t("employees.profile.firstNamePlaceholder")}
                     errorMessage={errors.firstName}/>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Last Name</Label>
+                    <Label>{t("employees.profile.lastName")}</Label>
                     <InputWithValidation
-                    disabled={!isMyProfile()} 
+                    disabled={!isMyProfile()}
                     value={employeeDetails.lastName}
                     onChange={(val) => updateField('lastName', val)}
-                    placeholder="Enter your last name..."
+                    placeholder={t("employees.profile.lastNamePlaceholder")}
                     errorMessage={errors.lastName}/>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Email</Label>
+                    <Label>{t("employees.profile.email")}</Label>
                     <InputWithValidation
-                    disabled={!isMyProfile()} 
+                    disabled={!isMyProfile()}
                     value={employeeDetails.email}
                     onChange={(val) => updateField('email', val)}
-                    placeholder="Enter your email..."
+                    placeholder={t("employees.profile.emailPlaceholder")}
                     errorMessage={errors.email}/>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Phone Number</Label>
+                    <Label>{t("employees.profile.phoneNumber")}</Label>
                     <InputWithValidation
-                    disabled={!isMyProfile()} 
+                    disabled={!isMyProfile()}
                     value={employeeDetails.phoneNumber}
                     onChange={(val) => updateField('phoneNumber', val)}
-                    placeholder="Enter your phone number..."
+                    placeholder={t("employees.profile.phoneNumberPlaceholder")}
                     errorMessage={errors.phoneNumber}/>
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label htmlFor="position" aria-label="position">Position</Label>
+                    <Label htmlFor="position" aria-label="position">{t("employees.profile.position")}</Label>
                     <SelectOption
-                    disabled 
-                    value={{ name: getPositionEnumByStr(employeeDetails.position).toString(), value: employeeDetails.position }}
-                    options={EMPLOYEE_POSITIONS}
-                    onValueChange={(val:Option) => { toast.error(`This function is not implemented yet. Clicked value: ${val.value}`)}}
-                    placeholder="Select employee position"
-                    labelName="Position"
+                    disabled
+                    value={{ name: formatEmployeePosition(t, getPositionEnumByStr(employeeDetails.position)), value: employeeDetails.position }}
+                    options={employeePositions}
+                    onValueChange={(val:Option) => { toast.error(t("employees.profile.notImplemented", { value: val.value }))}}
+                    placeholder={t("employees.profile.positionPlaceholder")}
+                    labelName={t("employees.profile.position")}
                     />
                 </div>
                 <div className="col-span-2 lg:col-span-1 space-y-2">
-                    <Label>Date of Birth</Label>
-                    <CustomDatePicker 
+                    <Label>{t("employees.profile.dateOfBirth")}</Label>
+                    <CustomDatePicker
                     date={new Date(employeeDetails.dateOfBirth)}/>
                 </div>
             </div>
             {isMyProfile() && <div className="flex justify-end">
-                <Button size={"sm"} disabled={!canSaveProfile}>Save</Button>
+                <Button size={"sm"} disabled={!canSaveProfile}>{t("employees.profile.save")}</Button>
             </div>}
         </div>
     )

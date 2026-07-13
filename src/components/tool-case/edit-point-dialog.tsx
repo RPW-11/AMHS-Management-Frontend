@@ -11,9 +11,10 @@ import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import SelectOption from "../select-option";
 import { Button } from "../ui/button";
-import { useState } from "react";
-import { POINT_CATEGORY_OPTIONS, PointCategory } from "@/constants/tool-case";
-import { getPointCategoryByStr } from "@/utils/tool-case/route-planning";
+import { useMemo, useState } from "react";
+import { PointCategory } from "@/constants/tool-case";
+import { getPointCategoryByStr, getTranslatedPointCategoryOptions } from "@/utils/tool-case/route-planning";
+import { useTranslation } from "react-i18next";
 
 interface EditPointDialogProps {
     currPoint: RgvPathPoint;
@@ -22,11 +23,13 @@ interface EditPointDialogProps {
 
 const EditPointDialog = ({ currPoint, onEdit }: EditPointDialogProps) => {
     const [localPoint, setLocalPoint] = useState<RgvPathPoint>({...currPoint, category: PointCategory.Station });
+    const { t } = useTranslation();
+    const pointCategoryOptions = useMemo(() => getTranslatedPointCategoryOptions(t), [t]);
 
     const formatPointToOption = (): Option => {
         return localPoint.category === PointCategory.Obstacle
-            ? POINT_CATEGORY_OPTIONS[0]
-            : POINT_CATEGORY_OPTIONS[1];
+            ? pointCategoryOptions[0]
+            : pointCategoryOptions[1];
     };
 
     const changePointType = (value: Option) =>
@@ -53,39 +56,39 @@ const EditPointDialog = ({ currPoint, onEdit }: EditPointDialogProps) => {
         <Dialog open={currPoint !== null} onOpenChange={() => onEdit(null)}>
             <DialogContent>
                 <DialogHeader>
-                    <DialogTitle>Edit Point</DialogTitle>
+                    <DialogTitle>{t("toolCase.rgvRoutePlanning.editPointDialog.title")}</DialogTitle>
                     <DialogDescription>
-                        Fill the information of the point
+                        {t("toolCase.rgvRoutePlanning.editPointDialog.description")}
                     </DialogDescription>
                 </DialogHeader>
                 <div className="grid grid-cols-2 gap-4">
                     <div className="col-span-2 space-y-2">
-                        <Label>Point Name</Label>
+                        <Label>{t("toolCase.rgvRoutePlanning.editPointDialog.pointName")}</Label>
                         <Input
                             value={localPoint.name}
                             onChange={(e) => changePointName(e.target.value)}
-                            placeholder="Enter the point name"
+                            placeholder={t("toolCase.rgvRoutePlanning.editPointDialog.pointNamePlaceholder")}
                         />
                     </div>
                     <div className="col-span-2 lg:col-span-1 space-y-2">
-                        <Label>Point Type</Label>
+                        <Label>{t("toolCase.rgvRoutePlanning.editPointDialog.pointType")}</Label>
                         <SelectOption
                             value={formatPointToOption()}
-                            options={POINT_CATEGORY_OPTIONS}
+                            options={pointCategoryOptions}
                             onValueChange={changePointType}
-                            labelName="Point Type"
-                            placeholder="Select point type"
+                            labelName={t("toolCase.rgvRoutePlanning.editPointDialog.pointType")}
+                            placeholder={t("toolCase.rgvRoutePlanning.editPointDialog.selectPointType")}
                         />
                     </div>
                     <div className="col-span-2 lg:col-span-1 space-y-2">
-                        <Label>Processing time (s)</Label>
+                        <Label>{t("toolCase.rgvRoutePlanning.editPointDialog.processingTime")}</Label>
                         <Input
                             disabled={localPoint.category === PointCategory.Obstacle}
                             value={localPoint.category === PointCategory.Obstacle ? 0 : localPoint.time}
                             onChange={(e) =>
                                 changeProcessingTime(e.target.value)
                             }
-                            placeholder="Enter the processing time"
+                            placeholder={t("toolCase.rgvRoutePlanning.editPointDialog.processingTimePlaceholder")}
                             type="number"
                         />
                     </div>
@@ -94,7 +97,7 @@ const EditPointDialog = ({ currPoint, onEdit }: EditPointDialogProps) => {
                             onClick={handleSavePoint}
                             disabled={!canSavePoint()}
                         >
-                            Save
+                            {t("toolCase.rgvRoutePlanning.editPointDialog.save")}
                         </Button>
                     </div>
                 </div>

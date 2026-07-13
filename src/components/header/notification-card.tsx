@@ -6,6 +6,7 @@ import { MailOpen } from "lucide-react";
 import { useState } from "react";
 import { AlertDialog, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle } from "../ui/alert-dialog";
 import { useDeleteNotification } from "@/hooks/notification/useDeleteNotification";
+import { useTranslation } from "react-i18next";
 
 interface NotificationCardProps {
     data: NotificationData;
@@ -19,6 +20,7 @@ const NotificationCard = ({
     onMarkAsRead,
 }: NotificationCardProps) => {
     const { mutate:deleteNotification, isPending } = useDeleteNotification()
+    const { t } = useTranslation()
     const [isReadLocal, setIsLocalRead] = useState<boolean>(
         data.isRead || false,
     );
@@ -72,7 +74,7 @@ const NotificationCard = ({
                                 className="text-xs"
                                 onClick={handleMarkAsRead}
                             >
-                                <MailOpen /> Mark as read
+                                <MailOpen /> {t("notification.markAsRead")}
                             </Button>
                         )}
                         <Button
@@ -84,7 +86,7 @@ const NotificationCard = ({
                                 setOpenDeleteDialog(true);
                             }}
                         >
-                            Delete
+                            {t("notification.delete")}
                         </Button>
                     </div>
                 </div>
@@ -92,16 +94,15 @@ const NotificationCard = ({
                     <AlertDialogContent>
                         <AlertDialogHeader>
                             <AlertDialogTitle>
-                                Are you absolutely sure?
+                                {t("notification.confirmDeleteTitle")}
                             </AlertDialogTitle>
                             <AlertDialogDescription>
-                                This will
-                                permanently delete thi notification from the system.
+                                {t("notification.confirmDeleteDescription")}
                             </AlertDialogDescription>
                         </AlertDialogHeader>
                         <AlertDialogFooter>
-                            <AlertDialogCancel>Cancel</AlertDialogCancel>
-                            <Button variant={"destructive"} onClick={handleDeleteNotification} >Delete</Button>
+                            <AlertDialogCancel>{t("notification.cancel")}</AlertDialogCancel>
+                            <Button variant={"destructive"} onClick={handleDeleteNotification} >{t("notification.delete")}</Button>
                         </AlertDialogFooter>
                     </AlertDialogContent>
                 </AlertDialog>

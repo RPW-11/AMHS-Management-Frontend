@@ -2,6 +2,7 @@ import { ChevronLeft, ChevronRight } from "lucide-react";
 import { Button } from "./ui/button";
 import { Select, SelectContent, SelectGroup, SelectItem, SelectLabel, SelectTrigger, SelectValue } from "./ui/select";
 import { usePagination } from "@/hooks/usePagination";
+import { useTranslation } from "react-i18next";
 
 interface PaginationProps {
     page: number;
@@ -21,20 +22,21 @@ const Pagination = ({
     disabled = false
 }: PaginationProps) => {
     const { setPage, setPageSize } = usePagination();
+    const { t } = useTranslation();
 
     return (
         <div className="flex justify-between gap-4 items-center">
-            <div className="text-sm font-medium">Page {page} of {totalPages || 1}</div>
+            <div className="text-sm font-medium">{t("pagination.pageOf", { page, totalPages: totalPages || 1 })}</div>
             <div className="flex items-center gap-4">
                 <div className="flex items-center text-sm font-medium gap-2">
-                    Rows per page
+                    {t("pagination.rowsPerPage")}
                     <Select defaultValue={pageSize.toString()} onValueChange={(val) => setPageSize(Number(val))} disabled={disabled}>
                         <SelectTrigger className="w-[96px]">
                             <SelectValue/>
                         </SelectTrigger>
                         <SelectContent>
                             <SelectGroup>
-                            <SelectLabel>Number of rows</SelectLabel>
+                            <SelectLabel>{t("pagination.numberOfRows")}</SelectLabel>
                             <SelectItem value="10">10</SelectItem>
                             <SelectItem value="30">30</SelectItem>
                             <SelectItem value="50">50</SelectItem>

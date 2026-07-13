@@ -1,4 +1,6 @@
-import { PointCategory } from "@/constants/tool-case";
+import { PointCategory, RoutePlanningAlgorithm } from "@/constants/tool-case";
+import { Option } from "@/types/general";
+import { TFunction } from "i18next";
 
 export const getPointCategoryByStr = (category: string): PointCategory => {
     switch (category.toLowerCase()) {
@@ -10,3 +12,16 @@ export const getPointCategoryByStr = (category: string): PointCategory => {
             return PointCategory.None
     }
 }
+
+export const getTranslatedPointCategoryOptions = (t: TFunction): Option[] => [
+    { name: t("toolCase.rgvRoutePlanning.pointCategory.obstacle"), value: PointCategory.Obstacle.toString() },
+    { name: t("toolCase.rgvRoutePlanning.pointCategory.station"), value: PointCategory.Station.toString() }
+]
+
+export const getTranslatedRoutePlanningAlgorithms = (t: TFunction) => [
+    {
+        name: t("toolCase.algorithms.geneticAlgorithm.name"),
+        description: t("toolCase.algorithms.geneticAlgorithm.description"),
+        value: RoutePlanningAlgorithm.GeneticAlgorithm
+    },
+]

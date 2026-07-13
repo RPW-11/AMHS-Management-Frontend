@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import LoadingSpinner from "../loading-spinner";
 import { useSearchEmployeesByName } from "@/hooks/employee/useSearchEmployeesByName";
 import MissionMember from "./mission-member";
+import { useTranslation } from "react-i18next";
 
 interface MemberSearchProps {
     addMemberToMission: (employeeId: string) => void
@@ -11,6 +12,7 @@ interface MemberSearchProps {
 const MemberSearch = ({
     addMemberToMission
 }: MemberSearchProps) => {
+    const { t } = useTranslation();
     const { employees, isFetching, fetchError, searchedName, setSearchedName } =
         useSearchEmployeesByName();
 
@@ -26,7 +28,7 @@ const MemberSearch = ({
                 <input
                     value={searchedName}
                     onChange={(e) => setSearchedName(e.target.value)}
-                    placeholder="Search or add members"
+                    placeholder={t("missions.detail.memberSearch.placeholder")}
                     className="focus:outline-none w-full"
                 />
             </div>
@@ -40,7 +42,7 @@ const MemberSearch = ({
                         </h3>
                     ) : employees.length === 0 ? (
                         <h3 className="text-sm text-muted-foreground">
-                            No employee found
+                            {t("missions.detail.memberSearch.noEmployeeFound")}
                         </h3>
                     ) : (
                         <div className="space-y-2 w-full">

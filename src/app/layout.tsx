@@ -3,6 +3,7 @@ import { Figtree } from "next/font/google";
 import "./globals.css";
 import { Toaster } from "@/components/ui/sonner";
 import QueryProvider from "@/providers/query-provider";
+import I18nProvider from "@/providers/i18n-provider";
 
 const figtree = Figtree({
     subsets: ["latin"],
@@ -25,9 +26,11 @@ export default function RootLayout({
             <body
                 className={`${figtree.className} antialiased flex min-h-screen w-screen overflow-x-hidden bg-gray-100`}
             >
-                <QueryProvider>
-                  {children}
-                </QueryProvider>
+                <I18nProvider>
+                  <QueryProvider>
+                    {children}
+                  </QueryProvider>
+                </I18nProvider>
                 <Toaster />
             </body>
         </html>

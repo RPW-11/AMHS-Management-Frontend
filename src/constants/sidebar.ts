@@ -4,27 +4,27 @@ import { SidebarItemType } from "@/types/general";
 
 export const SIDEBAR_MENU: SidebarItemType[] = [
     {
-        name: "Dashboard",
+        name: "dashboard",
         icon: LayoutDashboard,
         path: Routes.Dashboard
     },
     {
-        name: "Employees",
+        name: "employees",
         icon: Users,
         path: Routes.Employees
     },
     {
-        name: "Missions",
+        name: "missions",
         icon: LayoutList,
         path: Routes.Missions
     },
     {
-        name: "Tools",
+        name: "tools",
         icon: ToolCase,
         path: Routes.ToolCase
     },
     {
-        name: "Notification",
+        name: "notification",
         icon: Bell,
         path: Routes.Notification
     }
