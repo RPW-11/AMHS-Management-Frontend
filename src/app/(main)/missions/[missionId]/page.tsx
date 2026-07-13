@@ -54,6 +54,7 @@ const MissionDetailPage = () => {
                     <Label>{t("missions.detail.detail")}</Label>
                     {mission.routePlanningSummary && mission.status == MissionStatus.Finished ? (
                         <RoutePlanningSummarySection
+                            missionId={mission.id}
                             routePlanningSumarry={mission.routePlanningSummary}
                         />
                     ) :

@@ -151,7 +151,11 @@
                 "solution": "Solution",
                 "chooseSolution": "Choose solution",
                 "downloadImage": "Download image",
-                "solutionName": "Solution {{num}}"
+                "solutionName": "Solution {{num}}",
+                "downloadErrors": {
+                    "unauthorized": "Unauthorized",
+                    "downloadFailed": "Failed to download image"
+                }
             }
         },
         "add": {

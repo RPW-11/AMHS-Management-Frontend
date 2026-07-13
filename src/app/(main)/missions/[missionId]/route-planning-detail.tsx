@@ -7,14 +7,19 @@ import { Download } from "lucide-react";
 import Image from "next/image";
 import { useState } from "react";
 import { useTranslation } from "react-i18next";
+import { useDownloadRoutePlanningImage } from "@/hooks/mission/useDownloadRoutePlanningImage";
+import LoadingSpinner from "@/components/loading-spinner";
 
 interface RoutePlanningSummaryProps {
+    missionId: string;
     routePlanningSumarry: RoutePlanningSummary;
 }
 const RoutePlanningSummarySection = ({
+    missionId,
     routePlanningSumarry
 }: RoutePlanningSummaryProps) => {
     const { t } = useTranslation();
+    const { mutate: downloadImage, isPending: isDownloading } = useDownloadRoutePlanningImage();
     const solutions: Option[] = [
         { name: t("missions.detail.routePlanning.solutionName", { num: 1 }), value: "1" },
     ]
@@ -71,8 +76,13 @@ const RoutePlanningSummarySection = ({
                     </div>
                     <Tooltip>
                         <TooltipTrigger asChild>
-                            <Button size={"icon-sm"} variant={"outline"}>
-                                <Download />
+                            <Button
+                                size={"icon-sm"}
+                                variant={"outline"}
+                                disabled={isDownloading}
+                                onClick={() => downloadImage(missionId)}
+                            >
+                                {isDownloading ? <LoadingSpinner size="sm" /> : <Download />}
                             </Button>
                         </TooltipTrigger>
                         <TooltipContent align="end">{t("missions.detail.routePlanning.downloadImage")}</TooltipContent>
