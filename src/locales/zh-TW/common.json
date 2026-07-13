@@ -1,7 +1,8 @@
 {
     "header": {
         "searchPlaceholder": "搜尋任何內容",
-        "language": "語言"
+        "language": "語言",
+        "profileSettings": "個人設定"
     },
     "dashboard": {
         "greeting": "哈囉 Rainata Putra，",

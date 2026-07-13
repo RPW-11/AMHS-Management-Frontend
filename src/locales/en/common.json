@@ -1,7 +1,8 @@
 {
     "header": {
         "searchPlaceholder": "Search for anything",
-        "language": "Language"
+        "language": "Language",
+        "profileSettings": "Profile Settings"
     },
     "dashboard": {
         "greeting": "Hello Rainata Putra,",
