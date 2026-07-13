@@ -38,7 +38,6 @@
             "dashboard": "儀表板",
             "employees": "員工",
             "missions": "任務",
-            "tools": "工具",
             "notification": "通知"
         }
     },
@@ -258,11 +257,8 @@
         }
     },
     "toolCase": {
-        "title": "AMHS 工具",
-        "subtitle": "與自動化物料搬運系統（AMHS）相關的工具清單",
         "rgvRoutePlanning": {
             "title": "RGV 路徑規劃",
-            "description": "根據所選演算法找出最佳的 RGV 路徑（軌道）",
             "pageSubtitle": "為您的 RGV 系統找出最有效率的路徑",
             "uploadImage": "上傳配置圖",
             "rowDimension": "列維度",

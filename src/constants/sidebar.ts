@@ -1,4 +1,4 @@
-import { Bell, LayoutDashboard, LayoutList, ToolCase, Users } from "lucide-react";
+import { Bell, LayoutDashboard, LayoutList, Users } from "lucide-react";
 import { Routes } from "./general";
 import { SidebarItemType } from "@/types/general";
 
@@ -17,11 +17,6 @@ export const SIDEBAR_MENU: SidebarItemType[] = [
         name: "missions",
         icon: LayoutList,
         path: Routes.Missions
-    },
-    {
-        name: "tools",
-        icon: ToolCase,
-        path: Routes.ToolCase
     },
     {
         name: "notification",

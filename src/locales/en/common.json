@@ -38,7 +38,6 @@
             "dashboard": "Dashboard",
             "employees": "Employees",
             "missions": "Missions",
-            "tools": "Tools",
             "notification": "Notification"
         }
     },
@@ -258,11 +257,8 @@
         }
     },
     "toolCase": {
-        "title": "AMHS Tools",
-        "subtitle": "A list of tools related to Automated Material Handling System (AMHS)",
         "rgvRoutePlanning": {
             "title": "RGV Route Planning",
-            "description": "Find the most optimal RGV route (track) based on the chosen algorithm",
             "pageSubtitle": "Find the some routes that are most efficient for your RGV system",
             "uploadImage": "Upload layout image",
             "rowDimension": "Row dimension",
