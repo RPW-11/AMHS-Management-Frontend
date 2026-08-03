@@ -151,6 +151,8 @@
                 "solution": "Solution",
                 "chooseSolution": "Choose solution",
                 "downloadImage": "Download image",
+                "rewriteRoute": "Rewrite route",
+                "downloadRouteDetails": "Download route details",
                 "solutionName": "Solution {{num}}",
                 "downloadErrors": {
                     "unauthorized": "Unauthorized",

@@ -151,6 +151,8 @@
                 "solution": "方案",
                 "chooseSolution": "選擇方案",
                 "downloadImage": "下載圖片",
+                "rewriteRoute": "重新規劃路徑",
+                "downloadRouteDetails": "下載路徑詳情",
                 "solutionName": "方案 {{num}}",
                 "downloadErrors": {
                     "unauthorized": "未授權",
