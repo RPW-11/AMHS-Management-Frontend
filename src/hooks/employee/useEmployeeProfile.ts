@@ -1,14 +1,13 @@
 "use client"
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { Employee } from "@/types/employee"
-import { useRouter } from "next/navigation";
 import { useState, useCallback, useMemo, useEffect } from "react"
 import { useTranslation } from "react-i18next"
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized"
 
 export const useEmployeeProfile = (employeeId?: string) => {
     const { user, isHydrated } = useUserStore()
-    const { push } = useRouter()
+    const handleUnauthorized = useUnauthorized()
     const { t } = useTranslation()
     const [fetchError, setFetchError] = useState<string | null>(null)
     const [isFetchingProfile, setIsFetchingProfile] = useState<boolean>(true)
@@ -76,7 +75,7 @@ export const useEmployeeProfile = (employeeId?: string) => {
             })
             
             if (result.status === 401) {
-                return push(Routes.Login)
+                handleUnauthorized()
             }
 
             const data = await result.json()
@@ -89,11 +88,12 @@ export const useEmployeeProfile = (employeeId?: string) => {
             setEmployeeDetails(data)
             
         } catch (error) {
+            if (error instanceof UnauthorizedError) return
             setFetchError((error as Error).message)
         } finally {
             setIsFetchingProfile(false)
         }
-    }, [user, employeeId, push])
+    }, [user, employeeId, handleUnauthorized])
 
     useEffect(() => {
         if (isHydrated && employeeId) {

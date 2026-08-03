@@ -5,10 +5,12 @@ import { useUserStore } from "@/stores/useAuthStore";
 import { NotificationData } from "@/types/general";
 import { toastNotification } from "./toastNotificationHandler";
 import { useQueryClient } from "@tanstack/react-query";
+import { useUnauthorized } from "../useUnauthorized";
 
 export const useStreamNotification = () => {
     const { user, isHydrated } = useUserStore();
     const queryClient = useQueryClient();
+    const handleUnauthorized = useUnauthorized();
 
     const handleNotificationMessage = async (data: NotificationData) => {
         toastNotification(data);
@@ -27,6 +29,12 @@ export const useStreamNotification = () => {
         fetchEventSource(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/notifications/stream`, {
             signal: ctrl.signal,
             headers: { Authorization: `Bearer ${token}` },
+            async onopen(response) {
+                if (response.status === 401) {
+                    ctrl.abort();
+                    handleUnauthorized();
+                }
+            },
             onmessage(msg) {
                 if (msg.data) {
                     const data = JSON.parse(msg.data) as NotificationData;
@@ -40,7 +48,7 @@ export const useStreamNotification = () => {
         });
 
         return () => ctrl.abort();
-    }, [])
+    }, [handleUnauthorized])
 
     useEffect(() => {
         if (isHydrated && user?.token) {

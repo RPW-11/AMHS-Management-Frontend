@@ -1,14 +1,13 @@
 "use client";
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { UpdateMissionRequest } from "@/types/mission";
 import { useMutation } from "@tanstack/react-query";
-import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized";
 
 export const useModifyMission = () => {
     const { user } = useUserStore();
-    const { push } = useRouter();
+    const handleUnauthorized = useUnauthorized();
 
     return useMutation({
         mutationFn: async ({
@@ -20,7 +19,7 @@ export const useModifyMission = () => {
             data: UpdateMissionRequest;
             onSuccessCb?: () => void;
         }) => {
-            if (!user?.token) throw new Error("Unauthorized");
+            if (!user?.token) handleUnauthorized();
 
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`,
@@ -28,15 +27,14 @@ export const useModifyMission = () => {
                     method: "PATCH",
                     headers: {
                         "Content-Type": "application/json",
-                        Authorization: `Bearer ${user.token}`,
+                        Authorization: `Bearer ${user?.token}`,
                     },
                     body: JSON.stringify(data),
                 },
             );
 
             if (response.status === 401) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
+                handleUnauthorized();
             }
 
             if (!response.ok) {
@@ -48,6 +46,7 @@ export const useModifyMission = () => {
         },
 
         onError: (err) => {
+            if (err instanceof UnauthorizedError) return;
             toast.error((err as Error).message || "Failed to update mission", {
                 duration: 3000,
                 onAutoClose: () => toast.dismiss(),

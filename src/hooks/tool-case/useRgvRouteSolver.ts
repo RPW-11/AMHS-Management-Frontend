@@ -1,13 +1,12 @@
-import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
 import { ApiError } from "@/types/general"
 import { CreateRgvPathPlanReq } from "@/types/toolcase"
-import { useRouter } from "next/navigation"
 import { useCallback } from "react"
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized"
 
 export const useRgvRouteSolver = () => {
     const { user } = useUserStore()
-    const { push } = useRouter()
+    const handleUnauthorized = useUnauthorized()
     
     const submitRgvRoutePlan = useCallback(async (createRgvPlanReq: CreateRgvPathPlanReq, missionId: string): Promise<ApiError|null> => {
         try {
@@ -24,8 +23,7 @@ export const useRgvRouteSolver = () => {
             })
 
             if (result.status === 401) {
-                push(Routes.Login)
-                return null
+                handleUnauthorized()
             }
 
             if(!result.ok) {
@@ -35,8 +33,9 @@ export const useRgvRouteSolver = () => {
 
             return null
         } catch (error) {
+            if (error instanceof UnauthorizedError) return null
             return { title: (error as Error).message }
         }
-    }, [user?.token, push])
+    }, [user?.token, handleUnauthorized])
     return { submitRgvRoutePlan }
 }

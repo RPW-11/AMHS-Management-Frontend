@@ -1,6 +1,6 @@
 "use client";
 
-import { MissionRoutes, Routes, ToolCaseRoutes } from "@/constants/general";
+import { MissionRoutes, ToolCaseRoutes } from "@/constants/general";
 import { MissionCategory } from "@/constants/mission";
 import { useUserStore } from "@/stores/useAuthStore";
 import { ApiError } from "@/types/general";
@@ -15,12 +15,14 @@ import { useRouter } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
 import { useTranslation } from "react-i18next";
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized";
 
 export const useAddMission = () => {
     const { user } = useUserStore();
     const { push } = useRouter();
     const { t } = useTranslation();
     const queryClient = useQueryClient();
+    const handleUnauthorized = useUnauthorized();
     const [addMissionForm, setAddMissionForm] = useState<AddMissionForm>({
         name: "",
         description: "",
@@ -37,7 +39,7 @@ export const useAddMission = () => {
 
     const { mutate, isPending } = useMutation({
         mutationFn: async (addMissionForm: AddMissionForm) => {
-            if (!user?.token) throw new Error(t("missions.add.toast.unauthorized"));
+            if (!user?.token) handleUnauthorized(t("missions.add.toast.unauthorized"));
 
             const addMissionReq = addMissionFormToRequest(addMissionForm);
             const response = await fetch(
@@ -53,8 +55,7 @@ export const useAddMission = () => {
             );
 
             if (response.status === 401) {
-                push(Routes.Login);
-                throw new Error(t("missions.add.toast.unauthorized"));
+                handleUnauthorized(t("missions.add.toast.unauthorized"));
             }
 
             const data = await response.json();
@@ -80,7 +81,10 @@ export const useAddMission = () => {
         },
         onMutate: () => toast.loading(t("missions.add.toast.adding")),
         onSettled: (_, __, ___, toastId) => toast.dismiss(toastId),
-        onError: (err) => toast.error((err as Error).message)
+        onError: (err) => {
+            if (err instanceof UnauthorizedError) return;
+            toast.error((err as Error).message);
+        }
     });
 
     const validateMissionForm = (addMissionForm: AddMissionForm): boolean => {

@@ -1,17 +1,16 @@
 "use client";
 
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { PaginatedResponse } from "@/types/general";
 import { Mission } from "@/types/mission";
-import { useRouter } from "next/navigation";
 import { usePagination } from "../usePagination";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useUnauthorized } from "../useUnauthorized";
 
 export const useLoadMission = () => {
     const { user, isHydrated } = useUserStore();
-    const { push } = useRouter();
+    const handleUnauthorized = useUnauthorized();
     const { page, pageSize, setPage, getSearchParamValue } = usePagination();
 
     const status = getSearchParamValue("status");
@@ -22,21 +21,17 @@ export const useLoadMission = () => {
     >({
         queryKey: ["missions", page, pageSize, status, name],
         queryFn: async () => {
-            if (!user?.token) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
-            }
+            if (!user?.token) handleUnauthorized();
             
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions?page=${page}&pageSize=${pageSize}${status ? `&status=${status}` : ""}${name ? `&name=${name}` : ""}`,
                 {
-                    headers: { Authorization: `Bearer ${user.token}` },
+                    headers: { Authorization: `Bearer ${user?.token}` },
                 }
             );
 
             if (response.status === 401) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
+                handleUnauthorized();
             }
 
             if (!response.ok) {

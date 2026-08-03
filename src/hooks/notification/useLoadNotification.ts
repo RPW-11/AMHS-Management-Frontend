@@ -1,16 +1,15 @@
 "use client";
 
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { NotificationData, PaginatedResponse } from "@/types/general";
-import { useRouter } from "next/navigation";
 import { usePagination } from "../usePagination";
 import { useQuery } from "@tanstack/react-query";
 import { useEffect } from "react";
+import { useUnauthorized } from "../useUnauthorized";
 
 export const useLoadNotification = () => {
     const { user, isHydrated } = useUserStore();
-    const { push } = useRouter();
+    const handleUnauthorized = useUnauthorized();
     const { page, pageSize, setPage, getSearchParamValue } = usePagination();
 
     const type = getSearchParamValue("type") || "all";
@@ -20,21 +19,17 @@ export const useLoadNotification = () => {
     >({
         queryKey: ["notifications", page, pageSize, type],
         queryFn: async () => {
-            if (!user?.token) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
-            }
+            if (!user?.token) handleUnauthorized();
             
             const response = await fetch(
                 `${process.env.NEXT_PUBLIC_BACKEND_HOST}/notifications?page=${page}&pageSize=${pageSize}${type ? `&type=${type}` : ""}`,
                 {
-                    headers: { Authorization: `Bearer ${user.token}` },
+                    headers: { Authorization: `Bearer ${user?.token}` },
                 }
             );
 
             if (response.status === 401) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
+                handleUnauthorized();
             }
 
             if (!response.ok) {

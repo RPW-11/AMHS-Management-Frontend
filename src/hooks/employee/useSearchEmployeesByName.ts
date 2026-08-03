@@ -1,16 +1,15 @@
 "use client"
 
-import { Routes } from "@/constants/general"
 import { useUserStore } from "@/stores/useAuthStore"
 import { EmployeeSearch } from "@/types/employee"
-import { useRouter } from "next/navigation"
 import { useCallback, useEffect, useState } from "react"
 import { useDebouncedCallback } from 'use-debounce';
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized";
 
 export const useSearchEmployeesByName = () => {
     const { user, isHydrated } = useUserStore();
     
-    const { push } = useRouter()
+    const handleUnauthorized = useUnauthorized()
     const [employees, setEmployess] = useState<EmployeeSearch[]>([])
     const [searchedName, setSearchedName] = useState<string>("")
     const [isFetching, setIsFetching] = useState<boolean>(true)
@@ -35,7 +34,7 @@ export const useSearchEmployeesByName = () => {
             })
 
             if (result.status === 401) {
-                return push(Routes.Login)
+                handleUnauthorized()
             }
 
             const data = await result.json()
@@ -46,11 +45,12 @@ export const useSearchEmployeesByName = () => {
 
             setEmployess(data)
         } catch (error) {
+            if (error instanceof UnauthorizedError) return
             setFetchError((error as Error).message)
         } finally {
             setIsFetching(false)
         }
-    }, [user?.token, push])
+    }, [user?.token, handleUnauthorized])
 
     const debouncedFetchEmployeesByName = useDebouncedCallback((name: string) => fetchEmployeesByName(name), 400)
 

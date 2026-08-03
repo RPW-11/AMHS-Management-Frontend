@@ -1,15 +1,14 @@
 "use client"
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { EmployeePosition, EmployeeRegisterRequest } from "@/types/employee";
 import { ApiError } from "@/types/general";
-import { useRouter } from "next/navigation";
 import { useState, useCallback, useMemo } from "react"
 import { useTranslation } from "react-i18next"
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized"
 
 export const useEmployeeRegis = () => {
     const { user } = useUserStore()
-    const { push } = useRouter()
+    const handleUnauthorized = useUnauthorized()
     const { t } = useTranslation()
     const [employeeRegisReq, setEmployeeRegisReq] = useState<EmployeeRegisterRequest>({
         firstName: "",
@@ -33,8 +32,7 @@ export const useEmployeeRegis = () => {
             })
 
             if (response.status === 401) {
-                push(Routes.Login)
-                return null
+                handleUnauthorized()
             }
 
             if (!response.ok) {
@@ -44,9 +42,10 @@ export const useEmployeeRegis = () => {
 
             return null
         } catch (error) {
+            if (error instanceof UnauthorizedError) return null
             return { title: (error as Error).message }
         }
-    }, [user?.token, push])
+    }, [user?.token, handleUnauthorized])
 
     const validateField = useCallback((field: keyof EmployeeRegisterRequest, value: string): string => {
         switch (field) {

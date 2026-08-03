@@ -6,18 +6,17 @@ import { MissionDetail } from "@/types/mission";
 import { useQuery } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { toast } from "sonner";
+import { useUnauthorized } from "../useUnauthorized";
 
 export const useLoadDetailedMission = (missionId?: string) => {
     const { user, isHydrated } = useUserStore()
     const { push } = useRouter()
+    const handleUnauthorized = useUnauthorized()
     
     const { data, isLoading, isFetching, error } = useQuery<MissionDetail>({
         queryKey: ["mission", missionId],
         queryFn: async () => {
-            if (!user?.token) {
-                push(Routes.Login);
-                throw new Error("Unauthorized");
-            }
+            if (!user?.token) handleUnauthorized();
 
             const response = await fetch(`${process.env.NEXT_PUBLIC_BACKEND_HOST}/missions/${missionId}`, {
                 headers: {
@@ -26,9 +25,7 @@ export const useLoadDetailedMission = (missionId?: string) => {
             })
 
             if (response.status === 401) {
-                push(Routes.Login)
-                throw new Error("Unauthorized");
-
+                handleUnauthorized();
             }
 
             if (response.status === 404) {

@@ -1,11 +1,10 @@
 "use client";
 
-import { Routes } from "@/constants/general";
 import { useUserStore } from "@/stores/useAuthStore";
 import { AssignedEmployee, ChangeMemberRoleRequest } from "@/types/mission";
-import { useRouter } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
 import { toast } from "sonner";
+import { UnauthorizedError, useUnauthorized } from "../useUnauthorized";
 
 export const useMissionMember = (missionId: string) => {
     const { user, isHydrated } = useUserStore();
@@ -14,7 +13,7 @@ export const useMissionMember = (missionId: string) => {
     );
     const [isFetchingMembers, setIsFetchingMembers] = useState<boolean>(true);
 
-    const { push } = useRouter();
+    const handleUnauthorized = useUnauthorized();
 
     const fetchMissionMembers = useCallback(async (missionId: string) => {
         setIsFetchingMembers(true);
@@ -31,7 +30,7 @@ export const useMissionMember = (missionId: string) => {
             );
 
             if (response.status === 401) {
-                return push(Routes.Login);
+                handleUnauthorized();
             }
 
             const data = await response.json();
@@ -42,11 +41,12 @@ export const useMissionMember = (missionId: string) => {
 
             setMissionMembers(data);
         } catch (error) {
+            if (error instanceof UnauthorizedError) return;
             toast.error((error as Error).message);
         } finally {
             setIsFetchingMembers(false);
         }
-    }, [user?.token, push]);
+    }, [user?.token, handleUnauthorized]);
 
     const addMemberToMissionHandler = useCallback(
         async (memberId: string, missionId: string) => {
@@ -63,7 +63,7 @@ export const useMissionMember = (missionId: string) => {
                 );
 
                 if (response.status === 401) {
-                    return push(Routes.Login);
+                    handleUnauthorized();
                 }
 
                 if (!response.ok) {
@@ -77,7 +77,7 @@ export const useMissionMember = (missionId: string) => {
                 throw error;
             }
         },
-        [user?.token, push, fetchMissionMembers]
+        [user?.token, handleUnauthorized, fetchMissionMembers]
     );
 
     const deleteMemberFromMissionHandler = useCallback(
@@ -95,7 +95,7 @@ export const useMissionMember = (missionId: string) => {
                 );
 
                 if (response.status === 401) {
-                    return push(Routes.Login);
+                    handleUnauthorized();
                 }
 
                 if (!response.ok) {
@@ -109,7 +109,7 @@ export const useMissionMember = (missionId: string) => {
                 throw error;
             }
         },
-        [user?.token, push, fetchMissionMembers]
+        [user?.token, handleUnauthorized, fetchMissionMembers]
     );
 
     const changeMemberRoleHandler = useCallback(
@@ -132,7 +132,7 @@ export const useMissionMember = (missionId: string) => {
                 );
 
                 if (response.status === 401) {
-                    return push(Routes.Login);
+                    handleUnauthorized();
                 }
 
                 if (!response.ok) {
@@ -146,7 +146,7 @@ export const useMissionMember = (missionId: string) => {
                 throw error;
             }
         },
-        [user?.token, push, fetchMissionMembers]
+        [user?.token, handleUnauthorized, fetchMissionMembers]
     );
 
     const addMemberToMission = (memberId: string) =>
