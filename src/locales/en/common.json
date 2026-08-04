@@ -341,6 +341,7 @@
         "title": "Notifications",
         "subtitle": "View all notifications here.",
         "errorOccurred": "Error has occured",
+        "streamFailed": "Failed to connect to the notification stream",
         "noNotifications": "No notifications",
         "markAsRead": "Mark as read",
         "markAllAsRead": "Mark all as read",

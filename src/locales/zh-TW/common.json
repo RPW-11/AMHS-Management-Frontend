@@ -341,6 +341,7 @@
         "title": "通知",
         "subtitle": "在這裡查看所有通知。",
         "errorOccurred": "發生錯誤",
+        "streamFailed": "無法連線至通知串流",
         "noNotifications": "目前沒有通知",
         "markAsRead": "標示為已讀",
         "markAllAsRead": "全部標示為已讀",

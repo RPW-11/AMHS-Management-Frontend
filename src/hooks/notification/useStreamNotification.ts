@@ -1,16 +1,21 @@
 "use client"
 import { useCallback, useEffect } from "react";
-import { fetchEventSource } from "@microsoft/fetch-event-source";
+import { EventStreamContentType, fetchEventSource } from "@microsoft/fetch-event-source";
 import { useUserStore } from "@/stores/useAuthStore";
 import { NotificationData } from "@/types/general";
 import { toastNotification } from "./toastNotificationHandler";
 import { useQueryClient } from "@tanstack/react-query";
 import { useUnauthorized } from "../useUnauthorized";
+import { useTranslation } from "react-i18next";
+import { toast } from "sonner";
+
+class FatalStreamError extends Error {}
 
 export const useStreamNotification = () => {
     const { user, isHydrated } = useUserStore();
     const queryClient = useQueryClient();
     const handleUnauthorized = useUnauthorized();
+    const { t } = useTranslation();
 
     const handleNotificationMessage = async (data: NotificationData) => {
         toastNotification(data);
@@ -34,6 +39,13 @@ export const useStreamNotification = () => {
                     ctrl.abort();
                     handleUnauthorized();
                 }
+
+                const contentType = response.headers.get("content-type");
+                if (response.ok && contentType?.startsWith(EventStreamContentType)) {
+                    return;
+                }
+
+                throw new FatalStreamError(`Notification stream failed to open: ${response.status}`);
             },
             onmessage(msg) {
                 if (msg.data) {
@@ -43,16 +55,20 @@ export const useStreamNotification = () => {
             },
             onerror(err) {
                 console.log(`Notification streaming error: ${err}`);
-                // handle retry or abort
+                if (err instanceof FatalStreamError) {
+                    toast.error(t("notification.streamFailed"));
+                    throw err;
+                }
+                // transient failure, let the library retry
             },
         });
 
         return () => ctrl.abort();
-    }, [handleUnauthorized])
+    }, [handleUnauthorized, t])
 
     useEffect(() => {
         if (isHydrated && user?.token) {
-            handleStreamNotification(user.token);
+            return handleStreamNotification(user.token);
         }
     }, [isHydrated, user?.token, handleStreamNotification])
 }
