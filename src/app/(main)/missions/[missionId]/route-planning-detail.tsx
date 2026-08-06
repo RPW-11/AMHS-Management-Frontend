@@ -25,12 +25,27 @@ const RoutePlanningSummarySection = ({
     const { push } = useRouter();
     const { mutate: downloadImage, isPending: isDownloading } = useDownloadRoutePlanningImage();
     const { mutate: downloadJson, isPending: isDownloadingJson } = useDownloadRoutePlanningJson();
-    const solutions: Option[] = [
-        { name: t("missions.detail.routePlanning.solutionName", { num: 1 }), value: "1" },
-    ]
+
+    const scores = routePlanningSumarry.scores?.length
+        ? routePlanningSumarry.scores
+        : [routePlanningSumarry.score]
+    const solutions: Option[] = scores.map((_, i) => ({
+        name: t("missions.detail.routePlanning.solutionName", { num: i + 1 }),
+        value: String(i),
+    }))
 
     const [currSolution, setCurrSolution] = useState<Option>(solutions[0])
     const [isImageLoaded, setIsImageLoaded] = useState(false)
+
+    const currIndex = Number(currSolution.value)
+    const currScore = scores[currIndex] ?? scores[0]
+    const currImageUrl = routePlanningSumarry.imageUrls[currIndex] ?? routePlanningSumarry.imageUrls[0]
+
+    const handleChangeSolution = (option: Option) => {
+        if (option.value === currSolution.value) return
+        setIsImageLoaded(false)
+        setCurrSolution(option)
+    }
 
     return (
         <div className="space-y-6 text-sm">
@@ -57,15 +72,15 @@ const RoutePlanningSummarySection = ({
                 </div>
                 <div className="col-span-1">{t("missions.detail.routePlanning.totalThroughput")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary whitespace-nowrap">
-                    {t("missions.detail.routePlanning.productsPerHour", { value: Math.floor(routePlanningSumarry.score.throughput) })}
+                    {t("missions.detail.routePlanning.productsPerHour", { value: Math.floor(currScore.throughput) })}
                 </div>
                 <div className="col-span-1">{t("missions.detail.routePlanning.trackLength")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {t("missions.detail.routePlanning.meter", { value: routePlanningSumarry.score.trackLength })}
+                    {t("missions.detail.routePlanning.meter", { value: currScore.trackLength })}
                 </div>
                 <div className="col-span-1">{t("missions.detail.routePlanning.maxNumberOfRgvs")}</div>
                 <div className="col-span-1 rounded-md bg-accent py-1 px-3 w-fit text-primary">
-                    {t("missions.detail.routePlanning.rgvs", { value: routePlanningSumarry.score.numOfRgvs })}
+                    {t("missions.detail.routePlanning.rgvs", { value: currScore.numOfRgvs })}
                 </div>
             </div>
 
@@ -75,7 +90,8 @@ const RoutePlanningSummarySection = ({
                         <SelectOption
                             value={currSolution}
                             options={solutions}
-                            onValueChange={(op) => setCurrSolution(op)}
+                            onValueChange={handleChangeSolution}
+                            disabled={solutions.length <= 1}
                             labelName={t("missions.detail.routePlanning.solution")}
                             placeholder={t("missions.detail.routePlanning.chooseSolution")}
                         />
@@ -124,7 +140,8 @@ const RoutePlanningSummarySection = ({
                         <div className="w-full h-48 rounded-md bg-accent animate-pulse" />
                     )}
                     <Image
-                        src={routePlanningSumarry.imageUrls[0]}
+                        key={currImageUrl}
+                        src={currImageUrl}
                         width={0}
                         height={0}
                         sizes="100vw"

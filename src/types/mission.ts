@@ -35,6 +35,13 @@ export type AssignedEmployee = {
     role: MissionRole
 }
 
+export type RoutePlanningScore = {
+    throughput: number,
+    trackLength: number,
+    numOfRgvs: number,
+    optimality: number
+}
+
 export type RoutePlanningSummary = {
     algorithm: RoutePlanningAlgorithm,
     imageUrls: string[],
@@ -44,12 +51,8 @@ export type RoutePlanningSummary = {
         widthLength: number,
         heightLength: number
     }
-    score: {
-        throughput: number,
-        trackLength: number,
-        numOfRgvs: number,
-        optimality: number
-    }
+    scores: RoutePlanningScore[]
+    score: RoutePlanningScore
 }
 
 export interface AddMissionForm {
